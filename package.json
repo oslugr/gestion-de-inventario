@@ -1,0 +1,23 @@
+{
+  "name": "gestion-de-inventario-back-end",
+  "version": "0.0.0",
+  "description": "Gestión del inventario de la OSL",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oslugr/gestion-de-inventario-back-end.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oslugr/gestion-de-inventario-back-end/issues"
+  },
+  "homepage": "https://github.com/oslugr/gestion-de-inventario-back-end#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "passport": "^0.4.1"
+  }
+}
