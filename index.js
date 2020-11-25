@@ -3,17 +3,24 @@ const app = express()
 const port = 3000
 const db = require('./db/pool').pool;
 
-app.get('/localizaciones', (req, res) => {
-  // 
-  db.getConnection(function(err, conn){
-    conn.query("SELECT * FROM localizacion", function(err, rows){
-      conn.release();
-      if(!err)
-        res.json(rows);
-      else
-        console.log("Error en la bd");
-    })
-  })
+// Routes
+const localizacion = require('./routes/localizacion')
+
+// Para poder recibir peticiones con cuerpo JSON
+app.use(express.json())
+app.use('/localizacion', localizacion);
+
+// Muestra el error cuando no existe el recurso
+app.get("/*", (req, res) => {
+  res.status(404);
+
+  if (req.accepts('json')) {
+    res.send({ 
+      error: 404,
+      message: 'Not found' 
+    });
+    return;
+  }
 })
 
 app.listen(port, () => {
