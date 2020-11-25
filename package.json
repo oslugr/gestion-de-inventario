@@ -1,7 +1,7 @@
 {
   "name": "gestion-de-inventario-back-end",
-  "version": "0.0.0",
-  "description": "Gestión del inventario de la OSL",
+  "version": "1.0.0",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,6 +18,6 @@
   "homepage": "https://github.com/oslugr/gestion-de-inventario-back-end#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "passport": "^0.4.1"
+    "mysql": "^2.18.1"
   }
 }
