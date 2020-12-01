@@ -59,19 +59,40 @@ router.post('/',[
 		if(!err){
 			conn.query(`INSERT INTO localizacion VALUES ("${nombre}")`, function(err, rows){
 				
-				conn.release();
 				if(!err){
-					return res.status('200').json({
-						codigo: "200",
-						mensaje: "Localización insertada correctamente"
+					conn.release();
+					return res.status('201').json({
+						codigo: "201",
+						mensaje: "Localización creada correctamente"
 					});
 				}
 				else{
-					console.log(`Error al insertar una localización en la base de datos. Query: INSERT INTO localizacion VALUES ${nombre}`);
-					return res.status('502').json({
-						tipo_error: 502,
-						mensaje_error: "Bad Gateway - Error interno al insertar valores a la base de datos"
-					})
+					conn.query(`SELECT * FROM localizacion WHERE nombre="${nombre}"`, function(err, rows) {
+						
+						conn.release();
+						if(!err){
+							if(rows.length){
+								return res.status('409').json({
+									codigo: "409",
+									mensaje: "Error al añadir el valor en la base de datos. Este valor ya existe."
+								})
+							}
+							else{
+								console.log(`Error al insertar una localización en la base de datos. Querys: \n INSERT INTO localizacion VALUES ${nombre} \n SELECT * FROM localizacion WHERE id="${nombre}"`);
+								return res.status('502').json({
+									tipo_error: 502,
+									mensaje_error: "Bad Gateway - Error interno al insertar el valor en la base de datos"
+								})
+							}
+						}
+						else{
+							console.log(`Error al insertar una localización en la base de datos. Querys: \n INSERT INTO localizacion VALUES ${nombre} \n SELECT * FROM localizacion WHERE id="${nombre}"`);
+							return res.status('502').json({
+								tipo_error: 502,
+								mensaje_error: "Bad Gateway - Error interno al insertar el valor en la base de datos"
+							})
+						}
+					}); 
 				}
 			})
 		}
@@ -85,5 +106,42 @@ router.post('/',[
 	})
 
 })
+
+router.delete('/:nombre', (req, res) => {
+
+	db.getConnection(function(err, conn){
+	  if(!err){
+			conn.query(`DELETE FROM localizacion WHERE nombre="${req.params.nombre}"`, function(err, rows){
+				
+				conn.release();
+				if(!err){
+					if(rows.affectedRows){
+						res.status('200').json({
+							estado: "Correcto",
+							mensaje: `Localización con nombre ${req.params.nombre} eliminada correctamente`
+						});
+					}
+					else{
+						res.status('404').json({
+							tipo_error: 404,
+							mensaje_error: `Not found - No hay ninguna localización con el nombre ${req.params.nombre}`
+						});
+					}
+				}
+				else{
+					console.log(`Error al eliminar localizaciones. Query: DELETE FROM localizacion WHERE nombre="${req.params.nombre}"`);
+					return res.status('502').json({
+						tipo_error: 502,
+						mensaje_error: "Bad Gateway - Error al eliminar el registro de la base de datos"
+					})
+				}
+			})
+		}
+		else{
+			console.log("Error en la conexión con la base de datos");
+		}
+	})
+
+});
 
 module.exports = router;
