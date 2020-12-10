@@ -15,7 +15,10 @@ router.get('/', (req, res) => {
 				
 				conn.release();
 				if(!err)
-					res.status('200').json(rows);
+					res.status('200').json({
+						cantidad: rows.lenght,
+						localizaciones: rows
+					});
 				else{
 					console.log("Error al obtener localizaciones. Query: SELECT * FROM localizacion");
 					return res.status('502').json({
@@ -27,6 +30,10 @@ router.get('/', (req, res) => {
 		}
 		else{
 			console.log("Error en la conexión con la base de datos");
+			return res.status('503').json({
+				tipo_error: 503,
+				mensaje_error: "Service Unavailable - Error interno al conectarse a la base de datos"
+			})
 		}
 	})
 

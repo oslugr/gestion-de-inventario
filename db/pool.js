@@ -1,6 +1,7 @@
 const fs = require('fs');
 const mysql = require('mysql');
 
+// let rawdata = fs.readFileSync('./gestion-de-inventario-back-end/db/data.json');
 let rawdata = fs.readFileSync('./db/data.json');
 var credenciales = JSON.parse(rawdata);
 

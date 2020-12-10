@@ -26,13 +26,13 @@ CREATE TABLE componente (
 );
 
 CREATE TABLE ordenador (
-	id INT PRIMARY KEY AUTO_INCREMENT,
+	id INT PRIMARY KEY AUTO_INCREMENT ON DELETE CASCADE,
 	localizacion_taller VARCHAR(30),
 	observaciones VARCHAR(1000)
 );
 
 CREATE TABLE portatil (
-	id INT REFERENCES ordenador(id),
+	id INT REFERENCES ordenador(id) ON DELETE CASCADE,
     PRIMARY KEY(id)
 );
 
