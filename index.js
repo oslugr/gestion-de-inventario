@@ -3,8 +3,12 @@ const app = express()
 const port = 3000
 const { NotFound } = require('./aux/error');
 
+// Routes
+const localizacion = require('./routes/localizacion')
+
 // Para poder recibir peticiones con cuerpo JSON
 app.use(express.json())
+app.use('/localizacion', localizacion);
 
 // Muestra el error cuando no existe el recurso
 app.get("/*", (req, res) => {
