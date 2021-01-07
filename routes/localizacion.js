@@ -5,39 +5,11 @@ var express = require('express'),
 	router = express.Router();
 const db = require('../db/pool').pool;
 const { body, validationResult } = require('express-validator');
+const {APIError, BadRequest} = require('../aux/error');
+const controller_localizaciones = require('../controllers/localizacionController')
 
 // Obtiene todas las localizaciones de la DB
-router.get('/', (req, res) => {
-
-	db.getConnection(function(err, conn){
-	  if(!err){
-			conn.query("SELECT * FROM localizacion", function(err, rows){
-				
-				conn.release();
-				if(!err)
-					res.status('200').json({
-						cantidad: rows.lenght,
-						localizaciones: rows
-					});
-				else{
-					console.log("Error al obtener localizaciones. Query: SELECT * FROM localizacion");
-					return res.status('502').json({
-						tipo_error: 502,
-						mensaje_error: "Bad Gateway - Error interno al obtener los valores de la base de datos"
-					})
-				}
-			})
-		}
-		else{
-			console.log("Error en la conexión con la base de datos");
-			return res.status('503').json({
-				tipo_error: 503,
-				mensaje_error: "Service Unavailable - Error interno al conectarse a la base de datos"
-			})
-		}
-	})
-
-});
+router.get('/', controller_localizaciones.listaLocalizaciones);
 
 /**
  * Añade una localización a la base de datos
@@ -53,12 +25,11 @@ router.post('/',[
 
 	// Gestión de errores 
 	const errors = validationResult(req);
-	if(!errors.isEmpty())
-		return res.status(400).json({
-			tipo_error: 400,
-			mensaje_error: "Bad request",
-			errores: errors.array()
-		})
+	if(!errors.isEmpty()){
+		let errores = errors.array();
+		let e = new BadRequest('Valores mal introducidos', errors.array(), `Petición erronea del usuario ${JSON.stringify(errors.array())}`)
+		return res.status(e.statusCode).json(e.getJson());
+	}
 
 	// Si no hay error añade la localizacion en la base de datos
 	let nombre = req.body.nombre;

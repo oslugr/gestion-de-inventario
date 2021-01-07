@@ -134,3 +134,8 @@ CREATE TABLE ram(
 	capacidad FLOAT,
 	tipo VARCHAR(20)
 );
+
+CREATE TABLE fuente(
+	id INT PRIMARY KEY REFERENCES componente(id),
+	potencia INT
+);

@@ -6,11 +6,13 @@ const db = require('./db/pool').pool;
 // Routes
 const localizacion = require('./routes/localizacion')
 const ordenador = require('./routes/ordenador')
+const cable = require('./routes/cable')
 
 // Para poder recibir peticiones con cuerpo JSON
 app.use(express.json())
 app.use('/localizacion', localizacion);
 app.use('/ordenador', ordenador);
+app.use('/cable', cable);
 
 // Muestra el error cuando no existe el recurso
 app.get("/*", (req, res) => {
