@@ -35,4 +35,10 @@ class BadRequest extends APIError{
     }
 }
 
-module.exports = { APIError, BadRequest}
+class NotFound extends APIError{
+    constructor(descripcion, log){
+        super('Not found', '404', descripcion, log);        
+    }
+}
+
+module.exports = { APIError, BadRequest, NotFound}
