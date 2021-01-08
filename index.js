@@ -4,13 +4,15 @@ const port = 3000
 const { NotFound } = require('./aux/error');
 
 // Routes
-const localizacion = require('./routes/localizacion')
-const cable        = require('./routes/cable')
+const localizacion  = require('./routes/localizacion')
+const cable         = require('./routes/cable')
+const transformador = require('./routes/transformador')
 
 // Para poder recibir peticiones con cuerpo JSON
 app.use(express.json())
 app.use('/localizacion', localizacion);
 app.use('/cable', cable);
+app.use('/transformador', transformador);
 
 // Muestra el error cuando no existe el recurso
 app.get("/*", (req, res) => {

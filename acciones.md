@@ -7,6 +7,13 @@
 ## Cables
 
 [x] Crear cables
-[] Asociar cables a una recogida
+[ ] Asociar cables a una recogida
 [x] Eliminar cables
 [x] Obtener todos los cables
+[ ] *Eliminar varios cables de una vez*
+
+## Transformadores
+[x] Añadir transformador
+[x] Obtener todos los transformadores
+[x] Eliminar un tranformador por voltaje y amperaje
+[x] Eliminar un tranformador por id
