@@ -66,7 +66,7 @@ exports.insertarCable = function (req, res) {
           });
         }
         else {
-          const e = new BadRequest('Error al introducir los parámetros', ['Tipo o versión de tipo incorrecto.'], `Error al introducir una localización por el usuario. ${err}`);
+          const e = new BadRequest('Error al introducir los parámetros', ['Tipo o versión de tipo incorrecto.'], `Error al introducir un cable por el usuario. ${err}`);
           return res.status(e.statusCode).send(e.getJson());
         }
 
@@ -122,7 +122,7 @@ exports.eliminarCable = function (req, res) {
           }
         }
         else {
-          const e = new APIError('Internal Server Error', '500', 'Error al eliminar los elementos de la base de datos', `Error al eliminar localizaciones de la base de datos\n${err}`);
+          const e = new APIError('Internal Server Error', '500', 'Error al eliminar los elementos de la base de datos', `Error al eliminar cables de la base de datos\n${err}`);
           return res.status(e.statusCode).send(e.getJson());
         }
 
