@@ -5,10 +5,12 @@ const { NotFound } = require('./aux/error');
 
 // Routes
 const localizacion = require('./routes/localizacion')
+const cable        = require('./routes/cable')
 
 // Para poder recibir peticiones con cuerpo JSON
 app.use(express.json())
 app.use('/localizacion', localizacion);
+app.use('/cable', cable);
 
 // Muestra el error cuando no existe el recurso
 app.get("/*", (req, res) => {
