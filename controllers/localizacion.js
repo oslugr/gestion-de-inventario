@@ -12,7 +12,7 @@ exports.obtenerLocalizaciones = function (req, res) {
         if (!err) {
           res.status('200').send({
             cantidad: rows.length,
-            localizaciones: rows
+            data: rows
           });
         }
         else {

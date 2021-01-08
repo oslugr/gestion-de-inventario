@@ -1,6 +1,6 @@
 const express 	  = require('express'),
-	  router  	    = express.Router();
-const db 	  	    = require('../db/pool').pool;
+	  router  	  = express.Router();
+const db 	  	  = require('../db/pool').pool;
 const controlador = require('../controllers/localizacion');
 
 // Obtiene todas las localizaciones de la DB
