@@ -5,7 +5,8 @@ CREATE TABLE localizacion(
 
 CREATE TABLE recogida(
 	id INT PRIMARY KEY AUTO_INCREMENT,
-	fecha DATETIME
+	fecha DATETIME,
+	tipo ENUM('Entrega', 'Recogida'),
 );
 
 CREATE TABLE en(
