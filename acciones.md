@@ -23,6 +23,8 @@
 
 ## Recogidas
 [ ] Crear una nueva recogida
+[ ] Obtener todas las entregas
+[ ] Obtener todas las recogidas
 [ ] Especificar la localización de una recogida
 [ ] Añadir cables a la recogida
 [ ] Añadir transformadores a la recogida
