@@ -6,7 +6,7 @@ CREATE TABLE localizacion(
 CREATE TABLE recogida(
 	id INT PRIMARY KEY AUTO_INCREMENT,
 	fecha DATETIME,
-	tipo ENUM('Entrega', 'Recogida'),
+	tipo ENUM('Entrega', 'Recogida')
 );
 
 CREATE TABLE en(
@@ -47,7 +47,9 @@ CREATE TABLE contiene_transformador(
 CREATE TABLE componente (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     estado ENUM('Desconocido', 'Bueno', 'Regular', 'Por revisar', 'No aprovechable', 'Roto') DEFAULT 'Desconocido',
-	observaciones VARCHAR(1000)
+	observaciones VARCHAR(1000),
+	fecha_entrada DATETIME,
+	tipo VARCHAR(50)
 );
 
 CREATE TABLE caracteristica (
