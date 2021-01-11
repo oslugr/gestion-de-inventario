@@ -39,6 +39,8 @@
 ## Componentes
 - [ ] Crear un componente sin características
 - [ ] Crear un componente con características
+- [x] Obtener todos los componentes
+- [x] Obtener todos los componentes de un tipo
 - [ ] Crear componentes directamente asociados a un ordenador
 - [ ] Eliminar un componente y sus características asociadas
 - [ ] Listar todos los componentes actuales
