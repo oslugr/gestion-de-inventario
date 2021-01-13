@@ -18,7 +18,7 @@
   "homepage": "https://github.com/oslugr/gestion-de-inventario-back-end#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "express-validator": "^6.7.0",
+    "express-validator": "^6.9.2",
     "mysql": "^2.18.1"
   }
 }
