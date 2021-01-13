@@ -9,7 +9,6 @@
 ## Cables
 
 - [x] Crear cables
-- [ ] Asociar cables a una recogida
 - [x] Eliminar cables
 - [x] Obtener todos los cables
 - [x] Listar todos los cables de un tipo
@@ -43,8 +42,6 @@
 - [x] Obtener todos los componentes de un tipo
 - [ ] Crear componentes directamente asociados a un ordenador
 - [x] Eliminar un componente y sus características asociadas
-- [ ] Listar todos los componentes actuales
-- [ ] Listar todos los componentes de un tipo
 - [ ] Asociar un componente a un transformador
 - [ ] Agregar una nueva característica a los componentes
 
