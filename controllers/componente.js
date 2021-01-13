@@ -31,7 +31,7 @@ function obtenerCaracteristicas( rows ){
 
   for (let i = 0; i < rows.length; i++) {
     
-    if(rows.id == id_actual){
+    if(rows[i].id == id_actual){
       componentes[aux-1].caracteristicas.push( caracteristica(rows[i]) );
     }
     else{
