@@ -43,7 +43,7 @@
 - [ ] Crear componentes directamente asociados a un ordenador
 - [x] Eliminar un componente y sus características asociadas
 - [ ] Asociar un componente a un transformador
-- [ ] Agregar una nueva característica a los componentes
+- [x] Agregar una nueva característica a los componentes
 
 ## Ordenador
 - [ ] Obtener todos los ordenadores del sistema

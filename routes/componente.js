@@ -18,5 +18,10 @@ router.post  ('/',[
 ],        						controlador.insertarComponente);
 // Elimina una componente a partir de su id
 router.delete  ('/:id',         controlador.eliminarComponente);
+// Añade una nueva característica a una componente
+router.post  ('/:id/caracteristica', [
+	body('nombre').isString().not().isEmpty().withMessage('El nombre de la característica no es válido'),
+	body('valor').isString().not().isEmpty().withMessage('El valor de la característica no es válido')
+],                              controlador.insertarCaracteristica);
 
 module.exports = router;

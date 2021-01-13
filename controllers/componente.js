@@ -279,3 +279,77 @@ exports.eliminarComponente = function (req, res){
   })
 
 }
+
+exports.insertarCaracteristica = function(req, res){
+
+  const errores = validationResult(req);
+
+  if(!errores.isEmpty()){
+    const e = new BadRequest('Error al introducir los parámetros', errores.array(), `Error en los parámetros introducidos por el usuario al añadir una característica a una componente. ${errores.array()}`);
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+  const nombre = req.body.nombre.replace(/\s+/g, ' ').trim();
+  const valor = req.body.valor.replace(/\s+/g, ' ').trim();
+  const id = req.params.id.replace(/\s+/g, ' ').trim();
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.beginTransaction(function(err) {
+
+        if(!err){
+          conn.query('INSERT INTO caracteristica(nombre, valor) VALUES (?);', [[nombre, valor]], function (err, rows) {
+
+            if (!err){
+              
+              conn.query('INSERT INTO tiene VALUES (?);', [[id, rows.insertId]], function (err, rows) {
+
+                if (!err){
+                  
+                  conn.commit(function(err) {
+                    if (err) {
+                      return conn.rollback(function() {
+                        const e = new BadRequest('Error al eliminar una componente', ['Ocurrió algún error al eliminar la componente'], `Error al eliminar una componente. ${err}`);
+                        return res.status(e.statusCode).send(e.getJson());
+                      });
+                    }
+                    
+                    return res.status('200').send({
+                      estado: "Correcto",
+                      descripcion: "Característica insertada correctamente"
+                    });
+                  });
+    
+                }
+                else {
+                  return conn.rollback(function() {
+                    const e = new BadRequest('Error al insertar la característica', ['Ocurrió algún error al insertar la característica. Es posible que no exista la componente especificada'], `Error al insertar una característica por el usuario. ${err}`);
+                    return res.status(e.statusCode).send(e.getJson());
+                  });
+                }
+    
+              })
+
+            }
+            else {
+              return conn.rollback(function() {
+                const e = new BadRequest('Error al insertar la característica', ['Ocurrió algún error al insertar la característica'], `Error al insertar la característica. ${err}`);
+                return res.status(e.statusCode).send(e.getJson());
+              });
+            }
+
+          })
+        }
+        else{
+          const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al iniciar la transacción para añadir componentes\n${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+      });
+    }
+    else {
+      const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  })
+
+}
