@@ -208,3 +208,74 @@ exports.insertarComponente = function (req, res) {
   })
 
 }
+
+
+exports.eliminarComponente = function (req, res){
+
+  if(req.params.id)           
+    var id = req.params.id.replace(/\s+/g, ' ').trim();
+  else{
+    const e = new BadRequest('Id del componente no introducida', ["ID no introducido"], `Error al eliminar un componente por el usuario. No ha especificado id`);
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.beginTransaction(function(err) {
+
+        if(!err){
+          conn.query('delete from caracteristica where exists( select * from tiene T where T.id_componente=? and T.id_caracteristica=id);', [id], function (err, rows) {
+
+            if (!err){
+              
+              conn.query('delete from componente where id=?;', [id], function (err, rows) {
+
+                if (!err){
+                  
+                  conn.commit(function(err) {
+                    if (err) {
+                      return conn.rollback(function() {
+                        const e = new BadRequest('Error al eliminar', ['Ocurrió algún error al eliminar la componente'], `Error al eliminar una componente por el usuario. ${err}`);
+                        return res.status(e.statusCode).send(e.getJson());
+                      });
+                    }
+                    
+                    return res.status('200').send({
+                      estado: "Correcto",
+                      descripcion: "Componente eliminada correctamente"
+                    });
+                  });
+    
+                }
+                else {
+                  return conn.rollback(function() {
+                    const e = new BadRequest('Error al eliminar una componente', ['Ocurrió algún error al eliminar la componente'], `Error al eliminar una componente. ${err}`);
+                    return res.status(e.statusCode).send(e.getJson());
+                  });
+                }
+    
+              })
+
+            }
+            else {
+              return conn.rollback(function() {
+                const e = new BadRequest('Error al eliminar una componente', ['Ocurrió algún error al eliminar la componente'], `Error al eliminar una componente. ${err}`);
+                return res.status(e.statusCode).send(e.getJson());
+              });
+            }
+
+          })
+        }
+        else{
+          const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al iniciar la transacción para añadir componentes\n${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+      });
+    }
+    else {
+      const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  })
+
+}

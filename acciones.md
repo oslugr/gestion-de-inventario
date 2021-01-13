@@ -42,7 +42,7 @@
 - [x] Obtener todos los componentes
 - [x] Obtener todos los componentes de un tipo
 - [ ] Crear componentes directamente asociados a un ordenador
-- [ ] Eliminar un componente y sus características asociadas
+- [x] Eliminar un componente y sus características asociadas
 - [ ] Listar todos los componentes actuales
 - [ ] Listar todos los componentes de un tipo
 - [ ] Asociar un componente a un transformador
