@@ -16,6 +16,7 @@ router.post  ('/',[
 	body('caracteristicas.*.nombre').isString().not().isEmpty().withMessage('Algún nombre de característica no es válido'),
 	body('caracteristicas.*.valor').isString().not().isEmpty().withMessage('Algún valor de característica no es válido')
 ],        						controlador.insertarComponente);
+// Elimina una componente a partir de su id
 router.delete  ('/:id',         controlador.eliminarComponente);
 
 module.exports = router;

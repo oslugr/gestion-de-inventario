@@ -170,7 +170,7 @@ exports.insertarComponente = function (req, res) {
   const errores = validationResult(req);
 
   if(!errores.isEmpty()){
-    const e = new BadRequest('Error al introducir los parámetros', errores.array(), `Error al introducir una localización por el usuario. ${errores.array()}`);
+    const e = new BadRequest('Error al introducir los parámetros', errores.array(), `Error en los parámetros introducidos por el usuario al añadir una componente. ${errores.array()}`);
     return res.status(e.statusCode).send(e.getJson());
   }
 
@@ -188,7 +188,7 @@ exports.insertarComponente = function (req, res) {
             }
             else {
               return conn.rollback(function() {
-                const e = new BadRequest('Error al insertar la componente', ['Ocurrió algún error al insertar la componente'], `Error al introducir una localización por el usuario. ${err}`);
+                const e = new BadRequest('Error al insertar la componente', ['Ocurrió algún error al insertar la componente'], `Error al insertar una componente por el usuario por el usuario. ${err}`);
                 return res.status(e.statusCode).send(e.getJson());
               });
             }
