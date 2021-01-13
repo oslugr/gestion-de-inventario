@@ -179,7 +179,7 @@ exports.insertarComponente = function (req, res) {
       conn.beginTransaction(function(err) {
 
         if(!err){
-          conn.query('INSERT INTO componente(estado, observaciones, fecha_entrada, tipo) VALUES (?)', [[estado, observaciones, fecha_entrada, tipo]], function (err, rows) {
+          conn.query('INSERT INTO componente(estado, observaciones, fecha_entrada, tipo) VALUES (?)', [[estado, observaciones, new Date(fecha_entrada), tipo]], function (err, rows) {
 
             if (!err){
               
