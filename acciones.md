@@ -37,8 +37,8 @@
 - [ ] *Generar informe de la recogida*
 
 ## Componentes
-- [ ] Crear un componente sin características
-- [ ] Crear un componente con características
+- [x] Crear un componente sin características
+- [x] Crear un componente con características
 - [x] Obtener todos los componentes
 - [x] Obtener todos los componentes de un tipo
 - [ ] Crear componentes directamente asociados a un ordenador
