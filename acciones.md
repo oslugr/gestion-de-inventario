@@ -12,7 +12,7 @@
 - [ ] Asociar cables a una recogida
 - [x] Eliminar cables
 - [x] Obtener todos los cables
-- [ ] Listar todos los cables de un tipo
+- [x] Listar todos los cables de un tipo
 - [ ] *Eliminar varios cables de una vez*
 
 ## Transformadores

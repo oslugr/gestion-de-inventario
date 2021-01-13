@@ -3,9 +3,21 @@ const { APIError, NotFound, BadRequest } = require('../aux/error');
 
 exports.obtenerCables = function (req, res) {
 
+  if(req.params.tipo) var tipo = req.params.tipo.replace(/\s+/g, ' ').trim()
+
   db.getConnection(function (err, conn) {
     if (!err) {
-      conn.query('SELECT * FROM cable', function (err, rows) {
+
+      if(tipo){
+        sql   = 'SELECT * FROM cable WHERE tipo=?';
+        value = [tipo];
+      }
+      else{
+        sql   = 'SELECT * FROM cable';
+        value = [];
+      }
+
+      conn.query(sql, value, function (err, rows) {
 
         conn.release();
 
