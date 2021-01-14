@@ -44,7 +44,7 @@
 - [x] Eliminar un componente y sus características asociadas
 - [ ] Asociar un componente a un transformador
 - [x] Agregar una nueva característica a los componentes
-- [ ] Eliminiar una característica especifica de un componente
+- [x] Eliminiar una característica especifica de un componente
 
 ## Ordenador
 - [ ] Obtener todos los ordenadores del sistema

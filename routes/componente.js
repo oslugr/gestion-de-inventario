@@ -23,5 +23,7 @@ router.post  ('/:id/caracteristica', [
 	body('nombre').isString().not().isEmpty().withMessage('El nombre de la característica no es válido'),
 	body('valor').isString().not().isEmpty().withMessage('El valor de la característica no es válido')
 ],                              controlador.insertarCaracteristica);
+// Elimina una característica a partir de su id
+router.delete  ('/caracteristica/:id',         controlador.eliminarCaracteristica);
 
 module.exports = router;

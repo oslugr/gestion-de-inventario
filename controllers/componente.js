@@ -353,3 +353,38 @@ exports.insertarCaracteristica = function(req, res){
   })
 
 }
+
+
+exports.eliminarCaracteristica = function (req, res){
+
+  if(req.params.id)           
+    var id = req.params.id.replace(/\s+/g, ' ').trim();
+  else{
+    const e = new BadRequest('Id de la característica no introducida', ["ID no introducido"], `Error al eliminar una característica por el usuario. No ha especificado id`);
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('delete from caracteristica where id=?;', [id], function (err, rows) {
+        
+        if (err) {
+          return conn.rollback(function() {
+            const e = new BadRequest('Error al eliminar', ['Ocurrió algún error al eliminar la característica'], `Error al eliminar una característica por el usuario. ${err}`);
+            return res.status(e.statusCode).send(e.getJson());
+          });
+        }
+        
+        return res.status('200').send({
+          estado: "Correcto",
+          descripcion: "Característica eliminada correctamente"
+        });
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al iniciar la transacción para añadir componentes\n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+
+}
