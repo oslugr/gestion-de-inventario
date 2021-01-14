@@ -1,5 +1,7 @@
 # To-Do list
 
+- [ ] Hacer obtenciones por páginas por páginas para contemplar los casos que haya muchas cosas
+
 ## Localizaciones
 
 - [x] Añadir nuevas localizaciones (sitios de recogida de material)
