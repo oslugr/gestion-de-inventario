@@ -24,7 +24,7 @@
 - [x] Eliminar un tranformador por id
 
 ## Recogidas
-- [ ] Crear una nueva recogida
+- [x] Crear una nueva recogida sin elementos
 - [ ] Obtener todas las entregas con todas las cosas asociadas
 - [ ] Obtener todas las recogidas con todas las cosas asociadas
 - [ ] Cambiar la localización de una recogida
