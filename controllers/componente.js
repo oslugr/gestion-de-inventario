@@ -380,7 +380,7 @@ exports.eliminarCaracteristica = function (req, res){
       });
     }
     else{
-      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al iniciar la transacción para añadir componentes\n${err}`);
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al iniciar la transacción para eliminar características\n${err}`);
       return res.status(e.statusCode).send(e.getJson());
     }
   });
