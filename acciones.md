@@ -5,7 +5,7 @@
 - [x] Añadir nuevas localizaciones (sitios de recogida de material)
 - [x] Eliminar localizaciones
 - [x] Obtener todas las localizaciones
-- [ ] Cambiar nombre de la localización
+- [x] Cambiar nombre de la localización
 
 ## Cables
 

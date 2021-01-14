@@ -91,3 +91,35 @@ exports.eliminarLocalizacion = function (req, res) {
   })
 
 }
+
+exports.cambiarNombre = function (req, res) {
+
+  const antiguo = req.params.antiguo.replace(/\s+/g, ' ').trim();
+  const nuevo   = req.params.nuevo.replace(/\s+/g, ' ').trim();
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('UPDATE localizacion SET nombre=? WHERE nombre=?', [nuevo, antiguo], function (err, rows) {
+
+        conn.release();
+
+        if (!err) {
+          res.status('200').send({
+            estado: "Correcto",
+            descripcion: "Localización actualizada correctamente"
+          });
+        }
+        else {
+          const e = new BadRequest('Error, es posible que ese nombre ya sea usado por otra localización', ['Nombre incorrecto. Es posible que ya exista una localización con ese nombre'], `Error al actualizar una localización por el usuario. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+
+      })
+    }
+    else {
+      const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  })
+
+}
