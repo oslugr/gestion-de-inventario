@@ -5,6 +5,7 @@
 - [x] Añadir nuevas localizaciones (sitios de recogida de material)
 - [x] Eliminar localizaciones
 - [x] Obtener todas las localizaciones
+- [ ] Cambiar nombre de la localización
 
 ## Cables
 
@@ -24,7 +25,7 @@
 - [ ] Crear una nueva recogida
 - [x] Obtener todas las entregas
 - [x] Obtener todas las recogidas
-- [ ] Especificar la localización de una recogida
+- [ ] Cambiar la localización de una recogida
 - [ ] Añadir cables a la recogida
 - [ ] Añadir transformadores a la recogida
 - [ ] Añadir ordenadores a la recogida
@@ -43,6 +44,7 @@
 - [ ] Crear componentes directamente asociados a un ordenador
 - [x] Eliminar un componente y sus características asociadas
 - [ ] Asociar un componente a un transformador
+- [x] Cambiar estado de un componente
 - [x] Agregar una nueva característica a los componentes
 - [x] Eliminiar una característica especifica de un componente
 

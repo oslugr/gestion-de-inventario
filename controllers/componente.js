@@ -386,3 +386,38 @@ exports.eliminarCaracteristica = function (req, res){
   });
 
 }
+
+exports.modificarEstado = function (req, res){
+
+  const valores_validos = ['Desconocido', 'Bueno', 'Regular', 'Por revisar', 'No aprovechable', 'Roto'];
+  const id = req.params.id;
+
+  if(req.params.estado && valores_validos.includes(req.params.estado) )           
+    var estado = req.params.estado;
+  else{
+    const e = new BadRequest('Estado no válido o no introducido', [{msg: "Estado no válido", valores: valores_validos}], `Error al actualizar el estado de un componente. Estado no válido`);
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('UPDATE componente SET estado=? WHERE id=?', [estado, id], function (err, rows) {
+        
+        if (err) {
+          const e = new BadRequest('Error al actualizar el estado de la componente', ['Ocurrió algún error al actualizar el estado'], `Error al actualizar el estado de una componente. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send({
+          estado: "Correcto",
+          descripcion: "Estado actualizado correctamente"
+        });
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar con la base de datos al modificar un estado\n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+
+}

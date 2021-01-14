@@ -17,13 +17,13 @@ router.post  ('/',[
 	body('caracteristicas.*.valor').isString().not().isEmpty().withMessage('Algún valor de característica no es válido')
 ],        						controlador.insertarComponente);
 // Elimina una componente a partir de su id
-router.delete  ('/:id',         controlador.eliminarComponente);
+router.delete('/:id',           controlador.eliminarComponente);
 // Añade una nueva característica a una componente
 router.post  ('/:id/caracteristica', [
 	body('nombre').isString().not().isEmpty().withMessage('El nombre de la característica no es válido'),
 	body('valor').isString().not().isEmpty().withMessage('El valor de la característica no es válido')
 ],                              controlador.insertarCaracteristica);
-// Elimina una característica a partir de su id
-router.delete  ('/caracteristica/:id',         controlador.eliminarCaracteristica);
+// Modifica el estado de una componente
+router.put   ('/:id/estado/:estado',controlador.modificarEstado);
 
 module.exports = router;
