@@ -369,10 +369,8 @@ exports.eliminarCaracteristica = function (req, res){
       conn.query('delete from caracteristica where id=?;', [id], function (err, rows) {
         
         if (err) {
-          return conn.rollback(function() {
-            const e = new BadRequest('Error al eliminar', ['Ocurrió algún error al eliminar la característica'], `Error al eliminar una característica por el usuario. ${err}`);
-            return res.status(e.statusCode).send(e.getJson());
-          });
+          const e = new BadRequest('Error al eliminar', ['Ocurrió algún error al eliminar la característica'], `Error al eliminar una característica por el usuario. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
         }
         
         return res.status('200').send({
