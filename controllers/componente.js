@@ -368,6 +368,8 @@ exports.eliminarCaracteristica = function (req, res){
     if (!err) {
       conn.query('delete from caracteristica where id=?;', [id], function (err, rows) {
         
+        conn.release();
+
         if (err) {
           const e = new BadRequest('Error al eliminar', ['Ocurrió algún error al eliminar la característica'], `Error al eliminar una característica por el usuario. ${err}`);
           return res.status(e.statusCode).send(e.getJson());
@@ -403,6 +405,8 @@ exports.modificarEstado = function (req, res){
     if (!err) {
       conn.query('UPDATE componente SET estado=? WHERE id=?', [estado, id], function (err, rows) {
         
+        conn.release();
+
         if (err) {
           const e = new BadRequest('Error al actualizar el estado de la componente', ['Ocurrió algún error al actualizar el estado'], `Error al actualizar el estado de una componente. ${err}`);
           return res.status(e.statusCode).send(e.getJson());
