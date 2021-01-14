@@ -157,7 +157,7 @@ function insertarCaracteristicas(caracteristicas, id_componente, conn, i, res, c
 exports.insertarComponente = function (req, res) {
 
   if(req.body.estado)           var estado = req.body.estado.replace(/\s+/g, ' ').trim();
-  else                          var estado = null;
+  else                          var estado = 'Desconocido';
   if(req.body.observaciones)    var observaciones = req.body.observaciones.replace(/\s+/g, ' ').trim();
   else                          var observaciones = null;
   if(req.body.fecha_entrada)    var fecha_entrada = req.body.fecha_entrada.replace(/\s+/g, ' ').trim();
