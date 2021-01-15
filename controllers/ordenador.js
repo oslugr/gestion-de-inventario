@@ -87,6 +87,9 @@ exports.crearSobremesa = function (req, res){
                 if (!err){
                   
                   conn.commit(function(err) {
+
+                    conn.release();
+
                     if (err) {
                       return conn.rollback(function() {
                         const e = new BadRequest('Error al insertar el sobremesa', ['Ocurrió algún error al insertar el sobremesa'], `Error al introducir un portátil por el usuario. ${err}`);
@@ -163,6 +166,9 @@ exports.crearPortatil = function (req, res){
                 if (!err){
                   
                   conn.commit(function(err) {
+
+                    conn.release();
+
                     if (err) {
                       return conn.rollback(function() {
                         const e = new BadRequest('Error al insertar el portátil', ['Ocurrió algún error al insertar el portátil'], `Error al introducir un portátil por el usuario. ${err}`);

@@ -15,6 +15,8 @@ exports.obtenerRecogida = function (req, res){
     if (!err) {
       conn.query('SELECT * FROM recogida WHERE tipo=?;', [tipo], function (err, rows) {
         
+        conn.release();
+
         if (err) {
           return conn.rollback(function() {
             const e = new BadRequest('Error al obtener', ['Ocurrió algún error al obtener la recogida'], `Error al obtener la recogida. ${err}`);

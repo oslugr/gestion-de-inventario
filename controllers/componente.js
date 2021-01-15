@@ -138,6 +138,9 @@ function insertarCaracteristicas(caracteristicas, id_componente, conn, i, res, c
   }
   else{
     conn.commit(function(err) {
+
+      conn.release();
+
       if (err) {
         return conn.rollback(function() {
           const e = new BadRequest('Error al insertar la componente', ['Ocurrió algún error al insertar la componente'], `Error al introducir una componente por el usuario. ${err}`);
@@ -233,6 +236,9 @@ exports.eliminarComponente = function (req, res){
                 if (!err){
                   
                   conn.commit(function(err) {
+
+                    conn.release();
+
                     if (err) {
                       return conn.rollback(function() {
                         const e = new BadRequest('Error al eliminar', ['Ocurrió algún error al eliminar la componente'], `Error al eliminar una componente por el usuario. ${err}`);
@@ -307,6 +313,9 @@ exports.insertarCaracteristica = function(req, res){
                 if (!err){
                   
                   conn.commit(function(err) {
+
+                    conn.release();
+
                     if (err) {
                       return conn.rollback(function() {
                         const e = new BadRequest('Error al eliminar una componente', ['Ocurrió algún error al eliminar la componente'], `Error al eliminar una componente. ${err}`);
