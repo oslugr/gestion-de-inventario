@@ -13,4 +13,7 @@ router.post	  ('/',[
 	body('tipo').isIn(['Entrega', 'Recogida']).withMessage('Tipo no válido. Tiene que estar entre los siguientes valores: Entrega, Recogida')
 ],                                      controlador.nuevaRecogida);
 
+// Añade un cable a una recogida
+router.post	  ('/:id_recogida/cable/:id_cable', controlador.aniadirCable);
+
 module.exports = router;

@@ -28,7 +28,7 @@
 - [ ] Obtener todas las entregas con todas las cosas asociadas
 - [ ] Obtener todas las recogidas con todas las cosas asociadas
 - [ ] Cambiar la localización de una recogida
-- [ ] Añadir cables a la recogida
+- [x] Añadir cables a la recogida
 - [ ] Añadir transformadores a la recogida
 - [ ] Añadir ordenadores a la recogida
 - [ ] Añadir componentes a la recogida
