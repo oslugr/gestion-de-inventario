@@ -53,8 +53,7 @@
 ## Ordenador
 - [x] Obtener todos los ordenadores del sistema
 - [x] Obtener los ordenadores por tipo
-- [ ] Crear un nuevo ordenador sin componentes 
-- [ ] Crear un nuevo ordenador con componentes
+- [x] Crear un nuevo ordenador sin componentes 
 - [ ] Eliminar un ordenador eliminando sus componentes
 - [ ] Eliminar un ordenador sin eliminar sus componentes
 - [ ] Añadir un componente a un ordenador
