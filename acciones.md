@@ -51,7 +51,8 @@
 - [x] Eliminiar una característica especifica de un componente
 
 ## Ordenador
-- [ ] Obtener todos los ordenadores del sistema
+- [x] Obtener todos los ordenadores del sistema
+- [x] Obtener los ordenadores por tipo
 - [ ] Crear un nuevo ordenador sin componentes 
 - [ ] Crear un nuevo ordenador con componentes
 - [ ] Eliminar un ordenador eliminando sus componentes
