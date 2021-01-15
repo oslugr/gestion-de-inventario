@@ -7,4 +7,7 @@ const { body } = require('express-validator');
 // Obtiene todos los ordenadores por tipo
 router.get	  ('/:tipo?',                controlador.obtenerOrdenadores);
 
+// Obtiene todos los ordenadores por tipo
+router.get	  ('/:tipo?',                controlador.obtenerOrdenadores);
+
 module.exports = router;

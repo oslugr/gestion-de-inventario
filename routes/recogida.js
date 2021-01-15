@@ -6,6 +6,7 @@ const { body } = require('express-validator');
 
 // Obtiene todas las recogidas por tipo
 router.get	  ('/:tipo',                controlador.obtenerRecogida);
+
 // Crea una nueva recogida
 router.post	  ('/',[
 	body('fecha').matches(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/).withMessage('Fecha mal introducida. Formatos de fecha correcto: AAAA-MM-DD'),
