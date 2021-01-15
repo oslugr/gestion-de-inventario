@@ -207,3 +207,39 @@ exports.crearPortatil = function (req, res){
     }
   })
 }
+
+exports.eliminarOrdenador = function(req, res){
+
+  if(req.params.id) 
+    var id = req.params.id;
+  else{
+    const e = new BadRequest('Error al introducir el id', ["Id no válido"], `Error al introducir el id por el usuario al eliminar un ordenador`);
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+
+      conn.query('DELETE FROM ordenador WHERE id=?',[id], function (err, rows) {
+
+        conn.release();
+
+        if (!err) {
+          return res.status('200').send({
+            estado: "Correcto",
+            descripcion: "Ordenador eliminado correctamente"
+          });
+        }
+        else {
+          const e = new APIError('Bad Gateway', 502, 'Error al eliminar un ordenador de la base de datos', `Error al eliminar un ordenador de la base de datos\n${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+
+      })
+    }
+    else {
+      const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  })
+}

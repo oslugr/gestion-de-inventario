@@ -21,4 +21,7 @@ router.post	  ('/portatil',[
 	body('estado').optional().isIn(['Desconocido', 'Bueno', 'Regular', 'Por revisar', 'No aprovechable', 'Roto']).not().isEmpty().withMessage('Tipo no válido. Tiene que estar entre los siguientes valores: Desconocido, Bueno, Regular, Por revisar, No aprovechable, Roto')
 ],                                       controlador.crearPortatil);
 
+// Elimina un ordenador pero no sus componentes
+router.delete ('/:id',                   controlador.eliminarOrdenador);
+
 module.exports = router;
