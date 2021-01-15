@@ -85,6 +85,7 @@ CREATE TABLE ordenador (
 
 CREATE TABLE portatil (
 	id INT REFERENCES ordenador(id) ON DELETE CASCADE,
+	estado ENUM('Desconocido', 'Bueno', 'Regular', 'Por revisar', 'No aprovechable', 'Roto') DEFAULT 'Desconocido',
     PRIMARY KEY(id)
 );
 
