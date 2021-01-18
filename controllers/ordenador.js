@@ -249,3 +249,41 @@ exports.eliminarOrdenador = function(req, res){
     }
   })
 }
+
+exports.aniadirComponente = function (req, res){
+
+  if(req.params.id_ord && req.params.id_comp){ 
+    var id_ord  = req.params.id_ord;
+    var id_comp = req.params.id_comp;
+  }
+  else{
+    const e = new BadRequest('Error al introducir alguno de los id', ["Ids no válidos"], `Error al introducir los ids por el usuario al añadir un componente a un ordenador`);
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+
+      conn.query('INSERT INTO formado(id_componente, id_ordenador) VALUES (?)',[[id_comp, id_ord]], function (err, rows) {
+
+        conn.release();
+
+        if (!err) {
+          return res.status('200').send({
+            estado: "Correcto",
+            descripcion: "Componente añadido al ordenador correctamente"
+          });
+        }
+        else {
+          const e = new APIError('Bad Gateway', 502, 'Error al añadir una componente a un ordenador', `Error al añadir una componente a un ordenador\n${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+
+      })
+    }
+    else {
+      const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  })
+}
