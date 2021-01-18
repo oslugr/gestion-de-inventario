@@ -57,5 +57,5 @@
 - [ ] Eliminar un ordenador eliminando sus componentes
 - [x] Eliminar un ordenador sin eliminar sus componentes
 - [x] Añadir un componente a un ordenador
-- [ ] Obtener los componentes de un ordenador
+- [x] Obtener los componentes de un ordenador
 - [ ] Asignar un transformador a un portátil

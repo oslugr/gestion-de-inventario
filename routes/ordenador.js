@@ -8,7 +8,7 @@ const { body } = require('express-validator');
 router.get	  ('/:tipo?',                controlador.obtenerOrdenadores);
 
 // Obtiene todos los compoenentes de un ordenador
-router.get	  ('/componente',            controlador.obtenerOrdenadores);
+router.get	  ('/:id/componente/',       controlador.obtenerComponentes);
 
 // Crear un sobremesa sin componentes
 router.post	  ('/sobremesa',[ 

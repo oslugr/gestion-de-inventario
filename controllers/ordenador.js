@@ -1,7 +1,7 @@
 const db = require('../db/pool').pool;
 const { APIError, NotFound, BadRequest } = require('../aux/error');
 const { validationResult } = require('express-validator');
-
+const { obtenerCaracteristicas } = require('../aux/gestionCaracteristicas');
 
 exports.obtenerOrdenadores = function(req, res){
 
@@ -276,6 +276,57 @@ exports.aniadirComponente = function (req, res){
         }
         else {
           const e = new APIError('Bad Gateway', 502, 'Error al añadir una componente a un ordenador', `Error al añadir una componente a un ordenador\n${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+
+      })
+    }
+    else {
+      const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  })
+}
+
+exports.obtenerComponentes = function (req, res){
+  
+  if(req.params.id) 
+    var id = req.params.id;
+  else{
+    const e = new BadRequest('Error al introducir el id', ["Id no válido"], `Error al introducir el id por el usuario al obtener las componentes de un ordenador`);
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+
+      sql = ' SELECT C.id, C.estado, C.observaciones, C.fecha_entrada, C.tipo, T.id_caracteristica, CA.nombre, CA.valor FROM componente C \
+                inner join formado F on F.id_componente=C.id \
+                  inner join ordenador O on F.id_ordenador=O.id \
+                  INNER JOIN tiene T ON T.id_componente=C.id \
+                INNER JOIN caracteristica CA on CA.id=T.id_caracteristica \
+                WHERE O.id = ? \
+              UNION  \
+              SELECT C2.id, C2.estado, C2.observaciones, C2.fecha_entrada, C2.tipo, NULL as id_caracteristica, null as nombre, null as valor FROM componente C2 \
+                inner join formado F2 on F2.id_componente=C2.id \
+                  inner join ordenador O2 on F2.id_ordenador=O2.id \
+                  where not exists ( SELECT * FROM tiene T2 where T2.id_componente=C2.id ) and O2.id = ?;';
+
+      conn.query(sql,[id, id], function (err, rows) {
+
+        conn.release();
+
+        if (!err) {
+
+          let componentes = obtenerCaracteristicas(rows);
+
+          return res.status('200').send({
+            cantidad: componentes.length,
+            data: componentes
+          });
+        }
+        else {
+          const e = new APIError('Bad Gateway', 502, 'Error al obtener los componentes de un ordenador', `Error al obtener los componentes de un ordenador\n${err}`);
           return res.status(e.statusCode).send(e.getJson());
         }
 
