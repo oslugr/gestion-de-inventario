@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oslugr/gestion-de-inventario-back-end.git"
+    "url": "git+https://github.com/oslugr/gestion-de-inventario.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/oslugr/gestion-de-inventario-back-end/issues"
+    "url": "https://github.com/oslugr/gestion-de-inventario/issues"
   },
-  "homepage": "https://github.com/oslugr/gestion-de-inventario-back-end#readme",
+  "homepage": "https://github.com/oslugr/gestion-de-inventario#readme",
   "dependencies": {
     "@release-it/conventional-changelog": "1.1.4",
     "@tailwindcss/custom-forms": "0.2.1",
