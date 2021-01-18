@@ -338,3 +338,94 @@ exports.obtenerComponentes = function (req, res){
     }
   })
 }
+
+exports.eliminarOrdenadorConComponentes = function (req, res) {
+  if(req.params.id) 
+    var id = req.params.id;
+  else{
+    const e = new BadRequest('Error al introducir el id', ["Id no válido"], `Error al introducir el id por el usuario al eliminar un ordenador junto con sus componentes`);
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.beginTransaction(function(err) {
+
+        if(!err){
+          // Elimina las características de las componentes asociadas al ordenador
+
+          sql = 'DELETE CA FROM caracteristica CA WHERE EXISTS ( \
+            SELECT * FROM tiene T \
+              inner join formado F on F.id_componente=T.id_componente \
+            where T.id_caracteristica=CA.id AND F.id_ordenador=? \
+          );'
+
+          conn.query(sql, [id], function (err, rows) {
+
+            if (!err){
+              
+              sql = 'DELETE C FROM componente C WHERE EXISTS (SELECT * FROM formado F where F.id_componente=C.id AND F.id_ordenador=? );';
+
+              conn.query(sql, [id], function (err, rows) {
+
+                if (!err){
+
+                  conn.query('DELETE FROM ordenador WHERE id=?;', [id], function (err, rows) {
+
+                    if (!err){
+                      
+                      conn.commit(function(err) {
+    
+                        conn.release();
+    
+                        if (err) {
+                          return conn.rollback(function() {
+                            const e = new BadRequest('Error al eliminar el ordenador con todos sus componentes', ['Ocurrió algún error al eliminar el ordenador'], `Error el eliminar un ordenador junto con sus componentes por el usuario. ${err}`);
+                            return res.status(e.statusCode).send(e.getJson());
+                          });
+                        }
+                        
+                        return res.status('200').send({
+                          estado: "Correcto",
+                          descripcion: "Ordenador y componentes eliminados correctamente"
+                        });
+                      });
+        
+                    }
+                    else {
+                      return conn.rollback(function() {
+                        const e = new BadRequest('Error al eliminar el ordenador con sus componentes', ['Ocurrió algún error al eliminar al ordenador'], `Error al eliminar el ordenador y sus componentes por el usuario. ${err}`);
+                        return res.status(e.statusCode).send(e.getJson());
+                      });
+                    }
+        
+                  });
+    
+                }
+                else {
+                  return conn.rollback(function() {
+                    const e = new BadRequest('Error al eliminar el ordenador con sus componentes', ['Ocurrió algún error al eliminar el ordenador'], `Error al eliminar un ordenador y sus componentes por el usuario. ${err}`);
+                    return res.status(e.statusCode).send(e.getJson());
+                  });
+                }
+    
+              });
+            }
+            else {
+              return conn.rollback(function() {
+                const e = new BadRequest('Error al eliminar el ordenador con sus componentes', ['Ocurrió algún error al eliminar el ordenador'], `Error al eliminar un ordenador y sus componentes por el usuario. ${err}`);
+                return res.status(e.statusCode).send(e.getJson());
+              });
+            }
+
+          })
+        }
+        else{
+          const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al iniciar la transacción para añadir componentes\n${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+      });
+    }
+  });
+}

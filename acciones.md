@@ -43,7 +43,7 @@
 - [x] Crear un componente con características
 - [x] Obtener todos los componentes
 - [x] Obtener todos los componentes de un tipo
-- [ ] Crear componentes directamente asociados a un ordenador
+- [ ] *Crear componentes directamente asociados a un ordenador*
 - [x] Eliminar un componente y sus características asociadas
 - [ ] Asociar un componente a un transformador
 - [x] Cambiar estado de un componente
@@ -54,7 +54,7 @@
 - [x] Obtener todos los ordenadores del sistema
 - [x] Obtener los ordenadores por tipo
 - [x] Crear un nuevo ordenador sin componentes 
-- [ ] Eliminar un ordenador eliminando sus componentes
+- [x] Eliminar un ordenador eliminando sus componentes
 - [x] Eliminar un ordenador sin eliminar sus componentes
 - [x] Añadir un componente a un ordenador
 - [x] Obtener los componentes de un ordenador

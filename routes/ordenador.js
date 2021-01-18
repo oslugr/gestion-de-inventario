@@ -30,4 +30,7 @@ router.post	  ('/:id_ord/componente/:id_comp', controlador.aniadirComponente);
 // Elimina un ordenador pero no sus componentes
 router.delete ('/:id',                   controlador.eliminarOrdenador);
 
+// Elimina un ordenador y sus componentes
+router.delete ('/:id/componente',        controlador.eliminarOrdenadorConComponentes);
+
 module.exports = router;
