@@ -1,24 +1,36 @@
 {
-  "name": "gestion-de-inventario-back-end",
+  "name": "gestion-de-inventario",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "tailwind": "tailwindcss build public/assets/css/tailwind.css -o public/assets/css/tailwind.output.css",
+    "build": "env NODE_ENV=production postcss public/assets/css/tailwind.css -o public/assets/css/tailwind.output.css"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/oslugr/gestion-de-inventario-back-end.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/oslugr/gestion-de-inventario-back-end/issues"
   },
   "homepage": "https://github.com/oslugr/gestion-de-inventario-back-end#readme",
   "dependencies": {
+    "@release-it/conventional-changelog": "1.1.4",
+    "@tailwindcss/custom-forms": "0.2.1",
+    "autoprefixer": "9.8.0",
+    "color": "3.1.2",
+    "commitizen": "^4.2.3",
+    "cssnano": "4.1.10",
+    "cz-conventional-changelog": "3.2.0",
     "express": "^4.17.1",
     "express-validator": "^6.9.2",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "postcss-cli": "7.1.1",
+    "release-it": "13.6.4",
+    "tailwindcss": "1.4.6",
+    "tailwindcss-multi-theme": "1.0.3"
   }
 }
