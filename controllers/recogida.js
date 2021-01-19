@@ -47,31 +47,73 @@ exports.nuevaRecogida = function (req, res){
     return res.status(e.statusCode).send(e.getJson());
 	}
 	
-  if(req.body.fecha)  var fecha = req.body.fecha;
-  else                var fecha = null;
-  if(req.body.tipo)   var tipo = req.body.tipo;
-  else                var tipo = null;
+  if(req.body.fecha)          var fecha = req.body.fecha;
+  else                        var fecha = null;
+  if(req.body.tipo)           var tipo = req.body.tipo;
+  else                        var tipo = null;
+  if(req.body.localizacion)   var localizacion = req.body.localizacion;
+  else                        var localizacion = null;
 
-	db.getConnection(function (err, conn) {
+  db.getConnection(function (err, conn) {
     if (!err) {
-      conn.query('INSERT INTO recogida(fecha, tipo) VALUES (?);', [[fecha, tipo]], function (err, rows) {
-        
-        if (err) {
-          const e = new BadRequest('Error al insertar una nueva recogida', ['Ocurrió algún error al insertar la recogida'], `Error al insertar una recogida. ${err}`);
+      conn.beginTransaction(function(err) {
+
+        if(!err){
+          conn.query('INSERT INTO recogida(fecha, tipo) VALUES (?);', [[fecha, tipo]], function (err, rows) {
+
+            if (!err){
+              
+              conn.query('INSERT INTO en VALUES (?);', [[localizacion, rows.insertId]], function (err, rows) {
+
+                if (!err){
+                  
+                  conn.commit(function(err) {
+
+                    conn.release();
+
+                    if (err) {
+                      return conn.rollback(function() {
+                        const e = new BadRequest('Error al insertar la recogida', ['Ocurrió algún error al insertar la recogida. Es posible que la localizacion especificada no esté creada'], `Error al introducir la recogida por el usuario. ${err}`);
+                        return res.status(e.statusCode).send(e.getJson());
+                      });
+                    }
+                    
+                    return res.status('200').send({
+                      estado: "Correcto",
+                      descripcion: "Recogida inertada correctamente"
+                    });
+                  });
+    
+                }
+                else {
+                  return conn.rollback(function() {
+                    const e = new BadRequest('Error al insertar la recogida', ['Ocurrió algún error al insertar la recogida'], `Error al introducir la recogida por el usuario. ${err}`);
+                    return res.status(e.statusCode).send(e.getJson());
+                  });
+                }
+    
+              });
+            }
+            else {
+              return conn.rollback(function() {
+                const e = new BadRequest('Error al insertar la recogida', ['Ocurrió algún error al insertar la recogida'], `Error al introducir la recogida por el usuario. ${err}`);
+                return res.status(e.statusCode).send(e.getJson());
+              });
+            }
+
+          })
+        }
+        else{
+          const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al iniciar la transacción para añadir componentes\n${err}`);
           return res.status(e.statusCode).send(e.getJson());
         }
-        
-        return res.status('200').send({
-					estado: "Correcto",
-					descripcion: "Recogida insertada correctamente"
-				});
       });
     }
-    else{
-      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+    else {
+      const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
       return res.status(e.statusCode).send(e.getJson());
     }
-  });
+  })
 }
 
 exports.aniadirCable = function (req, res){

@@ -24,7 +24,7 @@
 - [x] Eliminar un tranformador por id
 
 ## Recogidas
-- [x] Crear una nueva recogida sin elementos *(Añadir localizacion)*
+- [x] Crear una nueva recogida sin elementos con localizacion
 - [ ] Obtener entregas por tipo sin cosas asociadas pero con la localizacion
 - [ ] Obtener cables asociados a una recogida
 - [ ] Obtener transformadores asociados a una recogida
