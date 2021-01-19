@@ -10,6 +10,9 @@ router.get	  ('/:tipo',                controlador.obtenerRecogida);
 // Obtiene los cables de una recogida
 router.get	  ('/:id/cable',            controlador.obtenerCables);
 
+// Obtiene los transformadores de una recogida
+router.get	  ('/:id/transformador',    controlador.obtenerTransformadores);
+
 // Crea una nueva recogida
 router.post	  ('/',[
 	body('fecha').matches(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/).withMessage('Fecha mal introducida. Formatos de fecha correcto: AAAA-MM-DD'),

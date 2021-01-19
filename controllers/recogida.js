@@ -152,7 +152,7 @@ exports.aniadirTransformador = function (req, res) {
 
 	db.getConnection(function (err, conn) {
     if (!err) {
-      conn.query('INSERT INTO contiene_transformador VALUES (?);', [[id_recogida, id_trans]], function (err, rows) {
+      conn.query('INSERT INTO contiene_transformador(id_recogida, id_transformador) VALUES (?);', [[id_recogida, id_trans]], function (err, rows) {
         
         if (err) {
           const e = new BadRequest('Error al insertar un transformador en una recogida', ['Ocurrió algún error al insertar el transformador. Puede ser que el transformador o la recogida no existan o que simplemente ya esté inserado en esta recogida'], `Error al insertar un transformador en una recogida. ${err}`);
@@ -250,6 +250,44 @@ exports.obtenerCables = function (req, res){
 
         if (err) {
           const e = new BadRequest('Error al obtener cables', ['Ocurrió algún error al obtener los cables de la recogida'], `Error al obtener los cables de la recogida. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send({
+					cantidad: rows.length,
+					data: rows
+				});
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+
+}
+
+
+exports.obtenerTransformadores = function (req, res){
+
+	if(req.params.id )           
+		var id = req.params.id;
+	else{
+		const e = new BadRequest('Id de la recogida no especificado o no válido', ["id no introducido o no válido"], `Error al obtener los transformadores de las recogidas. El usuario no ha especificado un tipo válido`);
+		return res.status(e.statusCode).send(e.getJson());
+	}
+
+	db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('SELECT T.id as id, T.voltaje, T.amperaje FROM recogida R \
+                    INNER JOIN contiene_transformador CT ON CT.id_recogida=R.id \
+                    INNER JOIN transformador T ON CT.id_transformador=T.id \
+                  WHERE R.id=?;', [id], function (err, rows) {
+        
+        conn.release();
+
+        if (err) {
+          const e = new BadRequest('Error al obtener transformadores', ['Ocurrió algún error al obtener los transformadores de la recogida'], `Error al obtener los transformadores de la recogida. ${err}`);
           return res.status(e.statusCode).send(e.getJson());
         }
         
