@@ -115,13 +115,42 @@ exports.aniadirTransformador = function (req, res) {
       conn.query('INSERT INTO contiene_transformador VALUES (?);', [[id_recogida, id_trans]], function (err, rows) {
         
         if (err) {
-          const e = new BadRequest('Error al insertar un transformador en una recogida', ['Ocurrió algún error al insertar el cable. Puede ser que el transformador o la recogida no existan o que simplemente ya esté inserado en esta recogida'], `Error al insertar un transformador en una recogida. ${err}`);
+          const e = new BadRequest('Error al insertar un transformador en una recogida', ['Ocurrió algún error al insertar el transformador. Puede ser que el transformador o la recogida no existan o que simplemente ya esté inserado en esta recogida'], `Error al insertar un transformador en una recogida. ${err}`);
           return res.status(e.statusCode).send(e.getJson());
         }
         
         return res.status('200').send({
 					estado: "Correcto",
 					descripcion: "Transformador insertado correctamente en la recogida"
+				});
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+}
+
+exports.aniadirOrdenador = function (req, res) {
+  
+  if(req.params.id_recogida)  var id_recogida = req.params.id_recogida;
+  else                        var id_recogida = null;
+  if(req.params.id_ord)       var id_ord = req.params.id_ord;
+  else                        var id_ord = null;
+
+	db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('INSERT INTO contiene_ordenador(id_recogida, id_ordenador) VALUES (?);', [[id_recogida, id_ord]], function (err, rows) {
+        
+        if (err) {
+          const e = new BadRequest('Error al insertar un ordenador en una recogida', ['Ocurrió algún error al insertar el ordenador. Puede ser que el ordenador o la recogida no existan o que simplemente ya esté inserado en esta recogida'], `Error al insertar un ordenador en una recogida. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send({
+					estado: "Correcto",
+					descripcion: "ordenador insertado correctamente en la recogida"
 				});
       });
     }
