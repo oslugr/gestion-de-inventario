@@ -64,7 +64,7 @@ CREATE TABLE tiene (
 );
 
 CREATE TABLE contiene_componente(
-	id_componente INT REFERENCES componente(id),
+	id_componente INT REFERENCES componente(id) ON DELETE CASCADE,
 	id_recogida INT REFERENCES recogida(id),
 	PRIMARY KEY(id_componente, id_recogida),
     UNIQUE(id_componente)
