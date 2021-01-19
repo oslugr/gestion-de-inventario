@@ -26,7 +26,7 @@
 ## Recogidas
 - [x] Crear una nueva recogida sin elementos con localizacion
 - [ ] Obtener entregas por tipo sin cosas asociadas pero con la localizacion
-- [ ] Obtener cables asociados a una recogida
+- [x] Obtener cables asociados a una recogida
 - [ ] Obtener transformadores asociados a una recogida
 - [ ] Obtener ordenadores asociados a una recogida
 - [ ] Obtener componentes asociados a una recogida

@@ -18,10 +18,8 @@ exports.obtenerRecogida = function (req, res){
         conn.release();
 
         if (err) {
-          return conn.rollback(function() {
-            const e = new BadRequest('Error al obtener', ['Ocurrió algún error al obtener la recogida'], `Error al obtener la recogida. ${err}`);
-            return res.status(e.statusCode).send(e.getJson());
-          });
+          const e = new BadRequest('Error al obtener', ['Ocurrió algún error al obtener la recogida'], `Error al obtener la recogida. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
         }
         
         return res.status('200').send({
@@ -125,7 +123,7 @@ exports.aniadirCable = function (req, res){
 
 	db.getConnection(function (err, conn) {
     if (!err) {
-      conn.query('INSERT INTO contiene_cable VALUES (?);', [[id_recogida, id_cable]], function (err, rows) {
+      conn.query('INSERT INTO contiene_cable(id_recogida, id_cable) VALUES (?);', [[id_recogida, id_cable]], function (err, rows) {
         
         if (err) {
           const e = new BadRequest('Error al insertar un cable en una recogida', ['Ocurrió algún error al insertar el cable. Puede ser que el cable o la recogida no existan o que simplemente ya esté inserado en esta recogida'], `Error al insertar un cable en una recogida. ${err}`);
@@ -230,4 +228,41 @@ exports.aniadirComponente = function (req, res) {
       return res.status(e.statusCode).send(e.getJson());
     }
   });
+}
+
+exports.obtenerCables = function (req, res){
+
+	if(req.params.id )           
+		var id = req.params.id;
+	else{
+		const e = new BadRequest('Id de la recogida no especificado o no válido', ["id no introducido o no válido"], `Error al obtener los cables de las recogidas. El usuario no ha especificado un tipo válido`);
+		return res.status(e.statusCode).send(e.getJson());
+	}
+
+	db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('SELECT C.id as id, C.tipo, C.version_tipo FROM recogida R \
+                    INNER JOIN contiene_cable CC ON CC.id_recogida=R.id \
+                    INNER JOIN cable C on CC.id_cable=C.id \
+                  WHERE R.id=?;', [id], function (err, rows) {
+        
+        conn.release();
+
+        if (err) {
+          const e = new BadRequest('Error al obtener cables', ['Ocurrió algún error al obtener los cables de la recogida'], `Error al obtener los cables de la recogida. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send({
+					cantidad: rows.length,
+					data: rows
+				});
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+
 }
