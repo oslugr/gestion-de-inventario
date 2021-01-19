@@ -1,6 +1,7 @@
 const db = require('../db/pool').pool;
 const { APIError, NotFound, BadRequest } = require('../aux/error');
 const { validationResult } = require('express-validator');
+const { obtenerCaracteristicas } = require('../aux/gestionCaracteristicas');
 
 exports.obtenerRecogida = function (req, res){
 
@@ -294,6 +295,52 @@ exports.obtenerTransformadores = function (req, res){
         return res.status('200').send({
 					cantidad: rows.length,
 					data: rows
+				});
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+
+}
+
+exports.obtenerComponentes = function (req, res){
+
+	if(req.params.id )           
+		var id = req.params.id;
+	else{
+		const e = new BadRequest('Id de la recogida no especificado o no válido', ["id no introducido o no válido"], `Error al obtener los transformadores de las recogidas. El usuario no ha especificado un tipo válido`);
+		return res.status(e.statusCode).send(e.getJson());
+	}
+
+	db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('SELECT C.id, C.estado, C.observaciones, C.fecha_entrada, C.tipo, T.id_caracteristica, CA.nombre, CA.valor FROM recogida R \
+                    INNER JOIN contiene_componente CC ON CC.id_recogida=R.id \
+                    INNER JOIN componente C ON CC.id_componente=C.id \
+                    INNER JOIN tiene T ON T.id_componente=C.id \
+                    INNER JOIN caracteristica CA on CA.id=T.id_caracteristica \
+                    WHERE R.id=? \
+                  UNION \
+                    SELECT C2.id, C2.estado, C2.observaciones, C2.fecha_entrada, C2.tipo, Null as id_caracteristica, null as nombre, null as valor FROM recogida R2 \
+                    INNER JOIN contiene_componente CC2 ON CC2.id_recogida=R2.id \
+                    INNER JOIN componente C2 ON CC2.id_componente=C2.id \
+                      where not exists( select * from tiene T2 where T2.id_componente=C2.id ) && R2.id=?;', [id, id], function (err, rows) {
+        
+        conn.release();
+
+        if (err) {
+          const e = new BadRequest('Error al obtener las componentes de la recogida', ['Ocurrió algún error al obtener las componentes de la recogida'], `Error al obtener las componentes de la recogida. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+
+        let componentes = obtenerCaracteristicas(rows);
+        
+        return res.status('200').send({
+					cantidad: componentes.length,
+					data: componentes
 				});
       });
     }
