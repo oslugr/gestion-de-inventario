@@ -351,3 +351,47 @@ exports.obtenerComponentes = function (req, res){
   });
 
 }
+
+exports.obtenerOrdenadores = function (req, res){
+
+	if(req.params.id )           
+		var id = req.params.id;
+	else{
+		const e = new BadRequest('Id de la recogida no especificado o no válido', ["id no introducido o no válido"], `Error al obtener los ordenadores de las recogidas. El usuario no ha especificado un tipo válido`);
+		return res.status(e.statusCode).send(e.getJson());
+	}
+
+	db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('select "Portatil" as tipo, O.id, O.localizacion_taller, O.observaciones, P.estado, Null as tamano from recogida R \
+                      inner join contiene_ordenador CO on CO.id_recogida=R.id \
+                      inner join ordenador O on CO.id_ordenador=O.id \
+                      inner join portatil P on O.id=P.id \
+                    WHERE R.id=? \
+                  UNION \
+                  select "Sobremesa" as tipo, O.id, O.localizacion_taller, O.observaciones, Null as estado, S.tamano from recogida R \
+                      inner join contiene_ordenador CO on CO.id_recogida=R.id \
+                      inner join ordenador O on CO.id_ordenador=O.id \
+                      inner join sobremesa S on O.id=S.id \
+                      WHERE R.id=?;', [id, id], function (err, rows) {
+        
+        conn.release();
+
+        if (err) {
+          const e = new BadRequest('Error al obtener los ordenadores de la recogida', ['Ocurrió algún error al obtener los ordenadores de la recogida'], `Error al obtener los ordenadores de la recogida. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send({
+					cantidad: rows.length,
+					data: rows
+				});
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+
+}

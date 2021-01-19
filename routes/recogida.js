@@ -13,6 +13,9 @@ router.get	  ('/:id/cable',            controlador.obtenerCables);
 // Obtiene los transformadores de una recogida
 router.get	  ('/:id/transformador',    controlador.obtenerTransformadores);
 
+// Obtiene los ordenadores de una recogida
+router.get	  ('/:id/ordenador',        controlador.obtenerOrdenadores);
+
 // Obtiene los componentes de una recogida
 router.get	  ('/:id/componente',       controlador.obtenerComponentes);
 
