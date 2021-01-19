@@ -31,7 +31,7 @@
 - [x] Añadir cables a la recogida
 - [x] Añadir transformadores a la recogida
 - [x] Añadir ordenadores a la recogida
-- [ ] Añadir componentes a la recogida
+- [x] Añadir componentes a la recogida
 - [ ] Eliminar cables de la recogida
 - [ ] Eliminar transformadores de la recogida
 - [ ] Eliminar ordenadores de la recogida

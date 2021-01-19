@@ -22,4 +22,7 @@ router.post	  ('/:id_recogida/transformador/:id_trans', controlador.aniadirTrans
 // Añade un ordenador a una recogida
 router.post	  ('/:id_recogida/ordenador/:id_ord', controlador.aniadirOrdenador);
 
+// Añade un componente a una recogida
+router.post	  ('/:id_recogida/componente/:id_comp', controlador.aniadirComponente);
+
 module.exports = router;

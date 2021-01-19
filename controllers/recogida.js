@@ -150,7 +150,36 @@ exports.aniadirOrdenador = function (req, res) {
         
         return res.status('200').send({
 					estado: "Correcto",
-					descripcion: "ordenador insertado correctamente en la recogida"
+					descripcion: "Ordenador insertado correctamente en la recogida"
+				});
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+}
+
+exports.aniadirComponente = function (req, res) {
+  
+  if(req.params.id_recogida)  var id_recogida = req.params.id_recogida;
+  else                        var id_recogida = null;
+  if(req.params.id_comp)      var id_comp = req.params.id_comp;
+  else                        var id_comp = null;
+
+	db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('INSERT INTO contiene_componente(id_recogida, id_componente) VALUES (?);', [[id_recogida, id_comp]], function (err, rows) {
+        
+        if (err) {
+          const e = new BadRequest('Error al insertar una componente en una recogida', ['Ocurrió algún error al insertar la componente. Puede ser que la componente o la recogida no existan o que simplemente ya esté inserado en esta recogida'], `Error al insertar una componente en una recogida. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send({
+					estado: "Correcto",
+					descripcion: "Componente insertada correctamente en la recogida"
 				});
       });
     }
