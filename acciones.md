@@ -1,6 +1,6 @@
 # To-Do list
 
-- [ ] Hacer obtenciones por páginas por páginas para contemplar los casos que haya muchas cosas
+- [ ] Obtener los datos por páginas para contemplar los casos en que haya muchas cosas
 
 ## Localizaciones
 
