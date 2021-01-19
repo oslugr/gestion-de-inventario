@@ -16,4 +16,7 @@ router.post	  ('/',[
 // Añade un cable a una recogida
 router.post	  ('/:id_recogida/cable/:id_cable', controlador.aniadirCable);
 
+// Añade un transformador a una recogida
+router.post	  ('/:id_recogida/transformador/:id_trans', controlador.aniadirTransformador);
+
 module.exports = router;

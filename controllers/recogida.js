@@ -102,3 +102,32 @@ exports.aniadirCable = function (req, res){
     }
   });
 }
+
+exports.aniadirTransformador = function (req, res) {
+  
+  if(req.params.id_recogida)  var id_recogida = req.params.id_recogida;
+  else                        var id_recogida = null;
+  if(req.params.id_trans)     var id_trans = req.params.id_trans;
+  else                        var id_trans = null;
+
+	db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('INSERT INTO contiene_transformador VALUES (?);', [[id_recogida, id_trans]], function (err, rows) {
+        
+        if (err) {
+          const e = new BadRequest('Error al insertar un transformador en una recogida', ['Ocurrió algún error al insertar el cable. Puede ser que el transformador o la recogida no existan o que simplemente ya esté inserado en esta recogida'], `Error al insertar un transformador en una recogida. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send({
+					estado: "Correcto",
+					descripcion: "Transformador insertado correctamente en la recogida"
+				});
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+}

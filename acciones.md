@@ -29,7 +29,7 @@
 - [ ] Obtener todas las recogidas con todas las cosas asociadas
 - [ ] Cambiar la localización de una recogida
 - [x] Añadir cables a la recogida
-- [ ] Añadir transformadores a la recogida
+- [x] Añadir transformadores a la recogida
 - [ ] Añadir ordenadores a la recogida
 - [ ] Añadir componentes a la recogida
 - [ ] Eliminar cables de la recogida
