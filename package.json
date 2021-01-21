@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "tailwind": "tailwindcss build public/assets/css/tailwind.css -o public/assets/css/tailwind.output.css",
-    "build": "env NODE_ENV=production postcss public/assets/css/tailwind.css -o public/assets/css/tailwind.output.css"
+    "build": "env NODE_ENV=production postcss public/assets/css/tailwind.css -o public/assets/css/tailwind.output.css",
+    "build-jquery": "cp node_modules/jquery/dist/jquery.min.js public/assets/js/jquery/"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,7 @@
     "cz-conventional-changelog": "3.2.0",
     "express": "^4.17.1",
     "express-validator": "^6.9.2",
+    "jquery": "^3.5.1",
     "mysql": "^2.18.1",
     "postcss-cli": "7.1.1",
     "release-it": "13.6.4",

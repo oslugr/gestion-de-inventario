@@ -9,3 +9,4 @@ Aplicación desarrollada con el objetivo de controlar el inventario de ordenador
 * [express-validator](https://express-validator.github.io/docs/)
 * [mysql para JS](https://express-validator.github.io/docs/)
 * [windmill-dashboard](https://github.com/estevanmaito/windmill-dashboard) como plantilla para el front-end
+* [jQuery](https://jquery.com/)
