@@ -256,3 +256,7 @@ function generarPie() {
 	  
 	  generarNavegadorTabla();
 }
+
+function eliminarCable(tipo, version){
+	$.delete("/api/cable/", crearInterfazCables);
+}

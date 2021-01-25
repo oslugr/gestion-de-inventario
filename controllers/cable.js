@@ -147,3 +147,47 @@ exports.eliminarCable = function (req, res) {
   })
 
 }
+
+exports.eliminarCablePorId = function (req, res) {
+
+  // Validación de los valores introducidos
+  if(req.params.id)
+    var id = req.params.id.replace(/\s+/g, ' ').trim();
+  else{
+    const e = new BadRequest('Id mal introducido', [{ msg: "Valor de id no válido"}], "Error al eliminar un cable por parte del usuario");
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+
+      conn.query('DELETE FROM cable WHERE id=?', [id], function (err, rows) {
+
+        conn.release();
+
+        if (!err) {
+          if(rows.affectedRows){
+            res.status('200').send({
+              estado: "Correcto",
+              descripcion: "Cable eliminado correctamente"
+            });
+          }
+          else{
+            const e = new BadRequest('No existe el cable que quieres eliminar en la red.', ["No existe un cable con las características especificadas"], `Intento de eliminar cable inexistente ${err}`);
+            return res.status(e.statusCode).send(e.getJson());
+          }
+        }
+        else {
+          const e = new APIError('Internal Server Error', '500', 'Error al eliminar los elementos de la base de datos', `Error al eliminar cables de la base de datos\n${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+
+      })
+    }
+    else {
+      const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  })
+
+}
