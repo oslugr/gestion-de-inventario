@@ -9,6 +9,9 @@ router.get	  ('/:tipo?',               controlador.obtenerCables);
 // Añade un cable de un tipo con su versión
 router.post	  ('/:tipo/:version_tipo?', controlador.insertarCable);
 
+// Edita la informacion de un cable 
+router.put 	  ('/:id/:tipo/:version_tipo?', controlador.editarCable);
+
 // Elimina un cable por id
 router.delete ('/id/:id', controlador.eliminarCablePorId);
 

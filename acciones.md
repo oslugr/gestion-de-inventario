@@ -15,6 +15,7 @@
 - [x] Eliminar cables por tipo y versión
 - [x] Obtener todos los cables
 - [x] Listar todos los cables de un tipo
+- [x] Modificar un cable existente
 - [x] Eliminar un cable por id
 - [ ] *Eliminar varios cables de una vez*
 

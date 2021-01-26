@@ -191,3 +191,61 @@ exports.eliminarCablePorId = function (req, res) {
   })
 
 }
+
+exports.editarCable = function (req, res) {
+  
+  // Validación de los valores introducidos
+  if(req.params.version_tipo)
+    var version_tipo = req.params.version_tipo.replace(/\s+/g, ' ').trim();
+  
+  if(req.params.tipo && req.params.id){         
+    var tipo = req.params.tipo.replace(/\s+/g, ' ').trim();
+    var id   = req.params.id.replace(/\s+/g, ' ').trim();
+  }
+  else{
+    const e = new BadRequest('Tipo o id mal introducido', [{ msg: "Valor de tipo o id no válido"}], "Error al introducir el tipo o el id por parte del usuario");
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+
+      if(version_tipo){ 
+        var params = [tipo,version_tipo, id];
+        var sql    = 'UPDATE cable SET tipo=?, version_tipo=? WHERE id=?;';
+      }
+      else{
+        var params = [tipo, id];
+        var sql    = 'UPDATE cable SET tipo=?, version_tipo=NULL WHERE id=?;';
+      }
+
+      conn.query(sql, params, function (err, rows) {
+
+        conn.release();
+
+        if (!err) {
+          if(rows.affectedRows){
+            res.status('200').send({
+              estado: "Correcto",
+              descripcion: "Cable actualizado correctamente"
+            });
+          }
+          else{
+            const e = new BadRequest('No se ha actualizado ningún cable. Es posible que este no exista', ["Es posible que el cable no exista"], 'Intento de eliminar cable inexistente');
+            return res.status(e.statusCode).send(e.getJson());
+          }
+        }
+        else {
+          const e = new APIError('Internal Server Error', '500', 'Error al modificar los elementos de la base de datos', `Error al modificar cables de la base de datos\n${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+
+      })
+    }
+    else {
+      const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  })
+
+}
