@@ -12,8 +12,8 @@ function tarjeta(titulo, dato) {
 	return `
     <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
 			<div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
-				<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-					<path d="M20 12H4" ></path>
+				<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+					<path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
 				</svg>
 			</div>
 			<div>
