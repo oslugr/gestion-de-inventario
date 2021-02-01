@@ -1,2 +1,4 @@
 node_modules/
 db/data.json
+public/assets/css
+public/templates/assets/css
