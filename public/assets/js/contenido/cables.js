@@ -120,7 +120,7 @@ function crearTabla() {
 							<th class="px-4 py-3">ID</th>
 							<th class="px-4 py-3">Tipo</th>
 							<th class="px-4 py-3">Versión</th>
-							<th class="px-4 py-3">Actions</th>
+							<th class="px-4 py-3">Acciones</th>
 						</tr>
 					</thead>
 					<tbody id="body-tabla" class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
