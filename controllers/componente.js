@@ -389,3 +389,48 @@ exports.modificarEstado = function (req, res){
   });
 
 }
+
+
+exports.actualizarComponente = function (req, res) {
+
+  if(req.body.estado)           var estado = req.body.estado.replace(/\s+/g, ' ').trim();
+  else                          var estado = 'Desconocido';
+  if(req.body.observaciones)    var observaciones = req.body.observaciones.replace(/\s+/g, ' ').trim();
+  else                          var observaciones = null;
+  if(req.body.fecha_entrada)    var fecha_entrada = req.body.fecha_entrada.replace(/\s+/g, ' ').trim();
+  else                          var fecha_entrada = null;
+  if(req.body.tipo)             var tipo = req.body.tipo.replace(/\s+/g, ' ').trim();
+  else                          var tipo = null;
+  var id = req.params.id;
+
+  const errores = validationResult(req);
+
+  if(!errores.isEmpty()){
+    const e = new BadRequest('Error al introducir los parámetros', errores.array(), `Error en los parámetros introducidos por el usuario al editar una componente. ${errores.array()}`);
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('UPDATE componente SET estado=?, fecha_entrada=?, observaciones=?, tipo=? WHERE id=?', [estado, fecha_entrada, observaciones, tipo, id], function (err, rows) {
+        
+        conn.release();
+
+        if (err) {
+          const e = new BadRequest('Error al actualizar la componente', ['Ocurrió algún error la componente'], `Error al actualizar una componente. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send({
+          estado: "Correcto",
+          descripcion: "Componente actualizada correctamente"
+        });
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar con la base de datos al modificar un estado\n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+
+}
