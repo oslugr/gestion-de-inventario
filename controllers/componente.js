@@ -412,7 +412,7 @@ exports.actualizarComponente = function (req, res) {
 
   db.getConnection(function (err, conn) {
     if (!err) {
-      conn.query('UPDATE componente SET estado=?, fecha_entrada=?, observaciones=?, tipo=? WHERE id=?', [estado, fecha_entrada, observaciones, tipo, id], function (err, rows) {
+      conn.query('UPDATE componente SET estado=?, fecha_entrada=?, observaciones=?, tipo=? WHERE id=?', [estado, new Date(fecha_entrada), observaciones, tipo, id], function (err, rows) {
         
         conn.release();
 
