@@ -604,7 +604,7 @@
                 </button>
               </header>
               <!-- Modal body -->
-              <div class="mt-4 mb-6">
+              <div class="mt-4 mb-6 overflow-auto max-h-popup">
                 <!-- Modal title -->
                 <p
                   class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300"
@@ -667,9 +667,21 @@
                           <tbody id="body-tabla-caracteristicas" class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
                           </tbody>
                         </table>
-                      </div>
-                  
+                      </div>                  
                     </div>
+
+                    <!-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg> -->
+
+                    <a class="flex items-center justify-between p-4 mb-8 text-sm font-semibold text-gray-500 dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple" onclick="aniadirCaracteristica({nombre: '', valor: ''});">
+                      <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 mr-2">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        <span>Añadir una nueva característica</span>
+                      </div>
+                    </a>
                   </label>
                 </div>
               </div>

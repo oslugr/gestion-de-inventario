@@ -164,6 +164,7 @@ module.exports = {
       maxHeight: {
         '0': '0',
         xl: '36rem',
+        popup: '70vh'
       },
       fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
