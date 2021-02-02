@@ -269,20 +269,43 @@ function generarPie() {
 	  generarNavegadorTabla();
 }
 
-function aniadirCaracteristica(caracteristica){
+function editarCaracteristica(id, posicion_componente, posicion_caracteristica){
+
+	const nombre = $(`#caracteristica-${id}-nombre`).val();
+	const valor  = $(`#caracteristica-${id}-valor`).val();
+
+	$.ajax({
+		url: `/api/componente/caracteristica/${id}`,
+		data: JSON.stringify({
+			nombre: nombre,
+			valor: valor
+		}),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		type: 'PUT',
+		success: function(){
+			componentes.data[posicion_componente].caracteristicas[posicion_caracteristica].nombre = nombre;
+			componentes.data[posicion_componente].caracteristicas[posicion_caracteristica].valor = valor;
+			console.log("OK");
+		}
+	});
+
+}
+
+function aniadirCaracteristica(caracteristica, posicion_componente, posicion_caracteristica){
 
 	$('#body-tabla-caracteristicas').append(`
 		<tr class="text-gray-700 dark:text-gray-400">
 			<td class="px-2 py-3 text-sm">
-				<input class="w-32" type="text" value="${caracteristica.nombre}"/>
+				<input id="caracteristica-${caracteristica.id}-nombre" class="w-32" type="text" value="${caracteristica.nombre}"/>
 			</td>
 			<td class="px-2 py-3 text-sm">
-				<input class="w-32" type="text" value="${caracteristica.valor}"/>
+				<input id="caracteristica-${caracteristica.id}-valor" class="w-32" type="text" value="${caracteristica.valor}"/>
 			</td>
 			<td class="px-2 py-3">
 			
 			<div class="flex items-center space-x-4 text-sm">
-				<button @click="openModal" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Edit">
+				<button onclick="editarCaracteristica(${caracteristica.id}, ${posicion_componente}, ${posicion_caracteristica});" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray">
 					<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
 					</svg>
@@ -306,7 +329,7 @@ function cargarCaracteristicas(id, posicion){
 	$('#body-tabla-caracteristicas').html('');
 
 	for (let i = 0; i < numeroComponentes; i++) {
-		aniadirCaracteristica(componentes.data[posicion].caracteristicas[i]);
+		aniadirCaracteristica(componentes.data[posicion].caracteristicas[i], posicion, i);
 	}
 	
 }
