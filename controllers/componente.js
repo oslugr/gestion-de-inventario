@@ -458,3 +458,41 @@ exports.actualizarComponente = function (req, res) {
   });
 
 }
+
+exports.modificarEstado = function (req, res){
+
+  const errores = validationResult(req);
+
+  if(!errores.isEmpty()){
+    const e = new BadRequest('Error al introducir los parámetros', errores.array(), `Error en los parámetros introducidos por el usuario al editar una característica. ${errores.array()}`);
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+  const id     = req.params.id; 
+  const nombre = req.body.nombre;
+  const valor  = req.body.valor;
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('UPDATE caracteristica SET nombre=?, valor=? WHERE id=?', [nombre, valor, id], function (err, rows) {
+        
+        conn.release();
+
+        if (err) {
+          const e = new BadRequest('Error al actualizar la característica', ['Ocurrió algún error al actualizar la característica'], `Error al actualizar la característica. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send({
+          estado: "Correcto",
+          descripcion: "Característica actualizada correctamente"
+        });
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar con la base de datos al modificar un estado\n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+
+}
