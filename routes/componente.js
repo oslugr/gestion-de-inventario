@@ -34,7 +34,7 @@ router.put   ('/:id/estado/:estado',controlador.modificarEstado);
 router.put   ('/:id',[ 
 	body('estado').optional().isIn(['Desconocido', 'Bueno', 'Regular', 'Por revisar', 'No aprovechable', 'Roto']).not().isEmpty().withMessage('Tipo no válido. Tiene que estar entre los siguientes valores: Desconocido, Bueno, Regular, Por revisar, No aprovechable, Roto'),
 	body('observaciones').optional().isString().withMessage('Valor no válido en observaciones'),
-	body('fecha_entrada').matches(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/).withMessage('Fecha mal introducida. Formatos de fecha correcto: AAAA-MM-DD'),
+	body('fecha_entrada').optional().matches(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/).withMessage('Fecha mal introducida. Formatos de fecha correcto: AAAA-MM-DD'),
 	body('tipo').not().isEmpty().withMessage('Tipo no introducido. Este parámetro es obligatorio')
 ],        						controlador.actualizarComponente);
 

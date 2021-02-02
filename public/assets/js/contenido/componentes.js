@@ -343,19 +343,23 @@ function cargarFormulario(id, tipo, estado, fecha, observaciones, posicion){
 
 function editarComponente(id){
 
-	let tipo 	      = $('#editar-tipo').val();
-	let estado        = $('#editar-estado').val();
-	let fecha         = $('#editar-fecha').val();
-	let observaciones = $('#editar-observaciones').val();
+	const tipo 	        = $('#editar-tipo').val();
+	const estado        = $('#editar-estado').val();
+	const fecha         = $('#editar-fecha').val();
+	const observaciones = $('#editar-observaciones').val();
 	
+	const json = {
+		"tipo": tipo,
+		"estado": estado,
+		"observaciones": observaciones
+	};
+
+	if(fecha)
+		json["fecha_entrada"] = fecha;
+
 	$.ajax({
 		url: `/api/componente/${id}`,
-		data: JSON.stringify({
-			"tipo": tipo,
-			"estado": estado,
-			"fecha_entrada": fecha,
-			"observaciones": observaciones
-		}),
+		data: JSON.stringify(json),
 		contentType: "application/json; charset=utf-8",
 		dataType: "json",
 		type: 'PUT',

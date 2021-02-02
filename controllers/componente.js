@@ -410,9 +410,33 @@ exports.actualizarComponente = function (req, res) {
     return res.status(e.statusCode).send(e.getJson());
   }
 
+  // Realiza la query según lo que se ha introducido para cambiar
+  sql = 'UPDATE componente SET ';
+  values = [];
+  
+  if(estado){
+    sql += 'estado=?'
+    values.push(estado);
+  }
+  if(fecha_entrada){
+    sql += ', fecha_entrada=?'
+    values.push(new Date(fecha_entrada));
+  }
+  if(observaciones){
+    sql += ', observaciones=?'
+    values.push(observaciones);
+  }
+  if(tipo){
+    sql += ', tipo=?'
+    values.push(tipo);
+  }
+
+  sql += ' WHERE id=?';
+  values.push(id);
+
   db.getConnection(function (err, conn) {
     if (!err) {
-      conn.query('UPDATE componente SET estado=?, fecha_entrada=?, observaciones=?, tipo=? WHERE id=?', [estado, new Date(fecha_entrada), observaciones, tipo, id], function (err, rows) {
+      conn.query(sql, values, function (err, rows) {
         
         conn.release();
 
