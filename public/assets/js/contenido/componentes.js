@@ -286,7 +286,35 @@ function editarCaracteristica(id, posicion_componente, posicion_caracteristica){
 		success: function(){
 			componentes.data[posicion_componente].caracteristicas[posicion_caracteristica].nombre = nombre;
 			componentes.data[posicion_componente].caracteristicas[posicion_caracteristica].valor = valor;
-			console.log("OK");
+			
+			$(`#icono-cambiar-caracteristica-${id}`).html(`
+				<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+				</svg>
+			`);
+
+			setTimeout(() => {
+				$(`#icono-cambiar-caracteristica-${id}`).html(`
+					<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+					</svg>
+				`);
+			}, 1000)
+		},
+		error: function (){
+			$(`#icono-cambiar-caracteristica-${id}`).html(`
+				<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+				</svg>
+			`);
+
+			setTimeout(() => {
+				$(`#icono-cambiar-caracteristica-${id}`).html(`
+					<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+					</svg>
+				`);
+			}, 1000)
 		}
 	});
 
@@ -305,7 +333,7 @@ function aniadirCaracteristica(caracteristica, posicion_componente, posicion_car
 			<td class="px-2 py-3">
 			
 			<div class="flex items-center space-x-4 text-sm">
-				<button onclick="editarCaracteristica(${caracteristica.id}, ${posicion_componente}, ${posicion_caracteristica});" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray">
+				<button id="icono-cambiar-caracteristica-${caracteristica.id}" onclick="editarCaracteristica(${caracteristica.id}, ${posicion_componente}, ${posicion_caracteristica});" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray">
 					<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
 					</svg>
@@ -360,11 +388,11 @@ function cargarFormulario(id, tipo, estado, fecha, observaciones, posicion){
 	$('#editar-fecha').val(fecha);
 	$('#editar-observaciones').val(observaciones);
 	cargarCaracteristicas(id, posicion);
-	$('#confirmar-modal').attr('onclick', `editarComponente(${id})`);
+	$('#confirmar-modal').attr('onclick', `editarComponente(${id}, ${posicion})`);
 
 }
 
-function editarComponente(id){
+function editarComponente(id, posicion){
 
 	const tipo 	        = $('#editar-tipo').val();
 	const estado        = $('#editar-estado').val();
@@ -391,7 +419,7 @@ function editarComponente(id){
 			$(`#estado-${id}`).html(obtenerEstadoFormateado(estado));
 			$(`#fecha-${id}`).html(fecha);
 			$(`#observaciones-${id}`).html(observaciones);
-			$(`#editar-${id}`).attr('onclick', `cargarFormulario('${id}', '${tipo}', '${estado}', '${fecha}', '${observaciones}')`);
+			$(`#editar-${id}`).attr('onclick', `cargarFormulario('${id}', '${tipo}', '${estado}', '${fecha}', '${observaciones}', ${posicion})`);
 		}
 	});
 
