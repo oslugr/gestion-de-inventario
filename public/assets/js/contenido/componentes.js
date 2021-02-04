@@ -320,7 +320,124 @@ function editarCaracteristica(id, posicion_componente, posicion_caracteristica){
 
 }
 
-function aniadirCaracteristica(caracteristica, posicion_componente, posicion_caracteristica){
+function crearCaracteristica(id_componente, posicion){
+
+	const nombre = $(`#caracteristica--1-nombre`).val();
+	const valor  = $(`#caracteristica--1-valor`).val();
+
+	$.ajax({
+		url: `/api/componente/${id_componente}/caracteristica`,
+		data: JSON.stringify({
+			nombre: nombre,
+			valor: valor
+		}),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		type: 'POST',
+		success: function(datos){
+			componentes.data[posicion].caracteristicas.push({
+				id: datos.id,
+				nombre: nombre, 
+				valor: valor
+			});
+			
+			$(`#icono-cambiar-caracteristica--1`).html(`
+				<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+				</svg>
+			`);
+
+			// Cambiar todos los id a la nueva id
+			$('#caracteristica--1-nombre').attr("id",`#caracteristica-${datos.id}-nombre`);
+			$('#caracteristica--1-valor').attr("id",`caracteristica-${datos.id}-valor`);
+			$('#icono-cambiar-caracteristica--1').attr("id",`#icono-cambiar-caracteristica-${datos.id}`);
+			$('#icono-cambiar-caracteristica--1').attr("onclick",`onclick="editarCaracteristica(${datos.id}, ${posicion}, ${componentes.data[posicion].length} );"`);
+		
+			setTimeout(() => {
+				$(`#icono-cambiar-caracteristica-${datos.id}`).html(`
+					<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+					</svg>
+				`);
+			}, 1000)
+		},
+		error: function (){
+			$(`#icono-cambiar-caracteristica--1`).html(`
+				<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+				</svg>
+			`);
+
+			setTimeout(() => {
+				$(`#icono-cambiar-caracteristica--1`).html(`
+					<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+					</svg>
+				`);
+			}, 1000)
+		}
+	});
+
+}
+
+function eliminarCaracterística(id){
+
+	$.ajax({
+		url: `/api/componente/${id_componente}/caracteristica`,
+		data: JSON.stringify({
+			nombre: nombre,
+			valor: valor
+		}),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		type: 'POST',
+		success: function(datos){
+			componentes.data[posicion].caracteristicas.push({
+				id: datos.id,
+				nombre: nombre, 
+				valor: valor
+			});
+			
+			$(`#icono-cambiar-caracteristica--1`).html(`
+				<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+				</svg>
+			`);
+
+			// Cambiar todos los id a la nueva id
+			$('#caracteristica--1-nombre').attr("id",`#caracteristica-${datos.id}-nombre`);
+			$('#caracteristica--1-valor').attr("id",`caracteristica-${datos.id}-valor`);
+			$('#icono-cambiar-caracteristica--1').attr("id",`#icono-cambiar-caracteristica-${datos.id}`);
+			$('#icono-cambiar-caracteristica--1').attr("onclick",`onclick="editarCaracteristica(${datos.id}, ${posicion}, ${componentes.data[posicion].length} );"`);
+		
+			setTimeout(() => {
+				$(`#icono-cambiar-caracteristica-${datos.id}`).html(`
+					<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+					</svg>
+				`);
+			}, 1000)
+		},
+		error: function (){
+			$(`#icono-cambiar-caracteristica--1`).html(`
+				<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+				</svg>
+			`);
+
+			setTimeout(() => {
+				$(`#icono-cambiar-caracteristica--1`).html(`
+					<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+					</svg>
+				`);
+			}, 1000)
+		}
+	});
+
+}
+
+function aniadirCaracteristica(caracteristica, posicion_componente, posicion_caracteristica, id_componente, accion){
 
 	$('#body-tabla-caracteristicas').append(`
 		<tr class="text-gray-700 dark:text-gray-400">
@@ -333,7 +450,8 @@ function aniadirCaracteristica(caracteristica, posicion_componente, posicion_car
 			<td class="px-2 py-3">
 			
 			<div class="flex items-center space-x-4 text-sm">
-				<button id="icono-cambiar-caracteristica-${caracteristica.id}" onclick="editarCaracteristica(${caracteristica.id}, ${posicion_componente}, ${posicion_caracteristica});" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray">
+				<button id="icono-cambiar-caracteristica-${caracteristica.id}" 
+					${(accion=='editar' ? 'onclick="editarCaracteristica(' + caracteristica.id + ', ' + posicion_componente + ', ' + posicion_caracteristica + ');"' : 'onclick="crearCaracteristica(' + id_componente + ', ' + posicion_componente + ');"')} class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray">
 					<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
 					</svg>
@@ -357,7 +475,7 @@ function cargarCaracteristicas(id, posicion){
 	$('#body-tabla-caracteristicas').html('');
 
 	for (let i = 0; i < numeroComponentes; i++) {
-		aniadirCaracteristica(componentes.data[posicion].caracteristicas[i], posicion, i);
+		aniadirCaracteristica(componentes.data[posicion].caracteristicas[i], posicion, i, id, 'editar');
 	}
 	
 }
@@ -389,7 +507,7 @@ function cargarFormulario(id, tipo, estado, fecha, observaciones, posicion){
 	$('#editar-observaciones').val(observaciones);
 	cargarCaracteristicas(id, posicion);
 	$('#confirmar-modal').attr('onclick', `editarComponente(${id}, ${posicion})`);
-
+	$('#boton-nueva-caracteristica').attr('onclick', `aniadirCaracteristica({id: -1, nombre: '', valor: ''}, ${posicion}, null, ${id}, 'crear');`);
 }
 
 function editarComponente(id, posicion){
