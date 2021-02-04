@@ -44,4 +44,7 @@ router.put  ('/caracteristica/:id', [
 	body('valor').isString().not().isEmpty().withMessage('El valor de la característica no es válido')
 ],                              controlador.modificarEstado);
 
+// Elimina una componente a partir de su id
+router.delete('/caracteristica/:id',           controlador.eliminarCaracteristica);
+
 module.exports = router;
