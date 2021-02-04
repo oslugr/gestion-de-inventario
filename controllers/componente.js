@@ -21,7 +21,7 @@ exports.obtenerComponentes = function (req, res) {
                       WHERE C.tipo=? \
                       UNION \
                       SELECT C2.id, C2.estado, C2.observaciones, C2.fecha_entrada, C2.tipo, Null as id_caracteristica, Null as nombre, Null as valor FROM componente C2 \
-                        WHERE NOT EXISTS( SELECT * FROM tiene T WHERE T.id_componente=C2.id ) && C2.tipo=? ) ORDER BY id';
+                        WHERE NOT EXISTS( SELECT * FROM tiene T WHERE T.id_componente=C2.id ) && C2.tipo=? ) ORDER BY id, id_caracteristica';
       }
       else{
         var params = [];
@@ -30,7 +30,7 @@ exports.obtenerComponentes = function (req, res) {
                         INNER JOIN caracteristica CA on CA.id=T.id_caracteristica \
                       UNION \
                       SELECT C2.id, C2.estado, C2.observaciones, C2.fecha_entrada, C2.tipo, Null as id_caracteristica, Null as nombre, Null as valor FROM componente C2 \
-                        WHERE NOT EXISTS( SELECT * FROM tiene T WHERE T.id_componente=C2.id )) ORDER BY id';
+                        WHERE NOT EXISTS( SELECT * FROM tiene T WHERE T.id_componente=C2.id )) ORDER BY id, id_caracteristica';
       }
 
       conn.query(sql, params, function (err, rows) {
