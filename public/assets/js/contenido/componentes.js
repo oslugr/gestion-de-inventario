@@ -348,67 +348,10 @@ function crearCaracteristica(id_componente, posicion){
 			`);
 
 			// Cambiar todos los id a la nueva id
-			$('#caracteristica--1-nombre').attr("id",`#caracteristica-${datos.id}-nombre`);
+			$('#caracteristica--1-nombre').attr("id",`caracteristica-${datos.id}-nombre`);
 			$('#caracteristica--1-valor').attr("id",`caracteristica-${datos.id}-valor`);
-			$('#icono-cambiar-caracteristica--1').attr("id",`#icono-cambiar-caracteristica-${datos.id}`);
-			$('#icono-cambiar-caracteristica--1').attr("onclick",`onclick="editarCaracteristica(${datos.id}, ${posicion}, ${componentes.data[posicion].length} );"`);
-		
-			setTimeout(() => {
-				$(`#icono-cambiar-caracteristica-${datos.id}`).html(`
-					<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-					</svg>
-				`);
-			}, 1000)
-		},
-		error: function (){
-			$(`#icono-cambiar-caracteristica--1`).html(`
-				<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-				</svg>
-			`);
-
-			setTimeout(() => {
-				$(`#icono-cambiar-caracteristica--1`).html(`
-					<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-					</svg>
-				`);
-			}, 1000)
-		}
-	});
-
-}
-
-function eliminarCaracterística(id){
-
-	$.ajax({
-		url: `/api/componente/${id_componente}/caracteristica`,
-		data: JSON.stringify({
-			nombre: nombre,
-			valor: valor
-		}),
-		contentType: "application/json; charset=utf-8",
-		dataType: "json",
-		type: 'POST',
-		success: function(datos){
-			componentes.data[posicion].caracteristicas.push({
-				id: datos.id,
-				nombre: nombre, 
-				valor: valor
-			});
-			
-			$(`#icono-cambiar-caracteristica--1`).html(`
-				<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-				</svg>
-			`);
-
-			// Cambiar todos los id a la nueva id
-			$('#caracteristica--1-nombre').attr("id",`#caracteristica-${datos.id}-nombre`);
-			$('#caracteristica--1-valor').attr("id",`caracteristica-${datos.id}-valor`);
-			$('#icono-cambiar-caracteristica--1').attr("id",`#icono-cambiar-caracteristica-${datos.id}`);
-			$('#icono-cambiar-caracteristica--1').attr("onclick",`onclick="editarCaracteristica(${datos.id}, ${posicion}, ${componentes.data[posicion].length} );"`);
+			$('#icono-cambiar-caracteristica--1').attr("id",`icono-cambiar-caracteristica-${datos.id}`);
+			$(`#icono-cambiar-caracteristica-${datos.id}`).attr("onclick",`editarCaracteristica(${datos.id}, ${posicion}, ${componentes.data[posicion].caracteristicas.length-1} );`);
 		
 			setTimeout(() => {
 				$(`#icono-cambiar-caracteristica-${datos.id}`).html(`
