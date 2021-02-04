@@ -355,7 +355,8 @@ function crearCaracteristica(id_componente, posicion){
 			$(`#icono-cambiar-caracteristica-${datos.id}`).attr("onclick",`editarCaracteristica(${datos.id}, ${posicion}, ${componentes.data[posicion].caracteristicas.length-1} );`);
 			$('#icono-borrar-caracteristica--1').attr("id",`icono-borrar-caracteristica-${datos.id}`);
 			$(`#icono-borrar-caracteristica-${datos.id}`).attr("onclick",`eliminarCaracteristica(${datos.id}, ${posicion}, ${componentes.data[posicion].caracteristicas.length-1} );`);
-			// TODO: Mostrar el botón de añadir nueva componente
+
+			$('#boton-nueva-caracteristica').removeClass('hidden');
 
 			setTimeout(() => {
 				$(`#icono-cambiar-caracteristica-${datos.id}`).html(`
@@ -388,7 +389,7 @@ function eliminarCaracteristica(id, posicion_componente, posicion_caracteristica
 
 	if(id == -1){
 		$(`#fila-caracteristica--1`).remove();
-		// Mostrar añadir nueva componente
+		$('#boton-nueva-caracteristica').removeClass('hidden');
 	}
 	else
 		$.ajax({
@@ -459,6 +460,10 @@ function aniadirCaracteristica(caracteristica, posicion_componente, posicion_car
 			</td>
 		</tr>
 	`)
+
+	// Si es una nueva característica, se oculta el botón para añadir nuevas hasta que se guarde o borre
+	if(caracteristica.id == -1)
+		$('#boton-nueva-caracteristica').addClass('hidden');
 
 }
 
