@@ -437,10 +437,10 @@ function aniadirCaracteristica(caracteristica, posicion_componente, posicion_car
 	$('#body-tabla-caracteristicas').append(`
 		<tr id="fila-caracteristica-${caracteristica.id}" class="text-gray-700 dark:text-gray-400">
 			<td class="px-2 py-3 text-sm">
-				<input id="caracteristica-${caracteristica.id}-nombre" class="w-32" type="text" value="${caracteristica.nombre}"/>
+				<input id="caracteristica-${caracteristica.id}-nombre" class="w-32 dark:border-gray-600 dark:bg-gray-800 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray" type="text" value="${caracteristica.nombre}"/>
 			</td>
 			<td class="px-2 py-3 text-sm">
-				<input id="caracteristica-${caracteristica.id}-valor" class="w-32" type="text" value="${caracteristica.valor}"/>
+				<input id="caracteristica-${caracteristica.id}-valor" class="w-32 dark:border-gray-600 dark:bg-gray-800 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray" type="text" value="${caracteristica.valor}"/>
 			</td>
 			<td class="px-2 py-3">
 			
