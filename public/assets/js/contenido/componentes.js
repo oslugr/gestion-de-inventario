@@ -537,6 +537,11 @@ function editarComponente(id, posicion){
 			$(`#fecha-${id}`).html(fecha);
 			$(`#observaciones-${id}`).html(observaciones);
 			$(`#editar-${id}`).attr('onclick', `cargarFormulario('${id}', '${tipo}', '${estado}', '${fecha}', '${observaciones}', ${posicion})`);
+
+			componentes.data[posicion].estado = estado;
+			componentes.data[posicion].observaciones = observaciones;
+			componentes.data[posicion].fecha_entrada = fecha;
+			componentes.data[posicion].tipo = tipo;
 		}
 	});
 

@@ -69,7 +69,7 @@ function fila(id, tipo, version, posicion) {
 			</td>
 			<td class="px-4 py-3">
 				<div class="flex items-center space-x-4 text-sm">
-					<button id="editar-${id}" @click="openModal" onclick="cargarFormulario('${id}', '${tipo}', '${version}')" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Edit">
+					<button id="editar-${id}" @click="openModal" onclick="cargarFormulario('${id}', '${tipo}', '${version}', ${posicion})" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Edit">
 						<svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
 							<path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
 						</svg>
@@ -274,15 +274,15 @@ function eliminarCable(id, posicion){
 	});
 }
 
-function cargarFormulario(id, tipo, version){
+function cargarFormulario(id, tipo, version, posicion){
 
 	$('#editar-tipo').val(tipo);
 	$('#editar-version').val(version);
-	$('#confirmar-modal').attr('onclick', `editarCable(${id})`);
+	$('#confirmar-modal').attr('onclick', `editarCable(${id}, ${posicion})`);
 
 }
 
-function editarCable(id){
+function editarCable(id, posicion){
 
 	let tipo 	= $('#editar-tipo').val();
 	let version = $('#editar-version').val();
@@ -293,7 +293,10 @@ function editarCable(id){
 		success: function(){
 			$(`#tipo-${id}`).html(tipo);
 			$(`#version-${id}`).html(version);
-			$(`#editar-${id}`).attr('onclick', `cargarFormulario('${id}', '${tipo}', '${version}')`);
+			$(`#editar-${id}`).attr('onclick', `cargarFormulario('${id}', '${tipo}', '${version}', ${posicion})`);
+
+			cables.data[posicion].tipo = tipo;
+			cables.data[posicion].version_tipo = version;
 		}
 	});
 
