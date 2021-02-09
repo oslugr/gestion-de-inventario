@@ -511,9 +511,8 @@ function cargarFormulario(id, tipo, localizacion, observaciones, otro, posicion)
 	else{
 		$('#estado-o-tamano').html(`
 			<span class="text-gray-700 dark:text-gray-400">Estado</span>
-			<select id="editar-estado"
+			<select id="editar-estado-o-tamano"
 				class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
-				value="${otro}"
 			>
 				<option>Desconocido</option>
 				<option>Bueno</option>
@@ -523,6 +522,7 @@ function cargarFormulario(id, tipo, localizacion, observaciones, otro, posicion)
 				<option>Roto</option>
 			</select>
 		`);
+		$('#editar-estado-o-tamano').val(otro);
 	}
 
 	// cargarCaracteristicas(id, posicion);
