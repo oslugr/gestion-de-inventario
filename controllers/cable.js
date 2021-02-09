@@ -9,11 +9,11 @@ exports.obtenerCables = function (req, res) {
     if (!err) {
 
       if(tipo){
-        sql   = 'SELECT * FROM cable WHERE tipo=?';
+        sql   = 'SELECT * FROM cable WHERE tipo=? ORDER BY id';
         value = [tipo];
       }
       else{
-        sql   = 'SELECT * FROM cable';
+        sql   = 'SELECT * FROM cable ORDER BY id';
         value = [];
       }
 

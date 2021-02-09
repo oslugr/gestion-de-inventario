@@ -5,7 +5,7 @@ exports.obtenerTransformadores = function (req, res) {
 
   db.getConnection(function (err, conn) {
     if (!err) {
-      conn.query('SELECT * FROM transformador', function (err, rows) {
+      conn.query('SELECT * FROM transformador ORDER BY id', function (err, rows) {
 
         conn.release();
 

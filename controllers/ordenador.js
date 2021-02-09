@@ -17,18 +17,18 @@ exports.obtenerOrdenadores = function(req, res){
 
       if(tipo=="portatil"){
         sql = 'select O.id, O.localizacion_taller, O.observaciones, P.estado from ordenador O \
-                      inner join portatil P on O.id=P.id;';
+                      inner join portatil P on O.id=P.id ORDER BY O.id;';
       }
       else if(tipo=="sobremesa"){
         sql = 'select O.id, O.localizacion_taller, O.observaciones, S.tamano from ordenador O \
-                      inner join sobremesa S on O.id=S.id;';
+                      inner join sobremesa S on O.id=S.id ORDER BY O.id;';
       }
       else{
         sql = 'select "Portatil" as tipo, O.id, O.localizacion_taller, O.observaciones, P.estado, Null as tamano from ordenador O \
                 inner join portatil P on O.id=P.id \
               UNION \
               select "Sobremesa" as tipo, O.id, O.localizacion_taller, O.observaciones, Null as estado, S.tamano from ordenador O \
-                inner join sobremesa S on O.id=S.id;'
+                inner join sobremesa S on O.id=S.id ORDER BY id;'
       }
 
       conn.query(sql, function (err, rows) {
