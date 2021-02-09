@@ -526,43 +526,44 @@ function cargarFormulario(id, tipo, localizacion, observaciones, otro, posicion)
 	}
 
 	// cargarCaracteristicas(id, posicion);
-	// $('#confirmar-modal').attr('onclick', `editarComponente(${id}, ${posicion})`);
+	$('#confirmar-modal').attr('onclick', `editarOrdenador(${id}, '${tipo}', ${posicion})`);
 	// $('#boton-nueva-caracteristica').attr('onclick', `aniadirCaracteristica({id: -1, nombre: '', valor: ''}, ${posicion}, null, ${id}, 'crear');`);
 }
 
-function editarComponente(id, posicion){
+function editarOrdenador(id, tipo, posicion){
 
-	const tipo 	        = $('#editar-tipo').val();
-	const estado        = $('#editar-estado').val();
-	const fecha         = $('#editar-fecha').val();
+	const localizacion  = $('#editar-localizacion').val();
 	const observaciones = $('#editar-observaciones').val();
+	const otro 			= $('#editar-estado-o-tamano').val();
 	
 	const json = {
-		"tipo": tipo,
-		"estado": estado,
-		"observaciones": observaciones
+		"localizacion_taller": localizacion,
+		"observaciones": observaciones,
 	};
 
-	if(fecha)
-		json["fecha_entrada"] = fecha;
+	if(tipo == "Portatil")
+		json["estado"] = otro;
+	else if(tipo == "Sobremesa")
+		json["tamano"] = otro;
 
 	$.ajax({
-		url: `/api/componente/${id}`,
+		url: `/api/ordenador/${id}`,
 		data: JSON.stringify(json),
 		contentType: "application/json; charset=utf-8",
 		dataType: "json",
 		type: 'PUT',
 		success: function(){
-			$(`#tipo-${id}`).html(tipo);
-			$(`#estado-${id}`).html(obtenerEstadoFormateado(estado));
-			$(`#fecha-${id}`).html(fecha);
+			$(`#localizacion-${id}`).html(localizacion);
 			$(`#observaciones-${id}`).html(observaciones);
-			$(`#editar-${id}`).attr('onclick', `cargarFormulario('${id}', '${tipo}', '${estado}', '${fecha}', '${observaciones}', ${posicion})`);
+			$(`#editar-${id}`).attr('onclick', `cargarFormulario(${id}, '${tipo}', '${localizacion}', '${observaciones}', '${otro}', ${posicion})`);
 
-			componentes.data[posicion].estado = estado;
-			componentes.data[posicion].observaciones = observaciones;
-			componentes.data[posicion].fecha_entrada = fecha;
-			componentes.data[posicion].tipo = tipo;
+			if(tipo == "Portatil")
+				ordenadores.data[posicion].estado = otro;
+			else if(tipo == "Sobremesa")
+				ordenadores.data[posicion].tamano = otro;
+			
+			ordenadores.data[posicion].observaciones = observaciones;
+			ordenadores.data[posicion].localizacion_taller = localizacion;
 		}
 	});
 
