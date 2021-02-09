@@ -1,9 +1,5 @@
 $.get("/api/componente", crearInterfazComponentes);
 
-function eliminaPantallaCargando() {
-	$('#cargando').remove();
-}
-
 // -------------------------------------
 // Gestión de tarjetas superiores
 // -------------------------------------

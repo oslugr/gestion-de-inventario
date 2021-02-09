@@ -1,9 +1,5 @@
 $.get("/api/cable", crearInterfazCables);
 
-function eliminaPantallaCargando() {
-	$('#cargando').remove();
-}
-
 // -------------------------------------
 // Gestión de tarjetas superiores
 // -------------------------------------

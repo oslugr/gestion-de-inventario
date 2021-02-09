@@ -1,4 +1,8 @@
 
+function eliminaPantallaCargando() {
+	$('#cargando').remove();
+}
+
 // Funciones auxiliares que pueden servir en diferentes páginas
 function obtenerEstadoFormateado ( estado ){
     if(estado=='Desconocido' || estado=='Por revisar'){
