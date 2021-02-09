@@ -429,3 +429,136 @@ exports.eliminarOrdenadorConComponentes = function (req, res) {
     }
   });
 }
+
+exports.modificarOrdenador = function (req, res) {
+
+  if(req.body.estado)               var estado = req.body.estado.replace(/\s+/g, ' ').trim();
+  else                              var estado = null;
+  if(req.body.tamano)               var tamano = req.body.tamano.replace(/\s+/g, ' ').trim();
+  else                              var tamano = null;
+  if(req.body.observaciones)        var observaciones = req.body.observaciones.replace(/\s+/g, ' ').trim();
+  else                              var observaciones = null;
+  if(req.body.localizacion_taller)  var localizacion_taller = req.body.localizacion_taller.replace(/\s+/g, ' ').trim();
+  else                              var localizacion_taller = null;
+  var id = req.params.id;
+
+  const errores = validationResult(req);
+
+  if(!errores.isEmpty()){
+    const e = new BadRequest('Error al introducir los parámetros', errores.array(), `Error en los parámetros introducidos por el usuario al editar una componente. ${errores.array()}`);
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+  // Realiza la query según lo que se ha introducido para cambiar
+  sql = 'UPDATE ordenador SET ';
+  values = [];
+  
+  if(localizacion_taller){
+    sql += 'localizacion_taller=?'
+    values.push(localizacion_taller);
+  }
+  if(observaciones){
+    sql += ', observaciones=?'
+    values.push(observaciones);
+  }
+
+  sql += ' WHERE id=?';
+  values.push(id);
+
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.beginTransaction(function(err) {
+
+        if(!err){
+          conn.query(sql, values, function (err, rows) {
+
+            if (!err){
+              
+              if(estado || tamano){
+
+                if(estado){
+                  sql = 'UPDATE portatil SET estado=? WHERE id=?';
+                  values = [estado, id];
+                }
+                else if(tamano){
+                  sql = 'UPDATE sobremesa SET tamano=? WHERE id=?';
+                  values = [tamano, id]
+                }
+
+                conn.query(sql, values, function (err, rows) {
+
+                  if (!err){
+                    
+                    conn.commit(function(err) {
+
+                      conn.release();
+    
+                      if (err) {
+                        return conn.rollback(function() {
+                          const e = new BadRequest('Error al modificar el ordenador', ['Ocurrió algún error al modificar el ordenador'], `Error al modificar un ordenador. ${err}`);
+                          return res.status(e.statusCode).send(e.getJson());
+                        });
+                      }
+                      
+                      return res.status('200').send({
+                        estado: "Correcto",
+                        descripcion: "Ordenador modificado correctamente"
+                      });
+                    });
+      
+                  }
+                  else {
+                    return conn.rollback(function() {
+                      const e = new BadRequest('Error al modificar el ordenador', ['Ocurrió algún error al modificar el ordenador'], `Error al modificar un ordenador. ${err}`);
+                      return res.status(e.statusCode).send(e.getJson());
+                    });
+                  }
+      
+                });
+
+              }
+              else{
+
+                conn.commit(function(err) {
+
+                  conn.release();
+
+                  if (err) {
+                    return conn.rollback(function() {
+                      const e = new BadRequest('Error al modificar el ordenador', ['Ocurrió algún error al modificar el ordenador'], `Error al modificar un ordenador. ${err}`);
+                      return res.status(e.statusCode).send(e.getJson());
+                    });
+                  }
+                  
+                  return res.status('200').send({
+                    estado: "Correcto",
+                    descripcion: "Ordenador modificado correctamente"
+                  });
+                });
+
+              }
+
+            }
+            else {
+              return conn.rollback(function() {
+                const e = new BadRequest('Error al insertar el portátil', ['Ocurrió algún error al insertar el portátil'], `Error al introducir un portátil por el usuario. ${err}`);
+                return res.status(e.statusCode).send(e.getJson());
+              });
+            }
+
+          })
+        }
+        else{
+          const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al iniciar la transacción para añadir componentes\n${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+      });
+    }
+    else {
+      const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  })
+
+}
