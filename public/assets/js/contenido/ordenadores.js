@@ -1,8 +1,4 @@
-$.get("/api/componente", crearInterfazComponentes);
-
-function eliminaPantallaCargando() {
-	$('#cargando').remove();
-}
+$.get("/api/ordenador", crearInterfazOrdenadores);
 
 // -------------------------------------
 // Gestión de tarjetas superiores
@@ -12,9 +8,8 @@ function tarjeta(titulo, dato) {
 	return `
     <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
 			<div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
-				<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 19 19">
-				<path d="M13 7H7v6h6V7z" />
-				<path fill-rule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clip-rule="evenodd" />
+				<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 19 19">
+					<path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clip-rule="evenodd" />
 				</svg>
 			</div>
 			<div>
@@ -30,7 +25,7 @@ function tarjeta(titulo, dato) {
 }
 
 function crearTarjetas() {
-	let tarjetas = tarjeta('Total de componentes', componentes.cantidad);
+	let tarjetas = tarjeta('Total de ordenadores', ordenadores.cantidad);
 
 	$("#main-contenido").append(`
 		<div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
@@ -45,19 +40,21 @@ function crearTarjetas() {
 
 // Variable de estado para comprobar la página en la que se encuentra
 let pagina = 1;
-let componentes = null;
+let ordenadores = null;
 let numElementosActuales = 0;
 let paginaMax = 0;
 
-function fila(id, estado, fecha, tipo, observaciones, posicion) {
+function fila(id, tipo, localizacion, observaciones, posicion) {
 	if (observaciones == null) observaciones = "";
-	if (fecha == null) 		   fecha = "";
+	if (localizacion  == null) localizacion = "";
 
 	return `
-		<tr id="componente-${id}" class="componente text-gray-700 dark:text-gray-400">
+		<tr id="ordenador-${id}" class="ordenador text-gray-700 dark:text-gray-400">
 			<td class="px-4 py-3">
 				<div class="flex items-center text-sm">
-					<svg class="relative hidden w-6 h-6 mr-3 md:block" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" ><path d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" ></path></svg>
+					<svg class="relative hidden w-6 h-6 mr-3 md:block" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" >
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+					</svg>
 					<div>
 						<p class="font-semibold">${id}</p>
 					</div>
@@ -66,18 +63,15 @@ function fila(id, estado, fecha, tipo, observaciones, posicion) {
 			<td id="tipo-${id}" class="px-4 py-3 text-sm">
 				${tipo}
 			</td>
-			<td id="estado-${id}" class="px-4 py-3 text-sm">
-				${obtenerEstadoFormateado(estado)}
+			<td id="localizacion-${id}" class="px-4 py-3 text-sm">
+				${localizacion}
 			</td>
-			<td id="fecha-${id}" class="px-4 py-3 text-sm">
-				${fecha.split('T')[0]}
-			</td>
-			<td id="observaciones-${id}" class="px-4 py-3 text-xs">
+			<td id="observaciones-${id}" class="px-4 py-3 text-sm">
 				${observaciones}
 			</td>
 			<td class="px-4 py-3">
 				<div class="flex items-center space-x-4 text-sm">
-					<button id="editar-${id}" @click="openModal" onclick="cargarFormulario('${id}', '${tipo}', '${estado}', '${fecha.split('T')[0]}', '${observaciones}', '${posicion}' )" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Edit">
+					<button id="editar-${id}" @click="openModal" onclick="cargarFormulario()" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Edit">
 						<svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
 							<path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
 						</svg>
@@ -93,22 +87,22 @@ function fila(id, estado, fecha, tipo, observaciones, posicion) {
   `;
 }
 
-function crearComponentes() {
+function crearOrdenadores() {
 	let filas = '';
-	let elementos = componentes.data.slice((pagina - 1) * 10, (pagina - 1) * 10 + 10);
+	let elementos = ordenadores.data.slice((pagina - 1) * 10, (pagina - 1) * 10 + 10);
 
-	// Elimina la tabla de componentes
-	$('.componente').remove();
+	// Elimina la tabla de ordenadores
+	$('.ordenador').remove();
 
 	for (i = 0; i < elementos.length; i++)
-		filas += fila(elementos[i].id, elementos[i].estado, elementos[i].fecha_entrada, elementos[i].tipo, elementos[i].observaciones, (pagina - 1)*10+i );
+		filas += fila(elementos[i].id, elementos[i].tipo, elementos[i].localizacion_taller, elementos[i].observaciones, (pagina - 1)*10+i );
 
 	$("#body-tabla").append(filas);
 
 	// Actualiza el pie de la tabla
 	if(numElementosActuales){
 		numElementosActuales = elementos.length;
-		$('#cantidad-pie').html(`Mostrando ${numElementosActuales} de ${componentes.cantidad}`);
+		$('#cantidad-pie').html(`Mostrando ${numElementosActuales} de ${ordenadores.cantidad}`);
 	}
 	else
 		numElementosActuales = elementos.length;
@@ -127,8 +121,7 @@ function crearTabla() {
 						<tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
 							<th class="px-4 py-3">ID</th>
 							<th class="px-4 py-3">Tipo</th>
-							<th class="px-4 py-3">Estado</th>
-							<th class="px-4 py-3">Fecha</th>
+							<th class="px-4 py-3">Localización</th>
 							<th class="px-4 py-3">Observaciones</th>
 							<th class="px-4 py-3">Acciones</th>
 						</tr>
@@ -141,16 +134,16 @@ function crearTabla() {
 		</div>
   `);
 
-	crearComponentes();
+	crearOrdenadores();
 }
 
-function crearInterfazComponentes(data) {
-	componentes = data;
+function crearInterfazOrdenadores(data) {
+	ordenadores = data;
 	paginaMax = Math.ceil(data.cantidad/10);
 
 	eliminaPantallaCargando();
 	crearTarjetas();
-	if (componentes.cantidad) {
+	if (ordenadores.cantidad) {
 		crearTabla();
 		generarPie();
 	}
@@ -158,7 +151,7 @@ function crearInterfazComponentes(data) {
 
 function getPagina(num) {
 	pagina = num;
-	crearComponentes();
+	crearOrdenadores();
 }
 
 function generarNavegadorTabla(){
@@ -253,7 +246,7 @@ function generarPie() {
 	$("#main-tabla").append(`
 		<div id="pie-tabla" class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800">
 			<span id="cantidad-pie" class="flex items-center col-span-3">
-				Mostrando ${numElementosActuales} de ${componentes.data.length}
+				Mostrando ${numElementosActuales} de ${ordenadores.data.length}
 			</span>
 			<span class="col-span-2"></span>
 			<!-- Pagination -->
