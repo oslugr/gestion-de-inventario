@@ -612,16 +612,16 @@
                   Editar ordenador
                 </p>
                 <!-- Modal description -->
-                <div class="text-sm mt-5">
                   <label class="block text-sm my-3">
-                    <span class="text-gray-700 dark:text-gray-400">Tipo</span>
-                    <input id="editar-tipo"
+                    <span class="text-gray-700 dark:text-gray-400">Localizacion</span>
+                    <input id="editar-localizacion"
                       class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                       placeholder=""
                     />
                   </label>
 
-                  <label class="block text-sm my-3">
+
+                  <!-- <label class="block text-sm my-3">
                     <span class="text-gray-700 dark:text-gray-400">Estado</span>
                     <select id="editar-estado"
                       class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
@@ -633,15 +633,7 @@
                       <option>No aprovechable</option>
                       <option>Roto</option>
                     </select>
-                  </label>
-
-                  <label class="block text-sm my-3">
-                    <span class="text-gray-700 dark:text-gray-400">Fecha</span>
-                    <input id="editar-fecha"
-                      class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                      placeholder="Formato: 2000-01-31"
-                    />
-                  </label>
+                  </label> -->
 
                   <label class="block text-sm my-3">
                     <span class="text-gray-700 dark:text-gray-400">Observaciones</span>
@@ -651,39 +643,8 @@
                     />
                   </label>
 
-                  <label class="block text-sm my-3">
-                    <span class="text-gray-700 dark:text-gray-400">Características</span>
-                    <div id="main-tabla-caracteristicas" class="mt-1 w-full overflow-hidden rounded-lg shadow-xs">
-
-                      <div class="w-full overflow-x-auto">
-                        <table class="w-full whitespace-no-wrap">
-                          <thead>
-                            <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
-                              <th class="px-2 py-3">Nombre</th>
-                              <th class="px-2 py-3">Valor</th>
-                              <th class="px-2 py-3">Acciones</th>
-                            </tr>
-                          </thead>
-                          <tbody id="body-tabla-caracteristicas" class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-                          </tbody>
-                        </table>
-                      </div>                  
-                    </div>
-
-                    <!-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg> -->
-
-                    <a id="boton-nueva-caracteristica" class="flex items-center justify-between p-4 mb-8 text-sm font-semibold text-gray-500 dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple">
-                      <div class="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 mr-2">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
-                        <span>Añadir una nueva característica</span>
-                      </div>
-                    </a>
+                  <label id="estado-o-tamano" class="block text-sm my-3">
                   </label>
-                </div>
               </div>
               <footer
                 class="flex flex-col items-center justify-end px-6 py-3 -mx-6 -mb-4 space-y-4 sm:space-y-0 sm:space-x-6 sm:flex-row bg-gray-50 dark:bg-gray-800"

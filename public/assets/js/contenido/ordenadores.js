@@ -44,7 +44,7 @@ let ordenadores = null;
 let numElementosActuales = 0;
 let paginaMax = 0;
 
-function fila(id, tipo, localizacion, observaciones, posicion) {
+function fila(id, tipo, localizacion, observaciones, otro, posicion) {
 	if (observaciones == null) observaciones = "";
 	if (localizacion  == null) localizacion = "";
 
@@ -71,7 +71,7 @@ function fila(id, tipo, localizacion, observaciones, posicion) {
 			</td>
 			<td class="px-4 py-3">
 				<div class="flex items-center space-x-4 text-sm">
-					<button id="editar-${id}" @click="openModal" onclick="cargarFormulario()" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Edit">
+					<button id="editar-${id}" @click="openModal" onclick="cargarFormulario(${id}, '${tipo}', '${localizacion}', '${observaciones}', '${otro}', ${posicion})" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Edit">
 						<svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
 							<path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
 						</svg>
@@ -94,8 +94,12 @@ function crearOrdenadores() {
 	// Elimina la tabla de ordenadores
 	$('.ordenador').remove();
 
-	for (i = 0; i < elementos.length; i++)
-		filas += fila(elementos[i].id, elementos[i].tipo, elementos[i].localizacion_taller, elementos[i].observaciones, (pagina - 1)*10+i );
+	for (i = 0; i < elementos.length; i++){
+		if(elementos[i].tipo == "Portatil")
+			filas += fila(elementos[i].id, elementos[i].tipo, elementos[i].localizacion_taller, elementos[i].observaciones, elementos[i].estado, (pagina - 1)*10+i );
+		else
+			filas += fila(elementos[i].id, elementos[i].tipo, elementos[i].localizacion_taller, elementos[i].observaciones, elementos[i].tamano, (pagina - 1)*10+i );
+	}
 
 	$("#body-tabla").append(filas);
 
@@ -491,15 +495,39 @@ function eliminarComponente(id, posicion){
 	});
 }
 
-function cargarFormulario(id, tipo, estado, fecha, observaciones, posicion){
+function cargarFormulario(id, tipo, localizacion, observaciones, otro, posicion){
 
-	$('#editar-tipo').val(tipo);
-	$(`#editar-estado`).val(estado);
-	$('#editar-fecha').val(fecha);
+	$('#editar-localizacion').val(localizacion);
 	$('#editar-observaciones').val(observaciones);
-	cargarCaracteristicas(id, posicion);
-	$('#confirmar-modal').attr('onclick', `editarComponente(${id}, ${posicion})`);
-	$('#boton-nueva-caracteristica').attr('onclick', `aniadirCaracteristica({id: -1, nombre: '', valor: ''}, ${posicion}, null, ${id}, 'crear');`);
+	if(tipo == "Sobremesa"){
+		$('#estado-o-tamano').html(`
+			<span class="text-gray-700 dark:text-gray-400">Tamaño</span>
+			<input id="editar-estado-o-tamano"
+				class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+				placeholder="" value="${otro}"
+			/>
+		`);
+	}
+	else{
+		$('#estado-o-tamano').html(`
+			<span class="text-gray-700 dark:text-gray-400">Estado</span>
+			<select id="editar-estado"
+				class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+				value="${otro}"
+			>
+				<option>Desconocido</option>
+				<option>Bueno</option>
+				<option>Regular</option>
+				<option>Por revisar</option>
+				<option>No aprovechable</option>
+				<option>Roto</option>
+			</select>
+		`);
+	}
+
+	// cargarCaracteristicas(id, posicion);
+	// $('#confirmar-modal').attr('onclick', `editarComponente(${id}, ${posicion})`);
+	// $('#boton-nueva-caracteristica').attr('onclick', `aniadirCaracteristica({id: -1, nombre: '', valor: ''}, ${posicion}, null, ${id}, 'crear');`);
 }
 
 function editarComponente(id, posicion){
