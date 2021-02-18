@@ -96,6 +96,7 @@ function fila(id, tipo, version, posicion) {
 function crearCables() {
 	let filas = '';
 	let elementos = cables.data.slice((pagina - 1) * 10, (pagina - 1) * 10 + 10);
+	paginaMax = Math.ceil(cables.cantidad/10);
 
 	// Elimina la tabla de cables
 	$('.cable').remove();
@@ -272,6 +273,12 @@ function eliminarCable(id, posicion){
 		url: `/api/cable/id/${id}`,
 		type: 'DELETE',
 		success: function(){
+			cables.cantidad--;
+			
+			if(cables.cantidad%10 == 0){
+				pagina--;
+			}
+
 			cables.data.splice(posicion,1);
 			crearCables();
 			generarPie();
