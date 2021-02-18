@@ -71,10 +71,13 @@ exports.insertarCable = function (req, res) {
 
         conn.release();
 
+        let id_cable = rows.insertId;
+
         if (!err) {
           res.status('200').send({
             estado: "Correcto",
-            descripcion: "Cable insertado correctamente"
+            descripcion: "Cable insertado correctamente",
+            id: id_cable
           });
         }
         else {

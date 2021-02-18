@@ -21,6 +21,18 @@ function tarjeta(titulo, dato) {
 				</p>
 			</div>
     </div>
+	<div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 cursor-pointer" onclick="cargarFormularioVacio()" @click="openModal">
+			<div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
+				<svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+				</svg>
+			</div>
+			<div>
+				<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+				Añadir cable
+				</p>
+			</div>
+    </div>
     `
 }
 
@@ -278,6 +290,13 @@ function cargarFormulario(id, tipo, version, posicion){
 
 }
 
+function cargarFormularioVacio(){
+
+	$('#editar-tipo').val('');
+	$('#editar-version').val('');
+	$('#confirmar-modal').attr('onclick', `crearCable()`);
+}
+
 function editarCable(id, posicion){
 
 	let tipo 	= $('#editar-tipo').val();
@@ -293,6 +312,33 @@ function editarCable(id, posicion){
 
 			cables.data[posicion].tipo = tipo;
 			cables.data[posicion].version_tipo = version;
+		}
+	});
+
+}
+
+var hola;
+
+function crearCable(){
+
+	let tipo 	= $('#editar-tipo').val();
+	let version = $('#editar-version').val();
+	
+	$.ajax({
+		url: `/api/cable/${tipo}/${version}`,
+		type: 'POST',
+		success: function(data){
+			let id = data.id;
+			cables.cantidad++;
+
+			cables.data.push({
+				id: id,
+				tipo: tipo,
+				version_tipo: version
+			})
+
+			$('#elementos-totales-tarjeta').html(cables.cantidad);
+			crearCables();
 		}
 	});
 
