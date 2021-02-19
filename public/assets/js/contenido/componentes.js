@@ -92,6 +92,7 @@ function fila(id, estado, fecha, tipo, observaciones, posicion) {
 function crearComponentes() {
 	let filas = '';
 	let elementos = componentes.data.slice((pagina - 1) * 10, (pagina - 1) * 10 + 10);
+	paginaMax = Math.ceil(componentes.cantidad/10);
 
 	// Elimina la tabla de componentes
 	$('.componente').remove();
@@ -484,6 +485,12 @@ function eliminarComponente(id, posicion){
 		url: `/api/componente/${id}`,
 		type: 'DELETE',
 		success: function(){
+			componentes.cantidad--;
+
+			if(componentes.cantidad%10 == 0){
+				pagina--;
+			}
+
 			componentes.data.splice(posicion,1);
 			crearComponentes();
 			generarPie();

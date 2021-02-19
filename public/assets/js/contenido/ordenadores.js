@@ -90,6 +90,7 @@ function fila(id, tipo, localizacion, observaciones, otro, posicion) {
 function crearOrdenadores() {
 	let filas = '';
 	let elementos = ordenadores.data.slice((pagina - 1) * 10, (pagina - 1) * 10 + 10);
+	paginaMax = Math.ceil(ordenadores.cantidad/10);
 
 	// Elimina la tabla de ordenadores
 	$('.ordenador').remove();
@@ -485,6 +486,13 @@ function eliminarOrdenador(id, posicion){
 		url: `/api/ordenador/${id}`,
 		type: 'DELETE',
 		success: function(){
+
+			ordenadores.cantidad--;
+
+			if(ordenadores.cantidad%10 == 0){
+				pagina--;
+			}
+
 			ordenadores.data.splice(posicion,1);
 			crearOrdenadores();
 			generarPie();
