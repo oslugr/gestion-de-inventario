@@ -131,3 +131,53 @@ exports.eliminarTransformador = function (req, res) {
   })
 
 }
+
+exports.editarTransformador = function (req, res) {
+  
+  // Validación de los valores introducidos
+  if(req.params.id && req.params.voltaje && req.params.amperaje){
+    var id       = req.params.id.replace(/\s+/g, ' ').trim();
+    var voltaje  = req.params.voltaje.replace(/\s+/g, ' ').trim();
+    var amperaje = req.params.amperaje.replace(/\s+/g, ' ').trim();
+  }
+  else{
+    const e = new BadRequest('Parámetros mal introducidos', [{ msg: "Valor de voltaje o amperaje no válido"}], "Error en los parámetros introducidos por el usuario al añadir un transformador");
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+
+      var params = [voltaje,amperaje, id];
+      var sql    = 'UPDATE transformador SET voltaje=?, amperaje=? WHERE id=?;';
+      
+      conn.query(sql, params, function (err, rows) {
+
+        conn.release();
+
+        if (!err) {
+          if(rows.affectedRows){
+            res.status('200').send({
+              estado: "Correcto",
+              descripcion: "Transformador actualizado correctamente"
+            });
+          }
+          else{
+            const e = new BadRequest('No se ha actualizado ningún transformador. Es posible que este no exista', ["Es posible que el transformador no exista"], 'Intento de modificar transformador inexistente');
+            return res.status(e.statusCode).send(e.getJson());
+          }
+        }
+        else {
+          const e = new APIError('Internal Server Error', '500', 'Error al modificar los elementos de la base de datos', `Error al modificar cables de la base de datos\n${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+
+      })
+    }
+    else {
+      const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  })
+
+}
