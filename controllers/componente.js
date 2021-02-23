@@ -67,10 +67,14 @@ function insertarCaracteristicas(caracteristicas, id_componente, conn, i, res, c
   if(i<caracteristicas.length){
     conn.query('INSERT INTO caracteristica(nombre, valor) VALUES (?)', [[caracteristicas[i].nombre,caracteristicas[i].valor]], function (err, rows) {
       if (!err){
-                
-        conn.query('INSERT INTO tiene VALUES (?)', [[id_componente, rows.insertId]], function (err, rows) {
+        
+        let id_caracteristica = rows.insertId;
+
+        conn.query('INSERT INTO tiene VALUES (?)', [[id_componente, id_caracteristica]], function (err, rows) {
           if (!err){
-                    
+            
+            caracteristicas[i]['id'] = id_caracteristica;
+
             return callback(caracteristicas, id_componente, conn, i+1, res, callback);
       
           }
@@ -106,7 +110,8 @@ function insertarCaracteristicas(caracteristicas, id_componente, conn, i, res, c
       return res.status('200').send({
         estado: "Correcto",
         descripcion: "Componente añadida correctamente",
-        id: id_componente
+        id: id_componente,
+        caracteristicas: caracteristicas
       });
     });
   }
