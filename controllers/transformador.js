@@ -55,7 +55,8 @@ exports.insertarTransformador = function (req, res) {
         if (!err) {
           res.status('200').send({
             estado: "Correcto",
-            descripcion: "Transformador insertado correctamente"
+            descripcion: "Transformador insertado correctamente",
+            id: rows.insertId
           });
         }
         else {
