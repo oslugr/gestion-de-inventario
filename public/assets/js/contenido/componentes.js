@@ -610,7 +610,7 @@ function crearComponente(){
 				estado: estado,
 				fecha_entrada: fecha,
 				observaciones: observaciones,
-				caracteristicas: caracteristicas
+				caracteristicas: data.caracteristicas
 			})
 
 			$('#elementos-totales-tarjeta').html(componentes.cantidad);
