@@ -21,6 +21,30 @@ function tarjeta(titulo, dato) {
 				</p>
 			</div>
     </div>
+	<div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 cursor-pointer" onclick="cargarFormularioVacio('Sobremesa')" @click="openModal">
+			<div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
+				<svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+				</svg>
+			</div>
+			<div>
+				<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+				Añadir sobremesa
+				</p>
+			</div>
+    </div>
+	<div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 cursor-pointer" onclick="cargarFormularioVacio('Portatil')" @click="openModal">
+			<div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
+				<svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+				</svg>
+			</div>
+			<div>
+				<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+				Añadir portatil
+				</p>
+			</div>
+    </div>
     `
 }
 
@@ -536,6 +560,91 @@ function cargarFormulario(id, tipo, localizacion, observaciones, otro, posicion)
 	// cargarCaracteristicas(id, posicion);
 	$('#confirmar-modal').attr('onclick', `editarOrdenador(${id}, '${tipo}', ${posicion})`);
 	// $('#boton-nueva-caracteristica').attr('onclick', `aniadirCaracteristica({id: -1, nombre: '', valor: ''}, ${posicion}, null, ${id}, 'crear');`);
+}
+
+function cargarFormularioVacio(tipo){
+
+	$('#editar-localizacion').val('');
+	$('#editar-observaciones').val('');
+	
+	if(tipo == "Sobremesa"){
+		$('#estado-o-tamano').html(`
+			<span class="text-gray-700 dark:text-gray-400">Tamaño</span>
+			<input id="editar-estado-o-tamano"
+				class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+				placeholder="" value=""
+			/>
+		`);
+	}
+	else{
+		$('#estado-o-tamano').html(`
+			<span class="text-gray-700 dark:text-gray-400">Estado</span>
+			<select id="editar-estado-o-tamano"
+				class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+			>
+				<option>Desconocido</option>
+				<option>Bueno</option>
+				<option>Regular</option>
+				<option>Por revisar</option>
+				<option>No aprovechable</option>
+				<option>Roto</option>
+			</select>
+		`);
+		$('#editar-estado-o-tamano').val('');
+	}
+
+	// cargarCaracteristicas(id, posicion);
+	$('#confirmar-modal').attr('onclick', `crearOrdenador('${tipo}')`);
+}
+
+
+function crearOrdenador(tipo){
+
+	const localizacion  = $('#editar-localizacion').val();
+	const observaciones = $('#editar-observaciones').val();
+	const otro 			= $('#editar-estado-o-tamano').val();
+	
+	const json = {
+		"localizacion_taller": localizacion,
+		"observaciones": observaciones
+	};
+
+	if(tipo == "Portatil")
+		json["estado"] = otro;
+	else if(tipo == "Sobremesa")
+		json["tamano"] = otro;
+
+	$.ajax({
+		url: `/api/ordenador/${tipo}/`,
+		data: JSON.stringify(json),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		type: 'POST',
+		success: function(data){
+			ordenadores.cantidad++;
+
+			let json = {
+				id: data.id,
+				localizacion_taller: localizacion,
+				observaciones: observaciones, 
+				tipo: tipo
+			};
+
+			if(tipo == "Portatil"){
+				json["estado"] = otro;
+				json["tamano"] = null;
+			}
+			else if(tipo == "Sobremesa"){
+				json["estado"] = null;
+				json["tamano"] = otro;
+			}
+
+			ordenadores.data.push(json);
+			$(`#elementos-totales-tarjeta`).html(ordenadores.cantidad);
+			crearOrdenadores();
+		}
+	});
+
 }
 
 function editarOrdenador(id, tipo, posicion){

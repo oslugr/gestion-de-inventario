@@ -82,7 +82,9 @@ exports.crearSobremesa = function (req, res){
 
             if (!err){
               
-              conn.query('INSERT INTO sobremesa VALUES (?)', [[rows.insertId, tamano]], function (err, rows) {
+              let id_ordenador = rows.insertId;
+
+              conn.query('INSERT INTO sobremesa VALUES (?)', [[id_ordenador, tamano]], function (err, rows) {
 
                 if (!err){
                   
@@ -99,7 +101,8 @@ exports.crearSobremesa = function (req, res){
                     
                     return res.status('200').send({
                       estado: "Correcto",
-                      descripcion: "Sobremesa añadido correctamente"
+                      descripcion: "Sobremesa añadido correctamente",
+                      id: id_ordenador
                     });
                   });
     
@@ -161,7 +164,9 @@ exports.crearPortatil = function (req, res){
 
             if (!err){
               
-              conn.query('INSERT INTO portatil VALUES (?)', [[rows.insertId, estado]], function (err, rows) {
+              let id_ordenador = rows.insertId;
+
+              conn.query('INSERT INTO portatil VALUES (?)', [[id_ordenador, estado]], function (err, rows) {
 
                 if (!err){
                   
@@ -178,7 +183,8 @@ exports.crearPortatil = function (req, res){
                     
                     return res.status('200').send({
                       estado: "Correcto",
-                      descripcion: "Portátil añadido correctamente"
+                      descripcion: "Portátil añadido correctamente",
+                      id: id_ordenador
                     });
                   });
     
