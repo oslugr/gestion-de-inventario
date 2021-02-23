@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ordenadores</title>
+    <title>Transformadores</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
@@ -16,7 +16,7 @@
     <script src="./assets/js/init-alpine.js"></script>
     <script src="./assets/js/jquery/jquery.min.js"></script>
     <script src="./assets/js/contenido/aux.js"></script>
-    <script src="./assets/js/contenido/ordenadores.js"></script>
+    <script src="./assets/js/contenido/transformadores.js"></script>
 
     <!-- Para el modal -->
     <script src="./assets/js/focus-trap.js" defer></script>
@@ -115,12 +115,8 @@
               </a>
             </li>
             <li class="relative px-6 py-3">
-              <span
-                class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
-                aria-hidden="true"
-              ></span>
               <a
-                class="inline-flex items-center w-full text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100"
+                class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
                 href="ordenadores.html"
               >
                 <svg
@@ -185,8 +181,12 @@
               </a>
             </li>
             <li class="relative px-6 py-3">
+              <span
+                class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
+                aria-hidden="true"
+              ></span>
               <a
-                class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
+                class="inline-flex items-center w-full text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100"
                 href="transformadores.html"
               >
                 <svg
@@ -316,12 +316,8 @@
               </a>
             </li>
             <li class="relative px-6 py-3">
-              <span
-                class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
-                aria-hidden="true"
-              ></span>
               <a
-                class="inline-flex items-center w-full text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100"
+                class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
                 href="ordenadores.html"
               >
                 <svg
@@ -386,8 +382,12 @@
               </a>
             </li>
             <li class="relative px-6 py-3">
+              <span
+                class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
+                aria-hidden="true"
+              ></span>
               <a
-                class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
+                class="inline-flex items-center w-full text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100"
                 href="transformadores.html"
               >
                 <svg
@@ -572,7 +572,7 @@
             <h2
               class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
             >
-              Ordenadores
+              Transformadores
             </h2>
 
             <div id="cargando" class="grid w-full h-full my-20 block z-50 justify-items-center">
@@ -644,47 +644,31 @@
                 </button>
               </header>
               <!-- Modal body -->
-              <div class="mt-4 mb-6 overflow-auto max-h-popup">
+              <div class="mt-4 mb-6">
                 <!-- Modal title -->
                 <p
                   class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300"
                 >
-                  Editar ordenador
+                  Editar transformador
                 </p>
                 <!-- Modal description -->
+                <div class="text-sm mt-5">
                   <label class="block text-sm my-3">
-                    <span class="text-gray-700 dark:text-gray-400">Localizacion</span>
-                    <input id="editar-localizacion"
+                    <span class="text-gray-700 dark:text-gray-400">Voltaje</span>
+                    <input id="editar-tipo"
                       class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                       placeholder=""
                     />
                   </label>
 
-
-                  <!-- <label class="block text-sm my-3">
-                    <span class="text-gray-700 dark:text-gray-400">Estado</span>
-                    <select id="editar-estado"
-                      class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
-                    >
-                      <option>Desconocido</option>
-                      <option>Bueno</option>
-                      <option>Regular</option>
-                      <option>Por revisar</option>
-                      <option>No aprovechable</option>
-                      <option>Roto</option>
-                    </select>
-                  </label> -->
-
                   <label class="block text-sm my-3">
-                    <span class="text-gray-700 dark:text-gray-400">Observaciones</span>
-                    <input id="editar-observaciones"
+                    <span class="text-gray-700 dark:text-gray-400">Amperaje</span>
+                    <input id="editar-version"
                       class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                       placeholder=""
                     />
                   </label>
-
-                  <label id="estado-o-tamano" class="block text-sm my-3">
-                  </label>
+                </div>
               </div>
               <footer
                 class="flex flex-col items-center justify-end px-6 py-3 -mx-6 -mb-4 space-y-4 sm:space-y-0 sm:space-x-6 sm:flex-row bg-gray-50 dark:bg-gray-800"
