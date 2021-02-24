@@ -1,5 +1,6 @@
 const db = require('../db/pool').pool;
 const { APIError, NotFound, BadRequest } = require('../aux/error');
+const { validationResult } = require('express-validator');
 
 exports.obtenerTransformadores = function (req, res) {
 
@@ -63,39 +64,79 @@ exports.obtenerTransformadores = function (req, res) {
 
 exports.insertarTransformador = function (req, res) {
 
-  // Validación de los valores introducidos
-  if(req.params.voltaje && req.params.amperaje){
-    var voltaje  = req.params.voltaje.replace(/\s+/g, ' ').trim();
-    var amperaje = req.params.amperaje.replace(/\s+/g, ' ').trim();
+  const errores = validationResult(req);
+
+  if(!errores.isEmpty()){
+    const e = new BadRequest('Error al introducir los parámetros', errores.array(), `Error en los parámetros introducidos por el usuario al añadir un transformador. ${errores.array()}`);
+    return res.status(e.statusCode).send(e.getJson());
   }
   else{
-    const e = new BadRequest('Parámetros mal introducidos', [{ msg: "Valor de voltaje o amperaje no válido"}], "Error en los parámetros introducidos por el usuario al añadir un transformador");
-    return res.status(e.statusCode).send(e.getJson());
+    var voltaje = req.body.voltaje;
+    var amperaje = req.body.amperaje;
+    var corresponde = null;
+
+    if(req.body.corresponde){
+      corresponde = req.body.corresponde;
+    }
+
   }
 
   db.getConnection(function (err, conn) {
     if (!err) {
 
-      var params = [[voltaje, amperaje]];
-      var sql    = 'INSERT INTO transformador(voltaje, amperaje) VALUES (?)';
+      conn.beginTransaction(function(err) {
 
-      conn.query(sql, params, function (err, rows) {
+        var params = [[voltaje, amperaje]];
+        var sql    = 'INSERT INTO transformador(voltaje, amperaje) VALUES (?)';
 
-        conn.release();
+        conn.query(sql, params, function (err, rows) {
 
-        if (!err) {
-          res.status('200').send({
-            estado: "Correcto",
-            descripcion: "Transformador insertado correctamente",
-            id: rows.insertId
-          });
-        }
-        else {
-          const e = new BadRequest('Error al introducir los parámetros', ['Voltaje o amperaje incorrecto.'], `Error al introducir un transformador por el usuario. ${err}`);
-          return res.status(e.statusCode).send(e.getJson());
-        }
+          let id_transformador = rows.insertId;
 
-      })
+          if (!err) {
+            
+            if(corresponde.tipo="Portatil"){
+              var sql = "INSERT INTO corresponde_portatil VALUES(?)";
+            }
+            else if(corresponde.tipo="Componente"){
+              var sql = "INSERT INTO corresponde_componente VALUES(?)";
+            }
+
+            conn.query(sql, [[id_transformador, corresponde.id]], function (err, rows){
+
+              if(!err){
+
+                conn.commit(function(err) {
+
+                  conn.release();
+
+                  if(err){
+                    const e = new BadRequest(`Ha ocurrido algún error al introducir los parámetros`, [''], `Error al introducir un transformador por el usuario. ${err}`);
+                    return res.status(e.statusCode).send(e.getJson());
+                  }
+
+                  res.status('200').send({
+                    estado: "Correcto",
+                    descripcion: "Transformador insertado correctamente",
+                    id: id_transformador
+                  });
+
+                });
+              }
+              else{
+                const e = new BadRequest(`Error al introducir los parámetros, posiblemente el id del ${corresponde.tipo} no sea válido`, [`Id del ${corresponde.tipo} no válido`], `Error al introducir un transformador por el usuario. ${err}`);
+              return res.status(e.statusCode).send(e.getJson());
+              }
+
+            });
+          }
+          else {
+            const e = new BadRequest('Error al introducir los parámetros', ['Voltaje o amperaje incorrecto.'], `Error al introducir un transformador por el usuario. ${err}`);
+            return res.status(e.statusCode).send(e.getJson());
+          }
+
+        })
+      });
     }
     else {
       const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
