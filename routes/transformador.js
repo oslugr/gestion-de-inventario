@@ -9,6 +9,9 @@ router.get	  ('/',                   controlador.obtenerTransformadores);
 // Añade un transformador de un voltaje y amperaje
 router.post	  ('/:voltaje/:amperaje', controlador.insertarTransformador);
 
+// Asigna un transformador a un portatil
+router.post	  ('/:id_t/portatil/:id_p', controlador.asignarPortatil);
+
 // Edita un transformador
 router.put	  ('/:id/:voltaje/:amperaje', controlador.editarTransformador);
 
