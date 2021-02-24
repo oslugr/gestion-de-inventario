@@ -27,7 +27,7 @@
     "cssnano": "^4.1.10",
     "cz-conventional-changelog": "^3.3.0",
     "express": "^4.17.1",
-    "express-validator": "^6.9.2",
+    "express-validator": "^6.10.0",
     "jquery": "^3.5.1",
     "mysql": "^2.18.1",
     "postcss-cli": "^7.1.2",
