@@ -209,44 +209,128 @@ exports.eliminarTransformador = function (req, res) {
 
 exports.editarTransformador = function (req, res) {
   
-  // Validación de los valores introducidos
-  if(req.params.id && req.params.voltaje && req.params.amperaje){
-    var id       = req.params.id.replace(/\s+/g, ' ').trim();
-    var voltaje  = req.params.voltaje.replace(/\s+/g, ' ').trim();
-    var amperaje = req.params.amperaje.replace(/\s+/g, ' ').trim();
+  const errores = validationResult(req);
+
+  if(!errores.isEmpty()){
+    const e = new BadRequest('Error al introducir los parámetros', errores.array(), `Error en los parámetros introducidos por el usuario al editar un transformador. ${errores.array()}`);
+    return res.status(e.statusCode).send(e.getJson());
   }
   else{
-    const e = new BadRequest('Parámetros mal introducidos', [{ msg: "Valor de voltaje o amperaje no válido"}], "Error en los parámetros introducidos por el usuario al añadir un transformador");
-    return res.status(e.statusCode).send(e.getJson());
+    var id          = req.params.id.replace(/\s+/g, ' ').trim();
+    var voltaje     = req.body.voltaje;
+    var amperaje    = req.body.amperaje;
+    var corresponde = null;
+
+    if(req.body.corresponde){
+      corresponde = req.body.corresponde;
+    }
+
   }
 
   db.getConnection(function (err, conn) {
     if (!err) {
 
-      var params = [voltaje,amperaje, id];
-      var sql    = 'UPDATE transformador SET voltaje=?, amperaje=? WHERE id=?;';
-      
-      conn.query(sql, params, function (err, rows) {
+      conn.beginTransaction(function(err) {
 
-        conn.release();
+        if(!err){
 
-        if (!err) {
-          if(rows.affectedRows){
-            res.status('200').send({
-              estado: "Correcto",
-              descripcion: "Transformador actualizado correctamente"
-            });
-          }
-          else{
-            const e = new BadRequest('No se ha actualizado ningún transformador. Es posible que este no exista', ["Es posible que el transformador no exista"], 'Intento de modificar transformador inexistente');
-            return res.status(e.statusCode).send(e.getJson());
-          }
+          var params = [voltaje,amperaje, id];
+          var sql    = 'UPDATE transformador SET voltaje=?, amperaje=? WHERE id=?;';
+          
+          conn.query(sql, params, function (err, rows) {
+
+            if(err){
+              const e = new BadRequest('No se ha actualizado ningún transformador. Es posible que este no exista', ["Es posible que el transformador no exista"], 'Intento de modificar transformador inexistente');
+              conn.release();
+              return res.status(e.statusCode).send(e.getJson());
+            }
+            
+            if(corresponde){
+
+              conn.query('DELETE FROM corresponde_portatil where id_transformador = ?',[id], function(err,rows){
+                
+                if(!err){
+
+                  conn.query('DELETE FROM corresponde_componente where id_transformador = ?',[id], function(err,rows){
+                    
+                    if(!err){
+
+                      if(corresponde.tipo == "Portatil")
+                        sql = 'INSERT INTO corresponde_portatil VALUES (?)';
+                      else
+                        sql = 'INSERT INTO corresponde_componente VALUES (?)';
+
+                      conn.query(sql, [[id, corresponde.id]], function(err,rows){
+
+                        if(!err){
+
+                          conn.commit(function(err, rows){
+
+                            conn.release();
+
+                            if(!err){
+                              return res.status('200').send({
+                                estado: "Correcto",
+                                descripcion: "Transformador actualizado correctamente"
+                              });
+                            }
+                            else {
+                              const e = new BadRequest('No se ha actualizado el transformador. Error al encontrar la correspondencia actual', ["Es posible que el transformador o el elementos al que lo quieres asociar no exista"], `Intento de modificar transformador ${err}`);
+                              return res.status(e.statusCode).send(e.getJson());
+                            }
+
+                          });
+
+                        }
+                        else{
+                          const e = new BadRequest('No se ha actualizado el transformador. Error al encontrar la correspondencia actual', ["Es posible que el transformador o el elementos al que lo quieres asociar no exista"], `Intento de modificar transformador ${err}`);
+                          conn.release();
+                          return res.status(e.statusCode).send(e.getJson());
+                        }
+
+                      })
+
+                    }
+                    else{
+                      const e = new BadRequest('No se ha actualizado el transformador. Error al encontrar la correspondencia actual', ["Es posible que el transformador o el elementos al que lo quieres asociar no exista"], `Intento de modificar transformador ${err}`);
+                      conn.release();
+                      return res.status(e.statusCode).send(e.getJson());
+                    }
+
+                  })
+
+                }
+                else{
+                  const e = new BadRequest('No se ha actualizado el transformador. Error al encontrar la correspondencia actual', ["Es posible que el transformador o el elementos al que lo quieres asociar no exista"], `Intento de modificar transformador ${err}`);
+                  conn.release();
+                  return res.status(e.statusCode).send(e.getJson());
+                }
+              
+              });
+
+            }
+            else{
+
+              conn.commit(function(err) {
+
+                conn.release();
+
+                if(err){
+                  const e = new BadRequest(`Ha ocurrido algún error al introducir los parámetros`, [''], `Error al introducir un transformador por el usuario. ${err}`);
+                  return res.status(e.statusCode).send(e.getJson());
+                }
+
+                return res.status('200').send({
+                  estado: "Correcto",
+                  descripcion: "Transformador actualizado correctamente",
+                  id: id_transformador
+                });
+
+              });
+
+            }
+          })
         }
-        else {
-          const e = new APIError('Internal Server Error', '500', 'Error al modificar los elementos de la base de datos', `Error al modificar cables de la base de datos\n${err}`);
-          return res.status(e.statusCode).send(e.getJson());
-        }
-
       })
     }
     else {

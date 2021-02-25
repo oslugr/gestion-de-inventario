@@ -20,7 +20,13 @@ router.post	  ('/', [
 router.post	  ('/:id_t/portatil/:id_p', controlador.asignarPortatil);
 
 // Edita un transformador
-router.put	  ('/:id/:voltaje/:amperaje', controlador.editarTransformador);
+router.put	  ('/:id', [
+	body('voltaje').isInt().not().isEmpty().withMessage('Voltaje no válido'),
+	body('amperaje').isInt().not().isEmpty().withMessage('Amperaje no válido'),
+	body('corresponde').optional().isObject().withMessage('Corresponde no está bien introducido'),
+	body('corresponde.tipo').if(body('corresponde').exists()).isIn(['Componente', 'Portatil']).withMessage('Tipo de corresponde no válido. Los valores válidos son: "Componente", "Portatil"').not().isEmpty().withMessage('Tipo de corresponde no puede ser vacío'),
+	body('corresponde.id').if(body('corresponde').exists()).isInt().not().isEmpty().withMessage('Id de corresponde no válido')
+], controlador.editarTransformador);
 
 // Elimina un transformador con un voltaje y amperaje concretos
 router.delete ('/:voltaje/:amperaje', controlador.eliminarTransformador);
