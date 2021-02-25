@@ -342,19 +342,43 @@ function crearTransformador(){
 
 	let voltaje  = $('#editar-voltaje').val();
 	let amperaje = $('#editar-amperaje').val();
+	let c_tipo 	 = $('#corresponde-tipo').val();
+	let c_id	 = $('#corresponde-id').val();	
+
+	let json = {
+		voltaje: voltaje, 
+		amperaje: amperaje
+	}
+
+	if(c_id){
+		json['corresponde'] = {
+			tipo: c_tipo,
+			id: c_id
+		}
+	}
 	
 	$.ajax({
-		url: `/api/transformador/${voltaje}/${amperaje}`,
+		url: `/api/transformador/`,
 		type: 'POST',
+		data: JSON.stringify(json),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
 		success: function(data){
 			let id = data.id;
 			transformadores.cantidad++;
 
-			transformadores.data.push({
+			let response_json = {
 				id: id,
 				voltaje: voltaje,
 				amperaje: amperaje
-			})
+			}
+
+			if(json.corresponde)
+				response_json.corresponde = json.corresponde;
+			else
+				response_json.corresponde = null
+
+			transformadores.data.push(response_json);
 
 			$('#elementos-totales-tarjeta').html(transformadores.cantidad);
 			crearTransformadores();
