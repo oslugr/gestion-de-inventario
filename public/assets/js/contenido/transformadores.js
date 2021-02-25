@@ -294,6 +294,19 @@ function cargarFormulario(id, voltaje, amperaje, posicion){
 
 	$('#editar-voltaje').val(voltaje);
 	$('#editar-amperaje').val(amperaje);
+
+	if(transformadores.data[posicion].corresponde){
+		if(transformadores.data[posicion].corresponde.tipo == "Portatil")
+			$('#corresponde-tipo').val("Portátil")
+		else
+			$('#corresponde-tipo').val("Componente")
+
+		$('#corresponde-id').val(transformadores.data[posicion].corresponde.id)
+	}
+	else{
+		$('#corresponde-id').val("")
+	}
+	
 	$('#confirmar-modal').attr('onclick', `editarTransformador(${id}, ${posicion})`);
 
 }
