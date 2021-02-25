@@ -98,10 +98,10 @@ exports.insertarTransformador = function (req, res) {
 
           if (!err) {
             
-            if(corresponde.tipo="Portatil"){
+            if(corresponde.tipo=="Portatil"){
               var sql = "INSERT INTO corresponde_portatil VALUES(?)";
             }
-            else if(corresponde.tipo="Componente"){
+            else if(corresponde.tipo=="Componente"){
               var sql = "INSERT INTO corresponde_componente VALUES(?)";
             }
 
