@@ -322,10 +322,26 @@ function editarTransformador(id, posicion){
 
 	let voltaje  = $('#editar-voltaje').val();
 	let amperaje = $('#editar-amperaje').val();
-	
+	let c_tipo 	 = $('#corresponde-tipo').val().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+	let c_id	 = $('#corresponde-id').val();	
+
+	let json = {
+		voltaje: voltaje, 
+		amperaje: amperaje
+	}
+
+	if(c_id){
+		json['corresponde'] = {
+			tipo: c_tipo,
+			id: c_id
+		}
+	}
+
 	$.ajax({
-		url: `/api/transformador/${id}/${voltaje}/${amperaje}`,
+		url: `/api/transformador/${id}`,
 		type: 'PUT',
+		data: JSON.stringify(json),
+		contentType: "application/json; charset=utf-8",
 		success: function(){
 			$(`#voltaje-${id}`).html(voltaje);
 			$(`#amperaje-${id}`).html(amperaje);
@@ -333,6 +349,9 @@ function editarTransformador(id, posicion){
 
 			transformadores.data[posicion].voltaje  = voltaje;
 			transformadores.data[posicion].amperaje = amperaje;
+			transformadores.data[posicion].corresponde = json.corresponde;
+
+			crearTransformadores();
 		}
 	});
 
