@@ -4,13 +4,16 @@ const { validationResult } = require('express-validator');
 
 exports.obtenerTransformadores = function (req, res) {
 
-  let sql = `(select T.id, T.voltaje, T.amperaje, 'Portatil' as tipo, C_P.id_portatil as id_2 FROM transformador T 
-          inner join corresponde_portatil C_P on C_P.id_transformador=T.id
-        UNION
-        select T2.id, T2.voltaje, T2.amperaje, 'Componente' as tipo, C_C.id_componente as id_2 FROM transformador T2
-          inner join corresponde_componente C_C on C_C.id_transformador=T2.id
-        UNION
-        select T3.id, T3.voltaje, T3.amperaje, null as tipo, null as id_2 FROM transformador T3 ) ORDER BY id`
+  let sql = `(select T.id, T.voltaje, T.amperaje, 'Portatil' as tipo, C_P.id_portatil as id_2 FROM transformador T \
+              inner join corresponde_portatil C_P on C_P.id_transformador=T.id \
+            UNION \
+            select T2.id, T2.voltaje, T2.amperaje, 'Componente' as tipo, C_C.id_componente as id_2 FROM transformador T2 \
+              inner join corresponde_componente C_C on C_C.id_transformador=T2.id \
+            UNION \
+            select T3.id, T3.voltaje, T3.amperaje, null as tipo, null as id_2 FROM transformador T3 \ 
+              WHERE NOT EXISTS( SELECT * FROM corresponde_componente C_C2 WHERE C_C2.id_transformador=T3.id ) AND \
+                  NOT EXISTS( SELECT * FROM corresponde_portatil C_P2 WHERE C_P2.id_transformador=T3.id ) \
+            ) ORDER BY id;`
 
   db.getConnection(function (err, conn) {
     if (!err) {
