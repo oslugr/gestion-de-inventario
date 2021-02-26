@@ -324,8 +324,6 @@ function editarCable(id, posicion){
 
 }
 
-var hola;
-
 function crearCable(){
 
 	let tipo 	= $('#editar-tipo').val();
