@@ -12,9 +12,13 @@ exports.obtenerRecogida = function (req, res){
 		return res.status(e.statusCode).send(e.getJson());
 	}
 
+  let sql = `SELECT id, fecha, tipo, localizacion FROM recogida 
+              INNER JOIN en ON id_recogida=id
+              WHERE tipo=?;`
+
 	db.getConnection(function (err, conn) {
     if (!err) {
-      conn.query('SELECT * FROM recogida WHERE tipo=?;', [tipo], function (err, rows) {
+      conn.query(sql, [tipo], function (err, rows) {
         
         conn.release();
 
