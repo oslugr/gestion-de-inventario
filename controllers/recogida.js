@@ -14,7 +14,8 @@ exports.obtenerRecogida = function (req, res){
 
   let sql = `SELECT id, fecha, tipo, localizacion FROM recogida 
               INNER JOIN en ON id_recogida=id
-              WHERE tipo=?;`
+              WHERE tipo=?
+              ORDER BY id;`
 
 	db.getConnection(function (err, conn) {
     if (!err) {
@@ -64,9 +65,11 @@ exports.nuevaRecogida = function (req, res){
         if(!err){
           conn.query('INSERT INTO recogida(fecha, tipo) VALUES (?);', [[fecha, tipo]], function (err, rows) {
 
+            let id_recogida = rows.insertId;
+
             if (!err){
               
-              conn.query('INSERT INTO en VALUES (?);', [[localizacion, rows.insertId]], function (err, rows) {
+              conn.query('INSERT INTO en VALUES (?);', [[localizacion, id_recogida]], function (err, rows) {
 
                 if (!err){
                   
@@ -83,7 +86,8 @@ exports.nuevaRecogida = function (req, res){
                     
                     return res.status('200').send({
                       estado: "Correcto",
-                      descripcion: "Recogida inertada correctamente"
+                      descripcion: "Recogida inertada correctamente",
+                      id: id_recogida
                     });
                   });
     

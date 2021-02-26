@@ -16,6 +16,7 @@
     <script src="./assets/js/init-alpine.js"></script>
     <script src="./assets/js/jquery/jquery.min.js"></script>
     <script src="./assets/js/contenido/aux.js"></script>
+    <script src="./assets/js/contenido/recogidas.js"></script>
 
     <!-- Para el modal -->
     <script src="./assets/js/focus-trap.js" defer></script>
@@ -574,23 +575,118 @@
               Recogidas
             </h2>
 
-            <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
-              <a href="localizaciones.html">
-                <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 cursor-pointer">
-                  <div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                    Gestionar localizaciones
-                    </p>
-                  </div>
-                </div>
-              </a>
+            <div id="cargando" class="grid w-full h-full my-20 block z-50 justify-items-center">
+              <svg class="stroke-current text-gray-800 dark:text-gray-200" width="60" height="60" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg">
+                <g fill="none" fill-rule="evenodd">
+                    <g transform="translate(1 1)" stroke-width="2">
+                        <circle stroke-opacity=".5" cx="18" cy="18" r="18"/>
+                        <path d="M36 18c0-9.94-8.06-18-18-18">
+                            <animateTransform
+                                attributeName="transform"
+                                type="rotate"
+                                from="0 18 18"
+                                to="360 18 18"
+                                dur="1s"
+                                repeatCount="indefinite"/>
+                        </path>
+                    </g>
+                </g>
+              </svg>
             </div>
+
+          </div>
+
+          <!-- Modal para editar la información de la recogida -->
+          <div
+            x-show="isModalOpen"
+            x-transition:enter="transition ease-out duration-150"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-30 flex items-end bg-black bg-opacity-50 sm:items-center sm:justify-center"
+          >
+            <div
+              x-show="isModalOpen"
+              x-transition:enter="transition ease-out duration-150"
+              x-transition:enter-start="opacity-0 transform translate-y-1/2"
+              x-transition:enter-end="opacity-100"
+              x-transition:leave="transition ease-in duration-150"
+              x-transition:leave-start="opacity-100"
+              x-transition:leave-end="opacity-0  transform translate-y-1/2"
+              @click.away="closeModal"
+              @keydown.escape="closeModal"
+              class="w-full px-6 py-4 overflow-hidden bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-xl"
+              role="dialog"
+              id="modal"
+            >
+              <!-- Remove header if you don't want a close icon. Use modal body to place modal tile. -->
+              <header class="flex justify-end">
+                <button
+                  class="inline-flex items-center justify-center w-6 h-6 text-gray-400 transition-colors duration-150 rounded dark:hover:text-gray-200 hover: hover:text-gray-700"
+                  aria-label="close"
+                  @click="closeModal"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    role="img"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clip-rule="evenodd"
+                      fill-rule="evenodd"
+                    ></path>
+                  </svg>
+                </button>
+              </header>
+              <!-- Modal body -->
+              <div class="mt-4 mb-6">
+                <!-- Modal title -->
+                <p
+                  class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300"
+                >
+                  Editar recogida
+                </p>
+                <!-- Modal description -->
+                <div class="text-sm mt-5">
+                  <label class="block text-sm my-3">
+                    <span class="text-gray-700 dark:text-gray-400">Fecha</span>
+                    <input id="editar-fecha"
+                      class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                      placeholder="Formato: 2000-01-31"
+                    />
+                  </label>
+
+                  <label class="block text-sm my-3">
+                    <span class="text-gray-700 dark:text-gray-400">Localización</span>
+                    <select id="editar-localizacion"
+                      class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                    >
+                    </select>
+                  </label>
+                </div>
+              </div>
+              <footer
+                class="flex flex-col items-center justify-end px-6 py-3 -mx-6 -mb-4 space-y-4 sm:space-y-0 sm:space-x-6 sm:flex-row bg-gray-50 dark:bg-gray-800"
+              >
+                <button
+                  @click="closeModal"
+                  class="w-full px-5 py-3 text-sm font-medium leading-5 text-white text-gray-700 transition-colors duration-150 border border-gray-300 rounded-lg dark:text-gray-400 sm:px-4 sm:py-2 sm:w-auto active:bg-transparent hover:border-gray-500 focus:border-gray-500 active:text-gray-500 focus:outline-none focus:shadow-outline-gray"
+                >
+                  Cancelar
+                </button>
+                <button id="confirmar-modal" @click="closeModal"
+                  class="w-full px-5 py-3 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2 active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+                >
+                  Guardar
+                </button>
+              </footer>
+            </div>
+          </div>
 
         </main>
       </div>
