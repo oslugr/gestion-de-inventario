@@ -63,7 +63,7 @@ exports.nuevaRecogida = function (req, res){
       conn.beginTransaction(function(err) {
 
         if(!err){
-          conn.query('INSERT INTO recogida(fecha, tipo) VALUES (?);', [[fecha, tipo]], function (err, rows) {
+          conn.query('INSERT INTO recogida(fecha, tipo) VALUES (?);', [[new Date(fecha), tipo]], function (err, rows) {
 
             let id_recogida = rows.insertId;
 
