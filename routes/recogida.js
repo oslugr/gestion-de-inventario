@@ -38,6 +38,12 @@ router.post	  ('/:id_recogida/ordenador/:id_ord', controlador.aniadirOrdenador);
 // Añade un componente a una recogida
 router.post	  ('/:id_recogida/componente/:id_comp', controlador.aniadirComponente);
 
+// Edita una recogida
+router.put	  ('/:id',[
+	body('fecha').matches(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/).withMessage('Fecha mal introducida. Formatos de fecha correcto: AAAA-MM-DD'),
+	body('localizacion').isString().withMessage('Localizacion no válida. No puede ser vacía y tiene que ser un string')
+],                                      controlador.editarRecogida);
+
 // Elimina una recogida
 router.delete ('/:id', 					controlador.eliminarRecogida)
 

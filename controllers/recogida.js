@@ -437,3 +437,73 @@ exports.eliminarRecogida = function (req, res){
   });
 
 }
+
+exports.editarRecogida = function(req, res){
+
+  const errores = validationResult(req);
+
+  if(!errores.isEmpty() || !req.params.id){
+    const e = new BadRequest('Error al introducir los parámetros', errores.array(), `Error en los parámetros introducidos por el usuario al actualizar una recogida. ${errores.array()}`);
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+  if(req.body.fecha)          var fecha = req.body.fecha;
+  else                        var fecha = null;
+  if(req.body.localizacion)   var localizacion = req.body.localizacion;
+  else                        var localizacion = null;
+  if(req.params.id)           var id = req.params.id;
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.beginTransaction(function(err) {
+      
+        if (!err) {
+        
+          conn.query('UPDATE recogida SET fecha=? WHERE id=?', [new Date(fecha), id], function (err, rows) {
+            
+            if(!err){
+              
+              conn.query('UPDATE en SET localizacion=? WHERE id_recogida=?', [localizacion, id], function (err, rows) {
+
+                if(!err){
+                  conn.commit(function(err) {
+
+                    conn.release();
+
+                    if (err) {
+                      const e = new BadRequest('Error al actualizar una recogida', ['Ocurrió algún error al actualizar la recogida'], `Error al actualizar la recogida. ${err}`);
+                      return res.status(e.statusCode).send(e.getJson());
+                    }
+                    
+                    return res.status('200').send({
+                      estado: "Correcto",
+                      descripcion: "Recogida actualizada correctamente"
+                    });
+                  })
+                }
+                else{
+                  const e = new BadRequest('Error al actualizar una recogida', ['Ocurrió algún error al actualizar la recogida'], `Error al actualizar la recogida. ${err}`);
+                  return res.status(e.statusCode).send(e.getJson());
+                }
+              })
+            }
+            else {
+              const e = new BadRequest('Error al actualizar una recogida', ['Ocurrió algún error al actualizar la recogida'], `Error al actualizar la recogida. ${err}`);
+              return res.status(e.statusCode).send(e.getJson());
+            }
+          });
+
+        }
+        else {
+          const e = new BadRequest('Error al actualizar una recogida', ['Ocurrió algún error al actualizar la recogida'], `Error al actualizar la recogida. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+
+}
