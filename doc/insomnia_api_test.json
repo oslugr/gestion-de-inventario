@@ -1,15 +1,15 @@
 {
     "_type": "export",
     "__export_format": 4,
-    "__export_date": "2021-02-25T11:03:19.961Z",
+    "__export_date": "2021-03-02T11:16:20.901Z",
     "__export_source": "insomnia.desktop.app:v2020.5.2",
     "resources": [
         {
             "_id": "req_7e3c43489dc04ddf92868214055e753d",
             "parentId": "fld_2c018eb0d3674a699ab2eed4cc5ebc82",
-            "modified": 1610974205475,
+            "modified": 1614331157102,
             "created": 1610610064230,
-            "url": "http://localhost:3000/api/recogida/Entrega",
+            "url": "http://localhost:3000/api/recogida/Recogida",
             "name": "Recogidas por tipo",
             "description": "",
             "method": "GET",
@@ -144,7 +144,7 @@
         {
             "_id": "req_c96745d9bf664e8f8061cbaa7cb6dc7b",
             "parentId": "fld_2c018eb0d3674a699ab2eed4cc5ebc82",
-            "modified": 1611052378743,
+            "modified": 1614331197518,
             "created": 1610622067398,
             "url": "http://localhost:3000/api/recogida/",
             "name": "Recogida",
@@ -152,7 +152,7 @@
             "method": "POST",
             "body": {
                 "mimeType": "application/json",
-                "text": "{\n\t\"fecha\": \"2020-02-12\",\n\t\"tipo\": \"Entrega\",\n\t\"localizacion\": \"adios\"\n}"
+                "text": "{\n\t\"fecha\": \"2020-02-12\",\n\t\"tipo\": \"Recogida\",\n\t\"localizacion\": \"retwertwer\"\n}"
             },
             "parameters": [],
             "headers": [
@@ -256,6 +256,61 @@
             "headers": [],
             "authentication": {},
             "metaSortKey": -1610357373341,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "req_86cbb24d5b7e4100a3e6d29943dd5b7e",
+            "parentId": "fld_2c018eb0d3674a699ab2eed4cc5ebc82",
+            "modified": 1614683594543,
+            "created": 1614681809525,
+            "url": "http://localhost:3000/api/recogida/4",
+            "name": "Recogida",
+            "description": "",
+            "method": "PUT",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"fecha\": \"2020-03-15\",\n\t\"localizacion\": \"adios\"\n}\n"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "id": "pair_d77ea4757c1840abbb21e87c6b9870a4"
+                }
+            ],
+            "authentication": {},
+            "metaSortKey": -1610357373316,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "req_c5500fd3f3af477382a02acb9d46de91",
+            "parentId": "fld_2c018eb0d3674a699ab2eed4cc5ebc82",
+            "modified": 1614679489747,
+            "created": 1614679453732,
+            "url": "http://localhost:3000/api/recogida/7",
+            "name": "Recogida",
+            "description": "",
+            "method": "DELETE",
+            "body": {},
+            "parameters": [],
+            "headers": [],
+            "authentication": {},
+            "metaSortKey": -1610357373291,
             "isPrivate": false,
             "settingStoreCookies": true,
             "settingSendCookies": true,
