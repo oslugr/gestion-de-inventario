@@ -403,3 +403,37 @@ exports.obtenerOrdenadores = function (req, res){
   });
 
 }
+
+exports.eliminarRecogida = function (req, res){
+
+  if(req.params.id )           
+    var id = req.params.id;
+  else{
+    const e = new BadRequest('Id de la recogida no especificado o no válido', ["id no introducido o no válido"], `Error al eliminar una recogida. El usuario no ha especificado un id válido`);
+    return res.status(e.statusCode).send(e.getJson());
+  } 
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('DELETE FROM recogida WHERE id=?', [id], function (err, rows) {
+        
+        conn.release();
+
+        if (err) {
+          const e = new BadRequest('Error al eliminar una recogida', ['Ocurrió algún error al eliminar la recogida'], `Error al eliminar la recogida. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send({
+          estado: "Correcto",
+          descripcion: "Recogida eliminada correctamente"
+        });
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+
+}

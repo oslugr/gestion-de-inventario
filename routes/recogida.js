@@ -38,4 +38,7 @@ router.post	  ('/:id_recogida/ordenador/:id_ord', controlador.aniadirOrdenador);
 // Añade un componente a una recogida
 router.post	  ('/:id_recogida/componente/:id_comp', controlador.aniadirComponente);
 
+// Elimina una recogida
+router.delete ('/:id', 					controlador.eliminarRecogida)
+
 module.exports = router;
