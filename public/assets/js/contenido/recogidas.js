@@ -302,21 +302,21 @@ function generarPie() {
 
 function eliminarRecogida(id, posicion){
 	$.ajax({
-		url: `/api/recogida/id/${id}`,
+		url: `/api/recogida/${id}`,
 		type: 'DELETE',
 		success: function(){
-			cables.cantidad--;
+			recogidas.cantidad--;
 			
-			if(cables.cantidad%10 == 0){
+			if(recogidas.cantidad%10 == 0){
 				pagina--;
 			}
 
-			cables.data.splice(posicion,1);
-			crearCables();
+			recogidas.data.splice(posicion,1);
+			crearRecogidas();
 			generarPie();
 
 			// Actualiza la tarjeta superior
-			$('#elementos-totales-tarjeta').html(cables.data.length);
+			$('#elementos-totales-tarjeta').html(recogidas.data.length);
 		}
 	});
 }
@@ -336,21 +336,29 @@ function cargarFormularioVacio(){
 	$('#confirmar-modal').attr('onclick', `crearRecogida()`);
 }
 
-function editarCable(id, posicion){
-
-	let tipo 	= $('#editar-tipo').val();
-	let version = $('#editar-version').val();
+function editarRecogida(id, posicion){
 	
-	$.ajax({
-		url: `/api/cable/${id}/${tipo}/${version}`,
-		type: 'PUT',
-		success: function(){
-			$(`#tipo-${id}`).html(tipo);
-			$(`#version-${id}`).html(version);
-			$(`#editar-${id}`).attr('onclick', `cargarFormulario('${id}', '${tipo}', '${version}', ${posicion})`);
+	let fecha 	     = $('#editar-fecha').val();
+	let localizacion = $('#editar-localizacion').val();
+	
+    let json = {
+        fecha: fecha,
+        localizacion: localizacion
+    }
 
-			cables.data[posicion].tipo = tipo;
-			cables.data[posicion].version_tipo = version;
+	$.ajax({
+		url: `/api/recogida/${id}/`,
+		type: 'PUT',
+        data: JSON.stringify(json),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		success: function(){
+			$(`#fecha-${id}`).html(fecha);
+			$(`#localizacion-${id}`).html(localizacion);
+			$(`#editar-${id}`).attr('onclick', `cargarFormulario('${id}', '${fecha}', '${localizacion}', ${posicion})`);
+
+			recogidas.data[posicion].fecha = fecha;
+			recogidas.data[posicion].localizacion = localizacion;
 		}
 	});
 
