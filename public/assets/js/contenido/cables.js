@@ -285,6 +285,13 @@ function eliminarCable(id, posicion){
 
 			// Actualiza la tarjeta superior
 			$('#elementos-totales-tarjeta').html(cables.data.length);
+		},
+		error: function(){
+			$('#titulo-error').html('Error al eliminar')
+			$('#mensaje-error').html('Ha ocurrido un error al eliminar el cable')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
 		}
 	});
 }
@@ -319,6 +326,13 @@ function editarCable(id, posicion){
 
 			cables.data[posicion].tipo = tipo;
 			cables.data[posicion].version_tipo = version;
+		},
+		error: function(){
+			$('#titulo-error').html('Error al editar el cable')
+			$('#mensaje-error').html('Ha ocurrido un error al eliminar el cable')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
 		}
 	});
 
@@ -344,6 +358,13 @@ function crearCable(){
 
 			$('#elementos-totales-tarjeta').html(cables.cantidad);
 			crearCables();
+		},
+		error: function(){
+			$('#titulo-error').html('Error al crear el cable')
+			$('#mensaje-error').html('Ha ocurrido un error al crear el cable')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 );
 		}
 	});
 

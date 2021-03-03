@@ -227,6 +227,13 @@ function eliminarLocalizacion(nombre, posicion){
 
 			// Actualiza la tarjeta superior
 			$('#elementos-totales-tarjeta').html(localizaciones.cantidad);
+		},
+		error: function(){
+			$('#titulo-error').html('Error al eliminar')
+			$('#mensaje-error').html('Es posible que la localización esté asignada a una recogida')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
 		}
 	});
 }
@@ -253,6 +260,13 @@ function crearLocalizacion(){
 
 			$('#elementos-totales-tarjeta').html(localizaciones.cantidad);
 			crearLocalizaciones();
+		},
+		error: function(){
+			$('#titulo-error').html('Error al crear una localización')
+			$('#mensaje-error').html('Es posible que ya exista una localización con el mismo nombre')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
 		}
 	});
 
