@@ -529,7 +529,7 @@ function eliminarComponente(id, posicion){
 		success: function(){
 			componentes.cantidad--;
 
-			if(componentes.cantidad%10 == 0){
+			if(componentes.cantidad%10 == 0 && pagina!=1){
 				pagina--;
 			}
 

@@ -513,7 +513,7 @@ function eliminarOrdenador(id, posicion){
 
 			ordenadores.cantidad--;
 
-			if(ordenadores.cantidad%10 == 0){
+			if(ordenadores.cantidad%10 == 0 && pagina!=1){
 				pagina--;
 			}
 

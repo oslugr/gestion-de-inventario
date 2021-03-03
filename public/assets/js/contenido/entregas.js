@@ -307,7 +307,7 @@ function eliminarRecogida(id, posicion){
 		success: function(){
 			recogidas.cantidad--;
 			
-			if(recogidas.cantidad%10 == 0){
+			if(recogidas.cantidad%10 == 0 && pagina!=1){
 				pagina--;
 			}
 

@@ -276,7 +276,7 @@ function eliminarTransformador(id, posicion){
 		success: function(){
 			transformadores.cantidad--;
 			
-			if(transformadores.cantidad%10 == 0){
+			if(transformadores.cantidad%10 == 0 && pagina!=1){
 				pagina--;
 			}
 

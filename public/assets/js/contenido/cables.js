@@ -275,7 +275,7 @@ function eliminarCable(id, posicion){
 		success: function(){
 			cables.cantidad--;
 			
-			if(cables.cantidad%10 == 0){
+			if(cables.cantidad%10 == 0 && pagina!=1){
 				pagina--;
 			}
 

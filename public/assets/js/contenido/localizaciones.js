@@ -217,7 +217,7 @@ function eliminarLocalizacion(nombre, posicion){
 		success: function(){
 			localizaciones.cantidad--;
 			
-			if(localizaciones.cantidad%10 == 0){
+			if(localizaciones.cantidad%10 == 0 && pagina!=1){
 				pagina--;
 			}
 
