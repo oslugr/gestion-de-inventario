@@ -294,7 +294,7 @@ exports.aniadirComponente = function (req, res){
   })
 }
 
-exports.obtenerComponentes = function (req, res){
+exports.obtenerOrdenador = function (req, res){
   
   if(req.params.id) 
     var id = req.params.id;
@@ -306,43 +306,93 @@ exports.obtenerComponentes = function (req, res){
   db.getConnection(function (err, conn) {
     if (!err) {
 
-      sql = ' SELECT C.id, C.estado, C.observaciones, C.fecha_entrada, C.tipo, T.id_caracteristica, CA.nombre, CA.valor FROM componente C \
-                inner join formado F on F.id_componente=C.id \
-                  inner join ordenador O on F.id_ordenador=O.id \
-                  INNER JOIN tiene T ON T.id_componente=C.id \
-                INNER JOIN caracteristica CA on CA.id=T.id_caracteristica \
-                WHERE O.id = ? \
-              UNION  \
-              SELECT C2.id, C2.estado, C2.observaciones, C2.fecha_entrada, C2.tipo, NULL as id_caracteristica, null as nombre, null as valor FROM componente C2 \
-                inner join formado F2 on F2.id_componente=C2.id \
-                  inner join ordenador O2 on F2.id_ordenador=O2.id \
-                  where not exists ( SELECT * FROM tiene T2 where T2.id_componente=C2.id ) and O2.id = ?;';
+      conn.beginTransaction(function(err) {
 
-      conn.query(sql,[id, id], function (err, rows) {
+        if(!err){
 
-        conn.release();
+          var sql = `select "Portatil" as tipo, O.id, O.localizacion_taller, O.observaciones, P.estado, Null as tamano from ordenador O \
+          inner join portatil P on O.id=P.id WHERE O.id=?\
+          UNION \
+          select "Sobremesa" as tipo, O.id, O.localizacion_taller, O.observaciones, Null as estado, S.tamano from ordenador O \
+          inner join sobremesa S on O.id=S.id WHERE O.id=?;`
 
-        if (!err) {
+          conn.query(sql, [id,id], function (err, rows) {
 
-          let componentes = obtenerCaracteristicas(rows);
+            if(!err){
 
-          return res.status('200').send({
-            cantidad: componentes.length,
-            data: componentes
-          });
+              if(rows.length)
+                var resultado = rows[0];
+              else
+                resultado = {}
+
+              sql = ' SELECT C.id, C.estado, C.observaciones, C.fecha_entrada, C.tipo, T.id_caracteristica, CA.nombre, CA.valor FROM componente C \
+                        inner join formado F on F.id_componente=C.id \
+                          inner join ordenador O on F.id_ordenador=O.id \
+                          INNER JOIN tiene T ON T.id_componente=C.id \
+                        INNER JOIN caracteristica CA on CA.id=T.id_caracteristica \
+                        WHERE O.id = ? \
+                      UNION  \
+                      SELECT C2.id, C2.estado, C2.observaciones, C2.fecha_entrada, C2.tipo, NULL as id_caracteristica, null as nombre, null as valor FROM componente C2 \
+                        inner join formado F2 on F2.id_componente=C2.id \
+                          inner join ordenador O2 on F2.id_ordenador=O2.id \
+                          where not exists ( SELECT * FROM tiene T2 where T2.id_componente=C2.id ) and O2.id = ?;';
+
+              conn.query(sql,[id, id], function (err, rows) {
+
+                if (!err) {
+
+                  conn.commit(function(err) {
+
+                    if(!err){
+                      conn.release();
+
+                      let componentes = obtenerCaracteristicas(rows);
+
+                      resultado["componentes"] = {
+                        cantidad: componentes.length,
+                        data: componentes
+                      };
+
+                      return res.status('200').send(resultado);
+                    }
+                    else {
+                      return conn.rollback(function() {
+                        const e = new BadRequest('Error al obtener el con sus componentes', ['Ocurrió algún error al obtener el ordenador'], `Error al obtener el ordenador y sus componentes por el usuario. ${err}`);
+                        return res.status(e.statusCode).send(e.getJson());
+                      });
+                    }
+
+                  });
+                }
+                else {
+                  return conn.rollback(function() {
+                    const e = new BadRequest('Error al obtener el con sus componentes', ['Ocurrió algún error al obtener el ordenador'], `Error al obtener el ordenador y sus componentes por el usuario. ${err}`);
+                    return res.status(e.statusCode).send(e.getJson());
+                  });
+                }
+
+              })
+
+            }
+            else {
+              return conn.rollback(function() {
+                const e = new BadRequest('Error al obtener el con sus componentes', ['Ocurrió algún error al obtener el ordenador'], `Error al obtener el ordenador y sus componentes por el usuario. ${err}`);
+                return res.status(e.statusCode).send(e.getJson());
+              });
+            }
+          })
         }
-        else {
-          const e = new APIError('Bad Gateway', 502, 'Error al obtener los componentes de un ordenador', `Error al obtener los componentes de un ordenador\n${err}`);
+        else{
+          const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
           return res.status(e.statusCode).send(e.getJson());
         }
-
-      })
+      });
     }
     else {
       const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
       return res.status(e.statusCode).send(e.getJson());
     }
-  })
+  })  
 }
 
 exports.eliminarOrdenadorConComponentes = function (req, res) {
