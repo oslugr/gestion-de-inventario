@@ -539,6 +539,13 @@ function eliminarComponente(id, posicion){
 
 			// Actualiza la tarjeta superior
 			$('#elementos-totales-tarjeta').html(componentes.data.length);
+		},
+		error: function(){
+			$('#titulo-error').html('Error al eliminar')
+			$('#mensaje-error').html('Ha habido un error al eliminar la componente')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
 		}
 	});
 }
@@ -615,6 +622,13 @@ function crearComponente(){
 
 			$('#elementos-totales-tarjeta').html(componentes.cantidad);
 			crearComponentes();
+		},
+		error: function(){
+			$('#titulo-error').html('Error al crear')
+			$('#mensaje-error').html('Ha habido un error al crear la componente')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
 		}
 	});
 }
@@ -652,6 +666,13 @@ function editarComponente(id, posicion){
 			componentes.data[posicion].observaciones = observaciones;
 			componentes.data[posicion].fecha_entrada = fecha;
 			componentes.data[posicion].tipo = tipo;
+		},
+		error: function(){
+			$('#titulo-error').html('Error al editar')
+			$('#mensaje-error').html('Ha habido un error al editar la componente')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
 		}
 	});
 

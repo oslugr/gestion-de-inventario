@@ -523,6 +523,13 @@ function eliminarOrdenador(id, posicion){
 
 			// Actualiza la tarjeta superior
 			$('#elementos-totales-tarjeta').html(ordenadores.data.length);
+		},
+		error: function(){
+			$('#titulo-error').html('Error al eliminar')
+			$('#mensaje-error').html('Ha habido un error al eliminar el ordenador')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
 		}
 	});
 }
@@ -642,6 +649,13 @@ function crearOrdenador(tipo){
 			ordenadores.data.push(json);
 			$(`#elementos-totales-tarjeta`).html(ordenadores.cantidad);
 			crearOrdenadores();
+		},
+		error: function(){
+			$('#titulo-error').html('Error al crear')
+			$('#mensaje-error').html('Ha habido un error al crear el ordenador')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
 		}
 	});
 
@@ -681,6 +695,13 @@ function editarOrdenador(id, tipo, posicion){
 			
 			ordenadores.data[posicion].observaciones = observaciones;
 			ordenadores.data[posicion].localizacion_taller = localizacion;
+		},
+		error: function(){
+			$('#titulo-error').html('Error al modificar')
+			$('#mensaje-error').html('Ha habido un error al editar el ordenador')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
 		}
 	});
 

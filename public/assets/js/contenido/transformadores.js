@@ -286,6 +286,13 @@ function eliminarTransformador(id, posicion){
 
 			// Actualiza la tarjeta superior
 			$('#elementos-totales-tarjeta').html(transformadores.data.length);
+		},
+		error: function(){
+			$('#titulo-error').html('Error al eliminar')
+			$('#mensaje-error').html('Ha ocurrido un error al eliminar el transformador')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
 		}
 	});
 }
@@ -352,6 +359,13 @@ function editarTransformador(id, posicion){
 			transformadores.data[posicion].corresponde = json.corresponde;
 
 			crearTransformadores();
+		},
+		error: function(){
+			$('#titulo-error').html('Error al editar')
+			$('#mensaje-error').html('Ha ocurrido un error al editar el transformador')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
 		}
 	});
 
@@ -401,6 +415,13 @@ function crearTransformador(){
 
 			$('#elementos-totales-tarjeta').html(transformadores.cantidad);
 			crearTransformadores();
+		},
+		error: function(){
+			$('#titulo-error').html('Error al crear')
+			$('#mensaje-error').html('Ha ocurrido un error al crear el transformador')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
 		}
 	});
 

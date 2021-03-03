@@ -317,6 +317,13 @@ function eliminarRecogida(id, posicion){
 
 			// Actualiza la tarjeta superior
 			$('#elementos-totales-tarjeta').html(recogidas.data.length);
+		},
+		error: function(){
+			$('#titulo-error').html('Error al eliminar')
+			$('#mensaje-error').html('Ha habido un error al eliminar la entrega')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
 		}
 	});
 }
@@ -359,6 +366,13 @@ function editarRecogida(id, posicion){
 
 			recogidas.data[posicion].fecha = fecha;
 			recogidas.data[posicion].localizacion = localizacion;
+		},
+		error: function(){
+			$('#titulo-error').html('Error al editar')
+			$('#mensaje-error').html('Ha habido un error al editar la entrega')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
 		}
 	});
 
@@ -394,6 +408,13 @@ function crearRecogida(){
 
 			$('#elementos-totales-tarjeta').html(recogidas.cantidad);
 			crearRecogidas();
+		},
+		error: function(){
+			$('#titulo-error').html('Error al crear')
+			$('#mensaje-error').html('Ha habido un error al crear la entrega')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
 		}
 	});
 
