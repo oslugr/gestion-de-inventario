@@ -20,7 +20,7 @@ app.use('/api/componente', componente);
 app.use('/api/recogida', recogida);
 app.use('/api/ordenador', ordenador);
 
-app.use('/', express.static('public'));
+app.use('/', express.static('public', {extensions:['html']}));
 
 // Errores 
 
