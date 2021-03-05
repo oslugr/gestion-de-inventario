@@ -618,3 +618,44 @@ exports.modificarOrdenador = function (req, res) {
   })
 
 }
+
+exports.eliminarComponente = function (req, res){
+
+  if(req.params.id_o && req.params.id_c){ 
+    var id_o = req.params.id_o;
+    var id_c = req.params.id_c;
+  }
+  else{
+    const e = new BadRequest('Error al introducir alguno de los id', ["Ids no válidos"], `Error al introducir los ids por el usuario al eliminar en enlace entre una componente y un ordenador`);
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+
+      conn.query('DELETE FROM formado WHERE id_componente=? AND id_ordenador=?',[id_c, id_o], function (err, rows) {
+
+        conn.release();
+
+        if (!err) {
+          return res.status('200').send({
+            estado: "Correcto",
+            descripcion: "Componente separado del ordenador correctamente"
+          });
+        }
+        else {
+          const e = new APIError('Bad Gateway', 502, 'Error al añadir una componente a un ordenador', `Error al añadir una componente a un ordenador\n${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+
+      })
+    }
+    else {
+      const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  })
+
+
+
+}
