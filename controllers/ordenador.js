@@ -270,19 +270,71 @@ exports.aniadirComponente = function (req, res){
   db.getConnection(function (err, conn) {
     if (!err) {
 
-      conn.query('INSERT INTO formado(id_componente, id_ordenador) VALUES (?)',[[id_comp, id_ord]], function (err, rows) {
+      conn.beginTransaction(function(err) {
+        
+        if(!err){
+          
+          conn.query('INSERT INTO formado(id_componente, id_ordenador) VALUES (?)',[[id_comp, id_ord]], function (err, rows) {
 
-        conn.release();
+            if(!err){
 
-        if (!err) {
-          return res.status('200').send({
-            estado: "Correcto",
-            descripcion: "Componente añadido al ordenador correctamente"
-          });
+              var sql = `( select C.id, estado, observaciones, fecha_entrada, tipo, id_caracteristica, nombre, valor FROM componente C 
+                            INNER JOIN tiene T ON T.id_componente=C.id 
+                            INNER JOIN caracteristica CA on CA.id=T.id_caracteristica 
+                            WHERE C.id=?
+                          UNION 
+                          SELECT C2.id, C2.estado, C2.observaciones, C2.fecha_entrada, C2.tipo, Null as id_caracteristica, Null as nombre, Null as valor FROM componente C2 
+                            WHERE NOT EXISTS( SELECT * FROM tiene T WHERE T.id_componente=C2.id ) AND C2.id=? ) ;`
+
+              conn.query(sql,[id_comp, id_comp], function (err, rows) {
+
+                if(!err){
+                  conn.commit(function(err) {
+                    
+                    conn.release();
+
+                    let componentes = obtenerCaracteristicas(rows);
+
+                    if (!err) {
+                      return res.status('200').send({
+                        estado: "Correcto",
+                        descripcion: "Componente añadido al ordenador correctamente",
+                        componente: componentes[0]
+                      });
+                    }
+                    else {
+                      return conn.rollback(function() {
+                        const e = new BadRequest('Error al insertar la componente', ['Ocurrió algún error al insertar la componente'], `Error al insertar una componente en un ordenador por el usuario. ${err}`);
+                        return res.status(e.statusCode).send(e.getJson());
+                      });
+                    }
+
+                  })
+                }
+                else {
+                  return conn.rollback(function() {
+                    const e = new BadRequest('Error al insertar la componente', ['Ocurrió algún error al insertar la componente'], `Error al insertar una componente en un ordenador por el usuario. ${err}`);
+                    return res.status(e.statusCode).send(e.getJson());
+                  });
+                }
+
+              })
+            }
+            else {
+              return conn.rollback(function() {
+                const e = new BadRequest('Error al insertar la componente', ['Ocurrió algún error al insertar la componente'], `Error al insertar una componente en un ordenador por el usuario. ${err}`);
+                return res.status(e.statusCode).send(e.getJson());
+              });
+            }
+
+          })
+
         }
         else {
-          const e = new APIError('Bad Gateway', 502, 'Error al añadir una componente a un ordenador', `Error al añadir una componente a un ordenador\n${err}`);
-          return res.status(e.statusCode).send(e.getJson());
+          return conn.rollback(function() {
+            const e = new BadRequest('Error al insertar la componente', ['Ocurrió algún error al insertar la componente'], `Error al insertar una componente en un ordenador por el usuario. ${err}`);
+            return res.status(e.statusCode).send(e.getJson());
+          });
         }
 
       })
@@ -291,7 +343,8 @@ exports.aniadirComponente = function (req, res){
       const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
       return res.status(e.statusCode).send(e.getJson());
     }
-  })
+
+  });
 }
 
 exports.obtenerOrdenador = function (req, res){
