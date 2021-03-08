@@ -95,7 +95,7 @@ function tarjeta(titulo, dato) {
 				</p>
 			</div>
     </div>
-	<div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 cursor-pointer" onclick="cargarFormularioVacio()" @click="openModal">
+	<div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 cursor-pointer" onclick="cargarModalNuevaComponente()" @click="openModal">
 			<div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
 				<svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -164,8 +164,8 @@ function fila(id, estado, fecha, tipo, observaciones, posicion) {
 						</svg>
 					</button>
 					<button onclick="eliminarComponente(${id}, ${posicion});" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Delete">
-						<svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-							<path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+						<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 						</svg>
 					</button>
 				</div>
@@ -596,7 +596,7 @@ function cargarCaracteristicas(id, posicion){
 
 function eliminarComponente(id, posicion){
 	$.ajax({
-		url: `/api/componente/${id}`,
+		url: `/api/ordenador/${ordenador.id}/componente/${id}`,
 		type: 'DELETE',
 		success: function(){
 			componentes.cantidad--;
@@ -614,7 +614,7 @@ function eliminarComponente(id, posicion){
 		},
 		error: function(){
 			$('#titulo-error').html('Error al eliminar')
-			$('#mensaje-error').html('Ha habido un error al eliminar la componente')
+			$('#mensaje-error').html('Ha habido un error al eliminar la componente del ordenador')
 			$('.popup').removeClass('hidden');
 
 			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
@@ -624,6 +624,7 @@ function eliminarComponente(id, posicion){
 
 function cargarFormulario(id, tipo, estado, fecha, observaciones, posicion){
 
+	cargarModalEditarComponente();
 	$('#editar-tipo').val(tipo);
 	$(`#editar-estado`).val(estado);
 	$('#editar-fecha').val(fecha);
@@ -633,71 +634,133 @@ function cargarFormulario(id, tipo, estado, fecha, observaciones, posicion){
 	$('#boton-nueva-caracteristica').attr('onclick', `aniadirCaracteristica({id: -1, nombre: '', valor: ''}, ${posicion}, null, ${id}, 'crear');`);
 }
 
-function cargarFormularioVacio(){
+function cargarModalNuevaComponente(){
 
-	$('#editar-tipo').val("");
-	$(`#editar-estado`).val("Desconocido");
-	$('#editar-fecha').val("");
-	$('#body-tabla-caracteristicas').html('');
-	$('#editar-observaciones').val("");
+	$('#body-modal').html(`
+	<!-- Modal title -->
+	<p
+		class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300"
+	>
+		Nueva componente
+	</p>
+	<!-- Modal description -->
+	<div class="text-sm mt-5">
+		<label class="block text-sm my-3">
+		<span class="text-gray-700 dark:text-gray-400">ID</span>
+		<input id="editar-nueva-id"
+			class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+			placeholder=""
+		/>
+		</label>
+	</div>
+	`);
 	$('#confirmar-modal').attr('onclick', `crearComponente()`);
-	$('#boton-nueva-caracteristica').attr('onclick', `aniadirCaracteristicaNueva(0)`);
+
+}
+
+function cargarModalEditarComponente(){
+
+	$('#body-modal').html(`
+	<!-- Modal title -->
+	<p
+	  class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300"
+	>
+	  Editar componente
+	</p>
+	<!-- Modal description -->
+	<div class="text-sm mt-5">
+	  <label class="block text-sm my-3">
+		<span class="text-gray-700 dark:text-gray-400">Tipo</span>
+		<input id="editar-tipo"
+		  class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+		  placeholder=""
+		/>
+	  </label>
+
+	  <label class="block text-sm my-3">
+		<span class="text-gray-700 dark:text-gray-400">Estado</span>
+		<select id="editar-estado"
+		  class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+		>
+		  <option>Desconocido</option>
+		  <option>Bueno</option>
+		  <option>Regular</option>
+		  <option>Por revisar</option>
+		  <option>No aprovechable</option>
+		  <option>Roto</option>
+		</select>
+	  </label>
+
+	  <label class="block text-sm my-3">
+		<span class="text-gray-700 dark:text-gray-400">Fecha</span>
+		<input id="editar-fecha"
+		  class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+		  placeholder="Formato: 2000-01-31"
+		/>
+	  </label>
+
+	  <label class="block text-sm my-3">
+		<span class="text-gray-700 dark:text-gray-400">Observaciones</span>
+		<input id="editar-observaciones"
+		  class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+		  placeholder=""
+		/>
+	  </label>
+
+	  <label class="block text-sm my-3">
+		<span class="text-gray-700 dark:text-gray-400">Características</span>
+		<div id="main-tabla-caracteristicas" class="mt-1 w-full overflow-hidden rounded-lg shadow-xs">
+
+		  <div class="w-full overflow-x-auto">
+			<table class="w-full whitespace-no-wrap">
+			  <thead>
+				<tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+				  <th class="px-2 py-3">Nombre</th>
+				  <th class="px-2 py-3">Valor</th>
+				  <th class="px-2 py-3">Acciones</th>
+				</tr>
+			  </thead>
+			  <tbody id="body-tabla-caracteristicas" class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+			  </tbody>
+			</table>
+		  </div>                  
+		</div>
+
+		<!-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+		  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+		</svg> -->
+
+		<a id="boton-nueva-caracteristica" class="flex cursor-pointer items-center justify-between p-4 mb-8 text-sm font-semibold text-gray-500 dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple">
+		  <div class="flex items-center">
+			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 mr-2">
+			  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+			</svg>
+			<span>Añadir una nueva característica</span>
+		  </div>
+		</a>
+	  </label>
+	</div>
+	`)	
 
 }
 
 function crearComponente(){
-	const tipo 	        = $('#editar-tipo').val();
-	const estado        = $('#editar-estado').val();
-	const fecha         = $('#editar-fecha').val();
-	const observaciones = $('#editar-observaciones').val();
-	let caracteristicas = [];
-
-	const json = {
-		"tipo": tipo,
-		"estado": estado,
-		"observaciones": observaciones
-	};
-
-	if(fecha)
-		json["fecha_entrada"] = fecha;
-
-	let filas = document.querySelectorAll('.fila-caracteristica-nueva');
-	for (let i = 0; i < filas.length; i++) {
-		datos = filas[i].getElementsByTagName('input');
-		caracteristicas.push({
-			nombre: datos[0].value,
-			valor: datos[1].value
-		});
-	}
-
-	json["caracteristicas"] = caracteristicas;
+	const id_c = $('#editar-nueva-id').val();
 
 	$.ajax({
-		url: `/api/componente/`,
-		data: JSON.stringify(json),
-		contentType: "application/json; charset=utf-8",
-		dataType: "json",
+		url: `/api/ordenador/${ordenador.id}/componente/${id_c}`,
 		type: 'POST',
 		success: function(data){
-
-			let id = data.id;
 			componentes.cantidad++;
 
-			componentes.data.push({
-				id: id,
-				tipo: tipo, 
-				estado: estado,
-				fecha_entrada: fecha,
-				observaciones: observaciones,
-				caracteristicas: data.caracteristicas
-			})
+			componentes.data.push(data.componente)
 
 			$('#elementos-totales-tarjeta').html(componentes.cantidad);
 			crearComponentes();
 		},
 		error: function(){
-			$('#titulo-error').html('Error al crear')
-			$('#mensaje-error').html('Ha habido un error al crear la componente')
+			$('#titulo-error').html('Error al añadir')
+			$('#mensaje-error').html('Ha habido un error al añadir la componente')
 			$('.popup').removeClass('hidden');
 
 			setTimeout(() => $('.popup').addClass('hidden'), 3000 )

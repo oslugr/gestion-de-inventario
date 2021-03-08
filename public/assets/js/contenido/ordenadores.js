@@ -1,6 +1,4 @@
-// function cargarOrdenadores(){
-	$.get("/api/ordenador", crearInterfazOrdenadores);
-// }
+$.get("/api/ordenador", crearInterfazOrdenadores);
 
 // -------------------------------------
 // Gestión de tarjetas superiores
@@ -75,7 +73,7 @@ function fila(id, tipo, localizacion, observaciones, otro, posicion) {
 	if (localizacion  == null) localizacion = "";
 
 	return `
-		<tr id="ordenador-${id}" class=" cursor-pointer ordenador text-gray-700 dark:text-gray-400" onclick="cargarInfoOrdenador(${id}, this)">
+		<tr id="ordenador-${id}" class=" cursor-pointer ordenador text-gray-700 dark:text-gray-400" onclick="window.location.href='ordenador?id=${id}'">
 			<td class="px-4 py-3">
 				<div class="flex items-center text-sm">
 					<svg class="relative hidden w-6 h-6 mr-3 md:block" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" >
