@@ -1,7 +1,19 @@
 const express = require('express')
+const jwt = require('jsonwebtoken');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const app = express()
 const port = 3000
 const { NotFound } = require('./aux/error');
+const { autorizacion } = require('./aux/autorizar');
+
+// Auth
+app.use(bodyParser.json());
+app.use(cookieParser());
+const auth  = require('./routes/auth');
+app.use(autorizacion);
+app.use('/api', auth);
+
 
 // Routes
 const localizacion  = require('./routes/localizacion')
@@ -20,10 +32,10 @@ app.use('/api/componente', componente);
 app.use('/api/recogida', recogida);
 app.use('/api/ordenador', ordenador);
 
+app.use('/login', express.static('public/login'))
 app.use('/', express.static('public', {extensions:['html']}));
 
 // Errores 
-
 app.use('/api/*', (req, res) => {
   const e = new NotFound('Ruta no encontrada', 'Se ha intentando entrar en una ruta inexistente');
   return res.status(e.statusCode).send(e.getJson());

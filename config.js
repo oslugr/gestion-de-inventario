@@ -1,0 +1,1 @@
+exports.accessTokenSecret = 'hola';
