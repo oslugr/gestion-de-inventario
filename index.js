@@ -6,6 +6,9 @@ const app = express()
 const port = 3000
 const { NotFound } = require('./aux/error');
 const { autorizacion } = require('./aux/autorizar');
+const morgan = require('morgan');
+
+app.use(morgan('short'))
 
 // Auth
 app.use(bodyParser.json());
@@ -13,7 +16,6 @@ app.use(cookieParser());
 const auth  = require('./routes/auth');
 app.use(autorizacion);
 app.use('/api', auth);
-
 
 // Routes
 const localizacion  = require('./routes/localizacion')

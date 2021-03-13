@@ -34,6 +34,7 @@
     "express-validator": "^6.10.0",
     "jquery": "^3.5.1",
     "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0",
     "mysql": "^2.18.1",
     "postcss-cli": "^7.1.2",
     "release-it": "^13.7.1",
