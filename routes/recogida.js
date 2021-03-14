@@ -7,6 +7,9 @@ const { body } = require('express-validator');
 // Obtiene todas las recogidas por tipo
 router.get	  ('/:tipo',                controlador.obtenerRecogida);
 
+// Obtiene todas las recogidas por tipo
+router.get	  ('/info/:id', 			controlador.obtenerRecogidaId);
+
 // Obtiene los cables de una recogida
 router.get	  ('/:id/cable',            controlador.obtenerCables);
 

@@ -507,3 +507,39 @@ exports.editarRecogida = function(req, res){
   });
 
 }
+
+
+exports.obtenerRecogidaId = function (req, res){
+
+  if(!req.params.id){
+    const e = new BadRequest('Error al introducir la id', ['Error en el id'], `Error en los parámetros introducidos por el usuario al obtener la info de una recogida.`);
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+  const id = req.params.id;
+
+  let sql = `SELECT id, fecha, tipo, localizacion FROM recogida 
+              INNER JOIN en ON id_recogida=id
+              WHERE id=?;`
+
+	db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query(sql, [id], function (err, rows) {
+        
+        conn.release();
+
+        if (err || !rows.length) {
+          const e = new BadRequest('Error al obtener', ['Ocurrió algún error al obtener la recogida'], `Error al obtener la recogida. ${err}. Si no se muestra ningún error de base de datos es posible que el usuario haya introducido una id inexistente.`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send(rows[0]);
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+
+}
