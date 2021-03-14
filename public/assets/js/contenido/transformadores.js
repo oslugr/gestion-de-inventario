@@ -375,7 +375,7 @@ function crearTransformador(){
 
 	let voltaje  = $('#editar-voltaje').val();
 	let amperaje = $('#editar-amperaje').val();
-	let c_tipo 	 = $('#corresponde-tipo').val();
+	let c_tipo 	 = $('#corresponde-tipo').val().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 	let c_id	 = $('#corresponde-id').val();	
 
 	let json = {
