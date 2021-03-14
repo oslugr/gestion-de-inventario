@@ -2,14 +2,14 @@ const fs = require('fs');
 const mysql = require('mysql');
 
 let rawdata = fs.readFileSync('./db/data.json');
-var credenciales = JSON.parse(rawdata);
+const {credencialesdb} = require('../config');
 
 var pool  = mysql.createPool({
     connectionLimit : 10,
-    host     : credenciales.host,
-    user     : credenciales.user,
-    password : credenciales.password,
-    database : credenciales.database
+    host     : credencialesdb.host,
+    user     : credencialesdb.user,
+    password : credencialesdb.password,
+    database : credencialesdb.database
 });
 
 module.exports = { pool };
