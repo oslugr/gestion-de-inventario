@@ -108,7 +108,7 @@ function tarjeta(tipo,titulo, dato) {
 
 function crearTarjetas() {
 	$("#main-contenido").append(`
-		<div id="main-tarjetas" class="grid gap-6 my-4 md:grid-cols-2 xl:grid-cols-4">
+		<div id="main-tarjetas" class="grid gap-6 mt-4 md:grid-cols-2 xl:grid-cols-4">
 		
 		</div>
   `)
