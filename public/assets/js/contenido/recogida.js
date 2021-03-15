@@ -455,7 +455,7 @@ function editarCable(id, posicion){
 		},
 		error: function(){
 			$('#titulo-error').html('Error al editar el cable')
-			$('#mensaje-error').html('Ha ocurrido un error al eliminar el cable')
+			$('#mensaje-error').html('Ha ocurrido un error al editar el cable')
 			$('.popup').removeClass('hidden');
 
 			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
@@ -727,33 +727,33 @@ function generarPieTransformadores() {
 	  generarNavegadorTablaTransformadores();
 }
 
-// function eliminarCable(id, posicion){
-// 	$.ajax({
-// 		url: `/api/cable/id/${id}`,
-// 		type: 'DELETE',
-// 		success: function(){
-// 			cables.cantidad--;
+function eliminarTransformador(id, posicion){
+	$.ajax({
+		url: `/api/transformador/${id}`,
+		type: 'DELETE',
+		success: function(){
+			transformadores.cantidad--;
 			
-// 			if(cables.cantidad%10 == 0 && pagina_cables!=1){
-// 				pagina_cables--;
-// 			}
+			if(transformadores.cantidad%10 == 0 && pagina_transformadores!=1){
+				pagina_transformadores--;
+			}
 
-// 			cables.data.splice(posicion,1);
-// 			crearCables();
-// 			generarPieCables();
+			transformadores.data.splice(posicion,1);
+			crearTransformadores();
+			generarPieTransformadores();
 
-// 			// Actualiza la tarjeta superior
-// 			$('#elementos-totales-tarjeta-cables').html(cables.data.length);
-// 		},
-// 		error: function(){
-// 			$('#titulo-error').html('Error al eliminar')
-// 			$('#mensaje-error').html('Ha ocurrido un error al eliminar el cable')
-// 			$('.popup').removeClass('hidden');
+			// Actualiza la tarjeta superior
+			$('#elementos-totales-tarjeta-transformadores').html(transformadores.data.length);
+		},
+		error: function(){
+			$('#titulo-error').html('Error al eliminar')
+			$('#mensaje-error').html('Ha ocurrido un error al eliminar el cable')
+			$('.popup').removeClass('hidden');
 
-// 			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
-// 		}
-// 	});
-// }
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
+		}
+	});
+}
 
 function cargarFormularioTransformador(id, voltaje, amperaje, posicion){
 
@@ -893,67 +893,111 @@ function cargarFormularioVacioTransformador(){
 	$('#confirmar-modal').attr('onclick', `crearTransformador()`);
 }
 
-// function editarCable(id, posicion){
+function editarTransformador(id, posicion){
 
-// 	let tipo 	= $('#editar-tipo').val();
-// 	let version = $('#editar-version').val();
+	let voltaje  = $('#editar-voltaje').val();
+	let amperaje = $('#editar-amperaje').val();
+	let c_tipo 	 = $('#corresponde-tipo').val().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+	let c_id	 = $('#corresponde-id').val();	
+
+	let json = {
+		voltaje: voltaje, 
+		amperaje: amperaje
+	}
+
+	if(c_id){
+		json['corresponde'] = {
+			tipo: c_tipo,
+			id: c_id
+		}
+	}
+
+	$.ajax({
+		url: `/api/transformador/${id}`,
+		type: 'PUT',
+		data: JSON.stringify(json),
+		contentType: "application/json; charset=utf-8",
+		success: function(){
+			$(`#transformador_voltaje-${id}`).html(voltaje);
+			$(`#transformador_amperaje-${id}`).html(amperaje);
+			$(`#transformador_editar-${id}`).attr('onclick', `cargarFormularioTransformador('${id}', '${voltaje}', '${amperaje}', ${posicion})`);
+
+			transformadores.data[posicion].voltaje  = voltaje;
+			transformadores.data[posicion].amperaje = amperaje;
+			transformadores.data[posicion].corresponde = json.corresponde;
+
+			crearTransformadores();
+		},
+		error: function(){
+			$('#titulo-error').html('Error al editar el transformador')
+			$('#mensaje-error').html('Ha ocurrido un error al editar el transformador')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
+		}
+	});
+
+
+}
+
+function crearTransformador(){
+
+	let voltaje  = $('#editar-voltaje').val();
+	let amperaje = $('#editar-amperaje').val();
+	let c_tipo 	 = $('#corresponde-tipo').val().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+	let c_id	 = $('#corresponde-id').val();
 	
-// 	$.ajax({
-// 		url: `/api/cable/${id}/${tipo}/${version}`,
-// 		type: 'PUT',
-// 		success: function(){
-// 			$(`#cable_tipo-${id}`).html(tipo);
-// 			$(`#cable_version-${id}`).html(version);
-// 			$(`#cable_editar-${id}`).attr('onclick', `cargarFormularioCable('${id}', '${tipo}', '${version}', ${posicion})`);
+	let json = {
+		voltaje: voltaje, 
+		amperaje: amperaje
+	}
 
-// 			cables.data[posicion].tipo = tipo;
-// 			cables.data[posicion].version_tipo = version;
-// 		},
-// 		error: function(){
-// 			$('#titulo-error').html('Error al editar el cable')
-// 			$('#mensaje-error').html('Ha ocurrido un error al eliminar el cable')
-// 			$('.popup').removeClass('hidden');
-
-// 			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
-// 		}
-// 	});
-
-// }
-
-// function crearCable(){
-
-// 	let tipo 	= $('#editar-tipo').val();
-// 	let version = $('#editar-version').val();
+	if(c_id){
+		json['corresponde'] = {
+			tipo: c_tipo,
+			id: c_id
+		}
+	}
 	
-// 	$.ajax({
-// 		url: `/api/recogida/${recogida.id}/cable/${tipo}/${version}`,
-// 		type: 'POST',
-// 		success: function(data){
-// 			let id = data.id;
-// 			cables.cantidad++;
+	$.ajax({
+		url: `/api/recogida/${recogida.id}/transformador/`,
+		type: 'POST',
+		data: JSON.stringify(json),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		success: function(data){
+			let id = data.id;
+			transformadores.cantidad++;
 
-// 			cables.data.push({
-// 				id: id,
-// 				tipo: tipo,
-// 				version_tipo: version
-// 			})
+			let response_json = {
+				id: id,
+				voltaje: voltaje,
+				amperaje: amperaje
+			}
 
-// 			$('#elementos-totales-tarjeta-cables').html(cables.cantidad);
+			if(json.corresponde)
+				response_json.corresponde = json.corresponde;
+			else
+				response_json.corresponde = null
 
-// 			if(!$('#main-tabla-cables').length){
-// 				crearTablaCables();
-// 				generarPieCables();
-// 			}
-// 			else
-// 				crearCables();
-// 		},
-// 		error: function(){
-// 			$('#titulo-error').html('Error al crear el cable')
-// 			$('#mensaje-error').html('Ha ocurrido un error al crear el cable')
-// 			$('.popup').removeClass('hidden');
+			transformadores.data.push(response_json);
 
-// 			setTimeout(() => $('.popup').addClass('hidden'), 3000 );
-// 		}
-// 	});
+			$('#elementos-totales-tarjeta-transformadores').html(transformadores.cantidad);
 
-// }
+			if(!$('#main-tabla-transformadores').length){
+				crearTablaTransformadores();
+				generarPieTransformadores();
+			}
+			else
+				crearTransformadores();
+		},
+		error: function(){
+			$('#titulo-error').html('Error al crear el transformador')
+			$('#mensaje-error').html('Ha ocurrido un error al crear el transformador')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 );
+		}
+	});
+
+}
