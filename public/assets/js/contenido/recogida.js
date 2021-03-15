@@ -482,7 +482,13 @@ function crearCable(){
 			})
 
 			$('#elementos-totales-tarjeta-cables').html(cables.cantidad);
-			crearCables();
+
+			if(!$('#main-tabla-cables').length){
+				crearTablaCables();
+				generarPieCables();
+			}
+			else
+				crearCables();
 		},
 		error: function(){
 			$('#titulo-error').html('Error al crear el cable')

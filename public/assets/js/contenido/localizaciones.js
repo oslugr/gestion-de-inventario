@@ -259,7 +259,12 @@ function crearLocalizacion(){
 			})
 
 			$('#elementos-totales-tarjeta').html(localizaciones.cantidad);
-			crearLocalizaciones();
+			if(!$('#main-tabla').length){
+				crearTabla();
+				generarPie();
+			}
+			else
+				crearLocalizaciones();
 		},
 		error: function(){
 			$('#titulo-error').html('Error al crear una localización')

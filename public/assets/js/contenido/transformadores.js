@@ -414,7 +414,12 @@ function crearTransformador(){
 			transformadores.data.push(response_json);
 
 			$('#elementos-totales-tarjeta').html(transformadores.cantidad);
-			crearTransformadores();
+			if(!$('#main-tabla').length){
+				crearTabla();
+				generarPie();
+			}
+			else
+				crearTransformadores();
 		},
 		error: function(){
 			$('#titulo-error').html('Error al crear')

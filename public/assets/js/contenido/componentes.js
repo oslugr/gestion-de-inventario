@@ -621,7 +621,12 @@ function crearComponente(){
 			})
 
 			$('#elementos-totales-tarjeta').html(componentes.cantidad);
-			crearComponentes();
+			if(!$('#main-tabla').length){
+				crearTabla();
+				generarPie();
+			}
+			else
+				crearComponentes();
 		},
 		error: function(){
 			$('#titulo-error').html('Error al crear')

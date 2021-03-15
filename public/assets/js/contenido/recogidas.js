@@ -407,7 +407,12 @@ function crearRecogida(){
 			})
 
 			$('#elementos-totales-tarjeta').html(recogidas.cantidad);
-			crearRecogidas();
+			if(!$('#main-tabla').length){
+				crearTabla();
+				generarPie();
+			}
+			else
+				crearRecogidas();
 		},
 		error: function(){
 			$('#titulo-error').html('Error al crear')

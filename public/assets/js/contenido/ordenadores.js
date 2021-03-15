@@ -648,7 +648,12 @@ function crearOrdenador(tipo){
 
 			ordenadores.data.push(json);
 			$(`#elementos-totales-tarjeta`).html(ordenadores.cantidad);
-			crearOrdenadores();
+			if(!$('#main-tabla').length){
+				crearTabla();
+				generarPie();
+			}
+			else
+				crearOrdenadores();
 		},
 		error: function(){
 			$('#titulo-error').html('Error al crear')
