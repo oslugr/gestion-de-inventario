@@ -694,12 +694,23 @@ exports.obtenerTransformadores = function (req, res){
 		return res.status(e.statusCode).send(e.getJson());
 	}
 
+  let sql = `(select T.id, T.voltaje, T.amperaje, 'Portatil' as tipo, C_P.id_portatil as id_2 FROM transformador T \
+                inner join corresponde_portatil C_P on C_P.id_transformador=T.id \
+                inner join contiene_transformador CT1 on CT1.id_transformador=T.id AND CT1.id_recogida=? \
+              UNION \
+              select T2.id, T2.voltaje, T2.amperaje, 'Componente' as tipo, C_C.id_componente as id_2 FROM transformador T2 \
+                inner join corresponde_componente C_C on C_C.id_transformador=T2.id \
+                inner join contiene_transformador CT2 on CT2.id_transformador=T2.id AND CT2.id_recogida=? \
+              UNION \
+              select T3.id, T3.voltaje, T3.amperaje, null as tipo, null as id_2 FROM transformador T3 \ 
+                inner join contiene_transformador CT3 on CT3.id_transformador=T3.id AND CT3.id_recogida=? \
+                WHERE NOT EXISTS( SELECT * FROM corresponde_componente C_C2 WHERE C_C2.id_transformador=T3.id ) AND \
+                    NOT EXISTS( SELECT * FROM corresponde_portatil C_P2 WHERE C_P2.id_transformador=T3.id ) \
+              ) ORDER BY id;`
+
 	db.getConnection(function (err, conn) {
     if (!err) {
-      conn.query('SELECT T.id as id, T.voltaje, T.amperaje FROM recogida R \
-                    INNER JOIN contiene_transformador CT ON CT.id_recogida=R.id \
-                    INNER JOIN transformador T ON CT.id_transformador=T.id \
-                  WHERE R.id=?;', [id], function (err, rows) {
+      conn.query(sql, [id, id, id], function (err, rows) {
         
         conn.release();
 
@@ -707,11 +718,33 @@ exports.obtenerTransformadores = function (req, res){
           const e = new BadRequest('Error al obtener transformadores', ['Ocurrió algún error al obtener los transformadores de la recogida'], `Error al obtener los transformadores de la recogida. ${err}`);
           return res.status(e.statusCode).send(e.getJson());
         }
+
+        let transformadores = [];
+
+        for (let i = 0; i < rows.length; i++) {
+          let json = {
+            id: rows[i].id,
+            voltaje: rows[i].voltaje,
+            amperaje: rows[i].amperaje
+          };
+
+          if(rows[i].tipo){
+            json['corresponde'] = {
+              tipo: rows[i].tipo,
+              id: rows[i].id_2
+            }
+          }
+          else{
+            json['corresponde'] = null;
+          }
+
+          transformadores.push(json);
+        }
         
         return res.status('200').send({
-					cantidad: rows.length,
-					data: rows
-				});
+          cantidad: rows.length,
+          data: transformadores
+        });
       });
     }
     else{
