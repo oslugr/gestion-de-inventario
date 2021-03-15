@@ -41,11 +41,30 @@ router.post	  ('/:id_recogida/transformador/',[
 	body('corresponde.id').if(body('corresponde').exists()).isInt().not().isEmpty().withMessage('Id de corresponde no válido')
 ], 										controlador.aniadirTransformador);
 
-// Añade un ordenador a una recogida
-router.post	  ('/:id_recogida/ordenador/:id_ord', controlador.aniadirOrdenador);
-
 // Añade un componente a una recogida
-router.post	  ('/:id_recogida/componente/:id_comp', controlador.aniadirComponente);
+router.post	  ('/:id_recogida/componente/',[ 
+	body('estado').optional().isIn(['Desconocido', 'Bueno', 'Regular', 'Por revisar', 'No aprovechable', 'Roto']).not().isEmpty().withMessage('Tipo no válido. Tiene que estar entre los siguientes valores: Desconocido, Bueno, Regular, Por revisar, No aprovechable, Roto'),
+	body('observaciones').optional().isString().withMessage('Valor no válido en observaciones'),
+	body('fecha_entrada').optional().matches(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/).withMessage('Fecha mal introducida. Formatos de fecha correcto: AAAA-MM-DD'),
+	body('tipo').not().isEmpty().withMessage('Tipo no introducido. Este parámetro es obligatorio'),
+	body('caracteristicas').optional().isArray().withMessage('Las características deben de ser un array'),
+	body('caracteristicas.*.nombre').isString().not().isEmpty().withMessage('Algún nombre de característica no es válido'),
+	body('caracteristicas.*.valor').isString().not().isEmpty().withMessage('Algún valor de característica no es válido')
+], controlador.aniadirComponente);
+
+// Añade un ordenador a una recogida
+router.post	  ('/:id_recogida/portatil/',[ 
+	body('localizacion_taller').optional().isString().withMessage('Valor no válido en localizacion_taller'),
+	body('observaciones').optional().isString().withMessage('Valor no válido en observaciones'),
+	body('estado').optional().isIn(['Desconocido', 'Bueno', 'Regular', 'Por revisar', 'No aprovechable', 'Roto']).not().isEmpty().withMessage('Tipo no válido. Tiene que estar entre los siguientes valores: Desconocido, Bueno, Regular, Por revisar, No aprovechable, Roto')
+], controlador.aniadirPortatil);
+
+// Añade un ordenador a una recogida
+router.post	  ('/:id_recogida/sobremesa/',[ 
+	body('localizacion_taller').optional().isString().withMessage('Valor no válido en localizacion_taller'),
+	body('observaciones').optional().isString().withMessage('Valor no válido en observaciones'),
+	body('tamano').optional().isString().withMessage('Valor no válido en tamano')
+], controlador.aniadirSobremesa);
 
 // Edita una recogida
 router.put	  ('/:id',[

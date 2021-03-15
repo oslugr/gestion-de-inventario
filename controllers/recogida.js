@@ -305,6 +305,319 @@ exports.aniadirTransformador = function (req, res) {
 
 }
 
+// Funcion recursiva para añadir todas las características que haya indicado el usuario;
+function insertarCaracteristicas(caracteristicas, id_componente, conn, i, req, res, callback){
+  
+  if(i<caracteristicas.length){
+    conn.query('INSERT INTO caracteristica(nombre, valor) VALUES (?)', [[caracteristicas[i].nombre,caracteristicas[i].valor]], function (err, rows) {
+      if (!err){
+        
+        let id_caracteristica = rows.insertId;
+
+        conn.query('INSERT INTO tiene VALUES (?)', [[id_componente, id_caracteristica]], function (err, rows) {
+          if (!err){
+            
+            caracteristicas[i]['id'] = id_caracteristica;
+
+            return callback(caracteristicas, id_componente, conn, i+1, req, res, callback);
+      
+          }
+          else {
+            return conn.rollback(function() {
+              const e = new BadRequest('Error al insertar la componente', ['Ocurrió algún error al insertar la componente'], `Error al introducir una componente por el usuario. ${err}`);
+              return res.status(e.statusCode).send(e.getJson());
+            });
+          }
+        })
+
+      }
+      else {
+        return conn.rollback(function() {
+          const e = new BadRequest('Error al insertar la componente', ['Ocurrió algún error al insertar la componente'], `Error al introducir una componente por el usuario. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        });
+      }
+    })
+  }
+  else{
+
+    var id_recogida = req.params.id_recogida;
+
+    conn.query('INSERT INTO contiene_componente(id_recogida, id_componente) VALUES (?);', [[id_recogida, id_componente]], function (err, rows) {
+        
+      if (err) {
+        const e = new BadRequest('Error al insertar una componente en una recogida', ['Ocurrió algún error al insertar la componente. Puede ser que la componente o la recogida no existan o que simplemente ya esté inserado en esta recogida'], `Error al insertar una componente en una recogida. ${err}`);
+        return res.status(e.statusCode).send(e.getJson());
+      }
+      
+      conn.commit(function(err) {
+
+        conn.release();
+  
+        if (err) {
+          return conn.rollback(function() {
+            const e = new BadRequest('Error al insertar la componente', ['Ocurrió algún error al insertar la componente'], `Error al introducir una componente por el usuario. ${err}`);
+            return res.status(e.statusCode).send(e.getJson());
+          });
+        }
+        
+        return res.status('200').send({
+          estado: "Correcto",
+          descripcion: "Componente añadida correctamente",
+          id: id_componente,
+          caracteristicas: caracteristicas
+        });
+      });
+    });
+
+  }
+}
+
+exports.aniadirComponente = function (req, res) {
+  
+
+  if(req.body.estado)           var estado = req.body.estado.replace(/\s+/g, ' ').trim();
+  else                          var estado = 'Desconocido';
+  if(req.body.observaciones)    var observaciones = req.body.observaciones.replace(/\s+/g, ' ').trim();
+  else                          var observaciones = null;
+  if(req.body.fecha_entrada)    var fecha_entrada = req.body.fecha_entrada.replace(/\s+/g, ' ').trim();
+  else                          var fecha_entrada = 'NULL';
+  if(req.body.tipo)             var tipo = req.body.tipo.replace(/\s+/g, ' ').trim();
+  else                          var tipo = null;
+  if(req.body.caracteristicas)  var caracteristicas = req.body.caracteristicas;
+  else                          var caracteristicas = [];
+
+  const errores = validationResult(req);
+
+  if(!errores.isEmpty()){
+    const e = new BadRequest('Error al introducir los parámetros', errores.array(), `Error en los parámetros introducidos por el usuario al añadir una componente. ${errores.array()}`);
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.beginTransaction(function(err) {
+
+        if(!err){
+          conn.query('INSERT INTO componente(estado, observaciones, fecha_entrada, tipo) VALUES (?)', [[estado, observaciones, new Date(fecha_entrada), tipo]], function (err, rows) {
+
+            if (!err){
+              
+              return insertarCaracteristicas(caracteristicas, rows.insertId, conn, 0, req, res, insertarCaracteristicas);
+
+            }
+            else {
+              return conn.rollback(function() {
+                const e = new BadRequest('Error al insertar la componente', ['Ocurrió algún error al insertar la componente'], `Error al insertar una componente por el usuario por el usuario. ${err}`);
+                return res.status(e.statusCode).send(e.getJson());
+              });
+            }
+
+          })
+        }
+        else{
+          const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al iniciar la transacción para añadir componentes\n${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+      });
+    }
+    else {
+      const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  })
+
+}
+
+
+exports.aniadirPortatil = function (req, res) {
+
+  const errores = validationResult(req);
+
+  if(!errores.isEmpty()){
+    const e = new BadRequest('Error al introducir los parámetros', errores.array(), `Error en los parámetros introducidos por el usuario al añadir un portatil. ${errores.array()}`);
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+
+  if(req.body.localizacion_taller)  var localizacion_taller = req.body.localizacion_taller.replace(/\s+/g, ' ').trim();
+  else                              var localizacion_taller = null;
+  if(req.body.estado)               var estado = req.body.estado;
+  else                              var estado = 'Desconocido';
+  if(req.body.observaciones)        var observaciones = req.body.observaciones.replace(/\s+/g, ' ').trim();
+  else                              var observaciones = null;
+  if(req.params.id_recogida)        var id_recogida = req.params.id_recogida;
+  else                              var id_recogida = null;
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.beginTransaction(function(err) {
+
+        if(!err){
+          conn.query('INSERT INTO ordenador(localizacion_taller, observaciones) VALUES (?)', [[localizacion_taller, observaciones]], function (err, rows) {
+
+            if (!err){
+              
+              let id_ordenador = rows.insertId;
+
+              conn.query('INSERT INTO portatil VALUES (?)', [[id_ordenador, estado]], function (err, rows) {
+
+                if (!err){
+                  
+                  conn.query('INSERT INTO contiene_ordenador(id_recogida, id_ordenador) VALUES (?);', [[id_recogida, id_ordenador]], function (err, rows) {
+        
+                    if (err) {
+                      const e = new BadRequest('Error al insertar un ordenador en una recogida', ['Ocurrió algún error al insertar el ordenador. Puede ser que el ordenador o la recogida no existan o que simplemente ya esté inserado en esta recogida'], `Error al insertar un ordenador en una recogida. ${err}`);
+                      return res.status(e.statusCode).send(e.getJson());
+                    }
+                    
+                    conn.commit(function(err) {
+
+                      conn.release();
+  
+                      if (err) {
+                        return conn.rollback(function() {
+                          const e = new BadRequest('Error al insertar el portátil', ['Ocurrió algún error al insertar el portátil'], `Error al introducir un portátil por el usuario. ${err}`);
+                          return res.status(e.statusCode).send(e.getJson());
+                        });
+                      }
+                      
+                      return res.status('200').send({
+                        estado: "Correcto",
+                        descripcion: "Portátil añadido correctamente",
+                        id: id_ordenador
+                      });
+                    });
+
+                  });
+    
+                }
+                else {
+                  return conn.rollback(function() {
+                    const e = new BadRequest('Error al insertar el portátil', ['Ocurrió algún error al insertar el portátil'], `Error al introducir un portátil por el usuario. ${err}`);
+                    return res.status(e.statusCode).send(e.getJson());
+                  });
+                }
+    
+              });
+            }
+            else {
+              return conn.rollback(function() {
+                const e = new BadRequest('Error al insertar el portátil', ['Ocurrió algún error al insertar el portátil'], `Error al introducir un portátil por el usuario. ${err}`);
+                return res.status(e.statusCode).send(e.getJson());
+              });
+            }
+
+          })
+        }
+        else{
+          const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al iniciar la transacción para añadir componentes\n${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+      });
+    }
+    else {
+      const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  })
+
+}
+
+exports.aniadirSobremesa = function (req, res) {
+ 
+  const errores = validationResult(req);
+
+  if(!errores.isEmpty()){
+    const e = new BadRequest('Error al introducir los parámetros', errores.array(), `Error en los parámetros introducidos por el usuario al añadir un portatil. ${errores.array()}`);
+    return res.status(e.statusCode).send(e.getJson());
+  }
+
+
+  if(req.body.localizacion_taller)  var localizacion_taller = req.body.localizacion_taller.replace(/\s+/g, ' ').trim();
+  else                              var localizacion_taller = null;
+  if(req.body.tamano)               var tamano = req.body.tamano;
+  else                              var tamano = null;
+  if(req.body.observaciones)        var observaciones = req.body.observaciones.replace(/\s+/g, ' ').trim();
+  else                              var observaciones = null;
+  if(req.params.id_recogida)        var id_recogida = req.params.id_recogida;
+  else                              var id_recogida = null;
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.beginTransaction(function(err) {
+
+        if(!err){
+          conn.query('INSERT INTO ordenador(localizacion_taller, observaciones) VALUES (?)', [[localizacion_taller, observaciones]], function (err, rows) {
+
+            if (!err){
+              
+              let id_ordenador = rows.insertId;
+
+              conn.query('INSERT INTO sobremesa VALUES (?)', [[id_ordenador, tamano]], function (err, rows) {
+
+                if (!err){
+                  
+                  conn.query('INSERT INTO contiene_ordenador(id_recogida, id_ordenador) VALUES (?);', [[id_recogida, id_ordenador]], function (err, rows) {
+        
+                    if (err) {
+                      const e = new BadRequest('Error al insertar un ordenador en una recogida', ['Ocurrió algún error al insertar el ordenador. Puede ser que el ordenador o la recogida no existan o que simplemente ya esté inserado en esta recogida'], `Error al insertar un ordenador en una recogida. ${err}`);
+                      return res.status(e.statusCode).send(e.getJson());
+                    }
+                    
+                    conn.commit(function(err) {
+
+                      conn.release();
+  
+                      if (err) {
+                        return conn.rollback(function() {
+                          const e = new BadRequest('Error al insertar el sobremesa', ['Ocurrió algún error al insertar el sobremesa'], `Error al introducir un portátil por el usuario. ${err}`);
+                          return res.status(e.statusCode).send(e.getJson());
+                        });
+                      }
+                      
+                      return res.status('200').send({
+                        estado: "Correcto",
+                        descripcion: "Sobremesa añadido correctamente",
+                        id: id_ordenador
+                      });
+                    });
+
+                  });
+    
+                }
+                else {
+                  return conn.rollback(function() {
+                    const e = new BadRequest('Error al insertar el sobremesa', ['Ocurrió algún error al insertar el sobremesa'], `Error al introducir un portátil por el usuario. ${err}`);
+                    return res.status(e.statusCode).send(e.getJson());
+                  });
+                }
+    
+              });
+            }
+            else {
+              return conn.rollback(function() {
+                const e = new BadRequest('Error al insertar el sobremesa', ['Ocurrió algún error al insertar el sobremesa'], `Error al introducir un portátil por el usuario. ${err}`);
+                return res.status(e.statusCode).send(e.getJson());
+              });
+            }
+
+          })
+        }
+        else{
+          const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al iniciar la transacción para añadir componentes\n${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+      });
+    }
+    else {
+      const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  })
+
+}
+
 exports.aniadirOrdenador = function (req, res) {
   
   if(req.params.id_recogida)  var id_recogida = req.params.id_recogida;
@@ -324,35 +637,6 @@ exports.aniadirOrdenador = function (req, res) {
         return res.status('200').send({
 					estado: "Correcto",
 					descripcion: "Ordenador insertado correctamente en la recogida"
-				});
-      });
-    }
-    else{
-      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
-      return res.status(e.statusCode).send(e.getJson());
-    }
-  });
-}
-
-exports.aniadirComponente = function (req, res) {
-  
-  if(req.params.id_recogida)  var id_recogida = req.params.id_recogida;
-  else                        var id_recogida = null;
-  if(req.params.id_comp)      var id_comp = req.params.id_comp;
-  else                        var id_comp = null;
-
-	db.getConnection(function (err, conn) {
-    if (!err) {
-      conn.query('INSERT INTO contiene_componente(id_recogida, id_componente) VALUES (?);', [[id_recogida, id_comp]], function (err, rows) {
-        
-        if (err) {
-          const e = new BadRequest('Error al insertar una componente en una recogida', ['Ocurrió algún error al insertar la componente. Puede ser que la componente o la recogida no existan o que simplemente ya esté inserado en esta recogida'], `Error al insertar una componente en una recogida. ${err}`);
-          return res.status(e.statusCode).send(e.getJson());
-        }
-        
-        return res.status('200').send({
-					estado: "Correcto",
-					descripcion: "Componente insertada correctamente en la recogida"
 				});
       });
     }
