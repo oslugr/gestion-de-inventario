@@ -1,7 +1,5 @@
-const fs = require('fs');
 const mysql = require('mysql');
 
-let rawdata = fs.readFileSync('./db/data.json');
 const {credencialesdb} = require('../config');
 
 var pool  = mysql.createPool({

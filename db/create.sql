@@ -119,7 +119,7 @@ CREATE TABLE formado (
 CREATE TABLE usuario (
 	username VARCHAR(50) PRIMARY KEY,
 	password VARCHAR(255) NOT NULL
-)
+);
 
 -- Crea el usuario admin por defecto
 INSERT INTO usuario VALUES ('admin', '$2b$10$zkX346OXSX.Wp2kuU1Mk6uKJ.4lNTbYqJCWHbOeOkXZBNTybn1XIO');
