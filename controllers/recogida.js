@@ -245,49 +245,81 @@ exports.aniadirTransformador = function (req, res) {
 
           if (!err) {
             
-            if(corresponde.tipo=="Portatil"){
-              var sql = "INSERT INTO corresponde_portatil VALUES(?)";
-            }
-            else if(corresponde.tipo=="Componente"){
-              var sql = "INSERT INTO corresponde_componente VALUES(?)";
-            }
+            if(corresponde){
 
-            conn.query(sql, [[id_transformador, corresponde.id]], function (err, rows){
+              if(corresponde.tipo=="Portatil"){
+                var sql = "INSERT INTO corresponde_portatil VALUES(?)";
+              }
+              else if(corresponde.tipo=="Componente"){
+                var sql = "INSERT INTO corresponde_componente VALUES(?)";
+              }
 
-              if(!err){
+              conn.query(sql, [[id_transformador, corresponde.id]], function (err, rows){
 
-                conn.query('INSERT INTO contiene_transformador(id_recogida, id_transformador) VALUES (?);', [[id_recogida, id_transformador]], function (err, rows) {
-        
-                  if (err) {
-                    const e = new BadRequest('Error al insertar un transformador en una recogida', ['Ocurrió algún error al insertar el transformador. Puede ser que el transformador o la recogida no existan o que simplemente ya esté inserado en esta recogida'], `Error al insertar un transformador en una recogida. ${err}`);
-                    return res.status(e.statusCode).send(e.getJson());
-                  }
-                  
-                  conn.commit(function(err) {
+                if(!err){
 
-                    conn.release();
-  
-                    if(err){
-                      const e = new BadRequest(`Ha ocurrido algún error al introducir los parámetros`, [''], `Error al introducir un transformador por el usuario. ${err}`);
+                  conn.query('INSERT INTO contiene_transformador(id_recogida, id_transformador) VALUES (?);', [[id_recogida, id_transformador]], function (err, rows) {
+          
+                    if (err) {
+                      const e = new BadRequest('Error al insertar un transformador en una recogida', ['Ocurrió algún error al insertar el transformador. Puede ser que el transformador o la recogida no existan o que simplemente ya esté inserado en esta recogida'], `Error al insertar un transformador en una recogida. ${err}`);
                       return res.status(e.statusCode).send(e.getJson());
                     }
-  
-                    res.status('200').send({
-                      estado: "Correcto",
-                      descripcion: "Transformador insertado correctamente",
-                      id: id_transformador
+                    
+                    conn.commit(function(err) {
+
+                      conn.release();
+    
+                      if(err){
+                        const e = new BadRequest(`Ha ocurrido algún error al introducir los parámetros`, [''], `Error al introducir un transformador por el usuario. ${err}`);
+                        return res.status(e.statusCode).send(e.getJson());
+                      }
+    
+                      res.status('200').send({
+                        estado: "Correcto",
+                        descripcion: "Transformador insertado correctamente",
+                        id: id_transformador
+                      });
+    
                     });
-  
                   });
+
+                }
+                else{
+                  const e = new BadRequest(`Error al introducir los parámetros, posiblemente el id del ${corresponde.tipo} no sea válido`, [`Id del ${corresponde.tipo} no válido`], `Error al introducir un transformador por el usuario. ${err}`);
+                  return res.status(e.statusCode).send(e.getJson());
+                }
+
+              });
+
+            }
+            else{
+
+              conn.query('INSERT INTO contiene_transformador(id_recogida, id_transformador) VALUES (?);', [[id_recogida, id_transformador]], function (err, rows) {
+          
+                if (err) {
+                  const e = new BadRequest('Error al insertar un transformador en una recogida', ['Ocurrió algún error al insertar el transformador. Puede ser que el transformador o la recogida no existan o que simplemente ya esté inserado en esta recogida'], `Error al insertar un transformador en una recogida. ${err}`);
+                  return res.status(e.statusCode).send(e.getJson());
+                }
+                
+                conn.commit(function(err) {
+
+                  conn.release();
+
+                  if(err){
+                    const e = new BadRequest(`Ha ocurrido algún error al introducir los parámetros`, [''], `Error al introducir un transformador por el usuario. ${err}`);
+                    return res.status(e.statusCode).send(e.getJson());
+                  }
+
+                  res.status('200').send({
+                    estado: "Correcto",
+                    descripcion: "Transformador insertado correctamente",
+                    id: id_transformador
+                  });
+
                 });
+              });
 
-              }
-              else{
-                const e = new BadRequest(`Error al introducir los parámetros, posiblemente el id del ${corresponde.tipo} no sea válido`, [`Id del ${corresponde.tipo} no válido`], `Error al introducir un transformador por el usuario. ${err}`);
-                return res.status(e.statusCode).send(e.getJson());
-              }
-
-            });
+            }
           }
           else {
             const e = new BadRequest('Error al introducir los parámetros', ['Voltaje o amperaje incorrecto.'], `Error al introducir un transformador por el usuario. ${err}`);

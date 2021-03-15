@@ -98,40 +98,64 @@ exports.insertarTransformador = function (req, res) {
 
           if (!err) {
             
-            if(corresponde.tipo=="Portatil"){
-              var sql = "INSERT INTO corresponde_portatil VALUES(?)";
-            }
-            else if(corresponde.tipo=="Componente"){
-              var sql = "INSERT INTO corresponde_componente VALUES(?)";
-            }
+            if(corresponde){
 
-            conn.query(sql, [[id_transformador, corresponde.id]], function (err, rows){
+              if(corresponde.tipo=="Portatil"){
+                var sql = "INSERT INTO corresponde_portatil VALUES(?)";
+              }
+              else if(corresponde.tipo=="Componente"){
+                var sql = "INSERT INTO corresponde_componente VALUES(?)";
+              }
 
-              if(!err){
+              conn.query(sql, [[id_transformador, corresponde.id]], function (err, rows){
 
-                conn.commit(function(err) {
+                if(!err){
 
-                  conn.release();
+                  conn.commit(function(err) {
 
-                  if(err){
-                    const e = new BadRequest(`Ha ocurrido algún error al introducir los parámetros`, [''], `Error al introducir un transformador por el usuario. ${err}`);
-                    return res.status(e.statusCode).send(e.getJson());
-                  }
+                    conn.release();
 
-                  res.status('200').send({
-                    estado: "Correcto",
-                    descripcion: "Transformador insertado correctamente",
-                    id: id_transformador
+                    if(err){
+                      const e = new BadRequest(`Ha ocurrido algún error al introducir los parámetros`, [''], `Error al introducir un transformador por el usuario. ${err}`);
+                      return res.status(e.statusCode).send(e.getJson());
+                    }
+
+                    res.status('200').send({
+                      estado: "Correcto",
+                      descripcion: "Transformador insertado correctamente",
+                      id: id_transformador
+                    });
+
                   });
+                }
+                else{
+                  const e = new BadRequest(`Error al introducir los parámetros, posiblemente el id del ${corresponde.tipo} no sea válido`, [`Id del ${corresponde.tipo} no válido`], `Error al introducir un transformador por el usuario. ${err}`);
+                return res.status(e.statusCode).send(e.getJson());
+                }
 
+              });
+
+            }
+            else{
+
+              conn.commit(function(err) {
+
+                conn.release();
+
+                if(err){
+                  const e = new BadRequest(`Ha ocurrido algún error al introducir los parámetros`, [''], `Error al introducir un transformador por el usuario. ${err}`);
+                  return res.status(e.statusCode).send(e.getJson());
+                }
+
+                res.status('200').send({
+                  estado: "Correcto",
+                  descripcion: "Transformador insertado correctamente",
+                  id: id_transformador
                 });
-              }
-              else{
-                const e = new BadRequest(`Error al introducir los parámetros, posiblemente el id del ${corresponde.tipo} no sea válido`, [`Id del ${corresponde.tipo} no válido`], `Error al introducir un transformador por el usuario. ${err}`);
-              return res.status(e.statusCode).send(e.getJson());
-              }
 
-            });
+              });
+
+            }
           }
           else {
             const e = new BadRequest('Error al introducir los parámetros', ['Voltaje o amperaje incorrecto.'], `Error al introducir un transformador por el usuario. ${err}`);
@@ -244,8 +268,6 @@ exports.editarTransformador = function (req, res) {
               conn.release();
               return res.status(e.statusCode).send(e.getJson());
             }
-            
-            if(corresponde){
 
               conn.query('DELETE FROM corresponde_portatil where id_transformador = ?',[id], function(err,rows){
                 
@@ -255,40 +277,63 @@ exports.editarTransformador = function (req, res) {
                     
                     if(!err){
 
-                      if(corresponde.tipo == "Portatil")
-                        sql = 'INSERT INTO corresponde_portatil VALUES (?)';
-                      else
-                        sql = 'INSERT INTO corresponde_componente VALUES (?)';
+                      if(corresponde){
 
-                      conn.query(sql, [[id, corresponde.id]], function(err,rows){
+                        if(corresponde.tipo == "Portatil")
+                          sql = 'INSERT INTO corresponde_portatil VALUES (?)';
+                        else
+                          sql = 'INSERT INTO corresponde_componente VALUES (?)';
 
-                        if(!err){
+                        conn.query(sql, [[id, corresponde.id]], function(err,rows){
 
-                          conn.commit(function(err, rows){
+                          if(!err){
 
+                            conn.commit(function(err, rows){
+
+                              conn.release();
+
+                              if(!err){
+                                return res.status('200').send({
+                                  estado: "Correcto",
+                                  descripcion: "Transformador actualizado correctamente"
+                                });
+                              }
+                              else {
+                                const e = new BadRequest('No se ha actualizado el transformador. Error al encontrar la correspondencia actual', ["Es posible que el transformador o el elementos al que lo quieres asociar no exista"], `Intento de modificar transformador ${err}`);
+                                return res.status(e.statusCode).send(e.getJson());
+                              }
+
+                            });
+
+                          }
+                          else{
+                            const e = new BadRequest('No se ha actualizado el transformador. Error al encontrar la correspondencia actual', ["Es posible que el transformador o el elementos al que lo quieres asociar no exista"], `Intento de modificar transformador ${err}`);
                             conn.release();
+                            return res.status(e.statusCode).send(e.getJson());
+                          }
 
-                            if(!err){
-                              return res.status('200').send({
-                                estado: "Correcto",
-                                descripcion: "Transformador actualizado correctamente"
-                              });
-                            }
-                            else {
-                              const e = new BadRequest('No se ha actualizado el transformador. Error al encontrar la correspondencia actual', ["Es posible que el transformador o el elementos al que lo quieres asociar no exista"], `Intento de modificar transformador ${err}`);
-                              return res.status(e.statusCode).send(e.getJson());
-                            }
+                        })
+                      }
+                      else{
 
-                          });
+                        conn.commit(function(err, rows){
 
-                        }
-                        else{
-                          const e = new BadRequest('No se ha actualizado el transformador. Error al encontrar la correspondencia actual', ["Es posible que el transformador o el elementos al que lo quieres asociar no exista"], `Intento de modificar transformador ${err}`);
                           conn.release();
-                          return res.status(e.statusCode).send(e.getJson());
-                        }
 
-                      })
+                          if(!err){
+                            return res.status('200').send({
+                              estado: "Correcto",
+                              descripcion: "Transformador actualizado correctamente"
+                            });
+                          }
+                          else {
+                            const e = new BadRequest('No se ha actualizado el transformador. Error al encontrar la correspondencia actual', ["Es posible que el transformador o el elementos al que lo quieres asociar no exista"], `Intento de modificar transformador ${err}`);
+                            return res.status(e.statusCode).send(e.getJson());
+                          }
+
+                        });
+
+                      }
 
                     }
                     else{
@@ -307,28 +352,6 @@ exports.editarTransformador = function (req, res) {
                 }
               
               });
-
-            }
-            else{
-
-              conn.commit(function(err) {
-
-                conn.release();
-
-                if(err){
-                  const e = new BadRequest(`Ha ocurrido algún error al introducir los parámetros`, [''], `Error al introducir un transformador por el usuario. ${err}`);
-                  return res.status(e.statusCode).send(e.getJson());
-                }
-
-                return res.status('200').send({
-                  estado: "Correcto",
-                  descripcion: "Transformador actualizado correctamente",
-                  id: id_transformador
-                });
-
-              });
-
-            }
           })
         }
       })
