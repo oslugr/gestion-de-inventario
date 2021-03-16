@@ -293,7 +293,7 @@ exports.obtener = function(req, res){
       
             if (!err) {
               res.status('200').send({
-                estado: "Correcto",
+                cantidad: rows.length,
                 data: rows
               });
             }
