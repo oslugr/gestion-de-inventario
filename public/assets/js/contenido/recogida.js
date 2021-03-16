@@ -17,12 +17,11 @@ function crearInterfazRecogida(data){
     // Crear cables
     $.get(`/api/recogida/${recogida.id}/cable`, crearInterfazCables);
     // Crear ordenadores
+    $.get(`/api/recogida/${recogida.id}/ordenador`, crearInterfazOrdenadores);
     // Crear Transformadores
     $.get(`/api/recogida/${recogida.id}/transformador`, crearInterfazTransformadores);
     // Crear componentes
     $.get(`/api/recogida/${recogida.id}/componente`, crearInterfazComponentes);
-
-    // crearInterfazComponentes(ordenador.componentes);
 }
 
 function mostrarRecogida(){
@@ -43,7 +42,7 @@ function mostrarRecogida(){
 					</thead>
 					<tbody id="body-tabla-recogida" class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
 					
-                    <tr id="recogida" class=" cursor-pointer ordenador text-gray-700 dark:text-gray-400" onclick="cargarInfoOrdenador(id, this)">
+                    <tr id="recogida" class=" cursor-pointer text-gray-700 dark:text-gray-400" onclick="cargarInfoOrdenador(id, this)">
                         <td class="px-4 py-3">
                             <div class="flex items-center text-sm">
                                 <svg class="relative hidden w-6 h-6 mr-3 md:block" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" >
@@ -535,7 +534,7 @@ function fila_transformadores(id, voltaje, amperaje, posicion) {
 			</td>
 			<td class="px-4 py-3">
 				<div class="flex items-center space-x-4 text-sm">
-					<button id="editar-${id}" @click="openModal" onclick="cargarFormularioTransformador('${id}', '${voltaje}', '${amperaje}', ${posicion})" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Edit">
+					<button id="transformador_editar-${id}" @click="openModal" onclick="cargarFormularioTransformador('${id}', '${voltaje}', '${amperaje}', ${posicion})" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Edit">
 						<svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
 							<path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
 						</svg>
@@ -1041,7 +1040,7 @@ function fila_componentes(id, estado, fecha, tipo, observaciones, posicion) {
 			</td>
 			<td class="px-4 py-3">
 				<div class="flex items-center space-x-4 text-sm">
-					<button id="editar-${id}" @click="openModal" onclick="cargarFormularioComponente('${id}', '${tipo}', '${estado}', '${fecha.split('T')[0]}', '${observaciones}', '${posicion}' )" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Edit">
+					<button id="componente_editar-${id}" @click="openModal" onclick="cargarFormularioComponente('${id}', '${tipo}', '${estado}', '${fecha.split('T')[0]}', '${observaciones}', '${posicion}' )" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Edit">
 						<svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
 							<path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
 						</svg>
@@ -1482,3 +1481,539 @@ function crearComponente(){
 		}
 	});
 }
+
+
+// ----------------------------------------------------------------------------------
+// ORDENADORES
+// ----------------------------------------------------------------------------------
+
+// Variable de estado para comprobar la página en la que se encuentra
+let pagina_ordenadores = 1;
+let ordenadores = null;
+let numElementosActuales_ordenadores = 0;
+let paginaMax_ordenadores = 0;
+
+function tarjetaOrdenador() {
+	return `
+    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+			<div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
+				<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 19 19">
+				<path d="M13 7H7v6h6V7z" />
+				<path fill-rule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clip-rule="evenodd" />
+				</svg>
+			</div>
+			<div>
+				<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+				Total de ordenadores
+				</p>
+				<p id="elementos-totales-tarjeta-ordenadores" class="text-lg font-semibold text-gray-700 dark:text-gray-200">
+				${ordenadores.cantidad}
+				</p>
+			</div>
+    </div>
+	<div id="boton-aniadir-ordenadores-portatiles" class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 cursor-pointer" onclick="cargarFormularioVacioOrdenadores('Portátil')" @click="openModal">
+			<div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
+				<svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+				</svg>
+			</div>
+			<div>
+				<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+				Añadir Portátil
+				</p>
+			</div>
+    </div>
+	<div id="boton-aniadir-ordenadores-sobremesas" class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 cursor-pointer" onclick="cargarFormularioVacioOrdenadores('Sobremesa')" @click="openModal">
+			<div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
+				<svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+				</svg>
+			</div>
+			<div>
+				<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+				Añadir sobremesa
+				</p>
+			</div>
+    </div>
+    `
+}
+
+function fila_ordenadores(id, tipo, localizacion, observaciones, otro, posicion) {
+	if (observaciones == null) observaciones = "";
+	if (localizacion  == null) localizacion = "";
+
+	return `
+		<tr id="ordenador-${id}" class="ordenador text-gray-700 dark:text-gray-400">
+			<td class="px-4 py-3">
+				<div class="flex items-center text-sm">
+					<svg class="relative hidden w-6 h-6 mr-3 md:block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+					<div>
+						<p class="font-semibold">${id}</p>
+					</div>
+				</div>
+			</td>
+			<td id="ordenador_tipo-${id}" class="px-4 py-3 text-sm" onclick="window.location.href='ordenador?id=${id}'">
+				${tipo}
+			</td>
+			<td id="ordenador_localizacion-${id}" class="px-4 py-3 text-sm" onclick="window.location.href='ordenador?id=${id}'">
+				${localizacion}
+			</td>
+			<td id="ordenador_observaciones-${id}" class="px-4 py-3 text-sm" onclick="window.location.href='ordenador?id=${id}'">
+				${observaciones}
+			</td>
+			<td class="px-4 py-3">
+				<div class="flex items-center space-x-4 text-sm">
+					<button id="ordenador_editar-${id}" @click="openModal" onclick="cargarFormularioOrdenador('${id}', '${tipo}', '${localizacion}', '${observaciones}', '${otro}', '${posicion}' )" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Edit">
+						<svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+							<path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+						</svg>
+					</button>
+					<button onclick="eliminarOrdenador(${id}, ${posicion});" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Delete">
+						<svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+							<path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+						</svg>
+					</button>
+				</div>
+			</td>
+		</tr>
+  `;
+}
+
+
+function crearOrdenadores() {
+	let filas = '';
+	let elementos = ordenadores.data.slice((ordenadores - 1) * 10, (pagina_ordenadores - 1) * 10 + 10);
+	paginaMax_ordenadores = Math.ceil(ordenadores.cantidad/10);
+
+	// Elimina la tabla de ordenadores
+	$('.ordenador').remove();
+
+	for (i = 0; i < elementos.length; i++){
+		if(elementos[i].tipo == "Portatil")
+			filas += fila_ordenadores(elementos[i].id, elementos[i].tipo, elementos[i].localizacion_taller, elementos[i].observaciones, elementos[i].estado, (pagina_ordenadores - 1)*10+i );
+		else
+			filas += fila_ordenadores(elementos[i].id, elementos[i].tipo, elementos[i].localizacion_taller, elementos[i].observaciones, elementos[i].tamano, (pagina_ordenadores - 1)*10+i );
+	}
+
+	$("#body-tabla-ordenadores").append(filas);
+
+	// Actualiza el pie de la tabla
+	if(numElementosActuales_ordenadores){
+		numElementosActuales_ordenadores = elementos.length;
+		$('#cantidad-pie_ordenadores').html(`Mostrando ${numElementosActuales_ordenadores} de ${ordenadores.cantidad}`);
+	}
+	else
+		numElementosActuales_ordenadores = elementos.length;
+
+	generarNavegadorTablaOrdenadores();
+}
+
+function crearTablaOrdenadores() {
+
+	$("#ordenadores-contenido").append(`
+		<div id="main-tabla-ordenadores" class="w-full overflow-hidden rounded-lg shadow-xs">
+
+			<div class="w-full overflow-x-auto">
+				<table class="w-full whitespace-no-wrap">
+					<thead>
+						<tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+							<th class="px-4 py-3">ID</th>
+							<th class="px-4 py-3">Tipo</th>
+							<th class="px-4 py-3">Localización</th>
+							<th class="px-4 py-3">Observaciones</th>
+							<th class="px-4 py-3">Acciones</th>
+						</tr>
+					</thead>
+					<tbody id="body-tabla-ordenadores" class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+					</tbody>
+				</table>
+			</div>
+
+		</div>
+  `);
+
+	crearOrdenadores();
+}
+
+function crearInterfazOrdenadores(data) {
+	ordenadores = data;
+	paginaMax_ordenadores = Math.ceil(data.cantidad/10);
+
+	$('#cargando-ordenadores').remove();
+	$('#main-tarjetas').append(tarjetaOrdenador());
+	// $('#boton-aniadir-ordenadores-portatiles').attr("onclick","cargarFormularioVacioOrdenadores('Portatil')"); 
+	// $('#boton-aniadir-ordenadores-sobremesas').attr("onclick","cargarFormularioVacioOrdenadores('Sobremesa')"); 
+	if (ordenadores.cantidad) {
+		crearTablaOrdenadores();
+		generarPieOrdenadores();
+	}
+}
+
+function getPaginaOrdenadores(num) {
+	pagina_ordenadores = num;
+	crearOrdenadores();
+}
+
+function generarNavegadorTablaOrdenadores(){
+	let html = "";
+
+	// Elimina los actuales al cambiar de tabla
+	$('.elemento-navegacion-tabla_ordenadores').remove();
+
+	html += `
+		<li class="elemento-navegacion-tabla_ordenadores">
+			<button onclick="if(pagina_ordenadores>1) getPaginaOrdenadores(pagina_ordenadores-1);" class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple" aria-label="Previous">
+				<svg class="w-4 h-4 fill-current" aria-hidden="true" viewBox="0 0 20 20">
+					<path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" fill-rule="evenodd"></path>
+				</svg>
+			</button>
+		</li>
+	`;
+
+	if(paginaMax_ordenadores > 5){
+
+		if(pagina_ordenadores != 1){
+			html += `<li class="elemento-navegacion-tabla_ordenadores"> 
+						<button onclick="getPaginaOrdenadores(1);" class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
+							1 
+						</button>
+					</li>
+					`
+		}
+
+		if(pagina_ordenadores >= 3){
+			html += `<li class="elemento-navegacion-tabla_ordenadores">
+						<span class="px-3 py-1">...</span>
+					</li>
+					`
+		}
+
+		html += `<li class="elemento-navegacion-tabla_ordenadores">
+					<button onclick="getPaginaOrdenadores(${pagina_ordenadores});" class="px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple">
+						${pagina_ordenadores}
+					</button>
+				</li>
+				`
+
+		if(pagina_ordenadores != paginaMax_ordenadores){
+			if(pagina_ordenadores<paginaMax_ordenadores-1){
+				html += `<li class="elemento-navegacion-tabla_ordenadores">
+							<span class="px-3 py-1">...</span> 
+						</li>
+						`
+			}
+
+			html += `
+				<li class="elemento-navegacion-tabla_ordenadores">
+					<button onclick="getPaginaOrdenadores(${paginaMax_ordenadores});" class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
+						${paginaMax_ordenadores}
+					</button>
+				</li>
+			`
+		}
+	}
+	else{
+
+		for (i = 1; i <= paginaMax_ordenadores; i++) {
+			html += `
+				<li class="elemento-navegacion-tabla_ordenadores">
+					<button onclick="getPaginaOrdenadores(${i});" 
+						${ pagina_ordenadores!=i ? 'class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"' : 'class="px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple"' } >
+						${i}
+					</button>
+				</li>
+			`
+		}
+
+	}
+
+	html += `
+		<li class="elemento-navegacion-tabla_ordenadores">
+			<button onclick="if(pagina_ordenadores<paginaMax_ordenadores) getPaginaOrdenadores(pagina_ordenadores+1);" class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple" aria-label="Next">
+				<svg class="w-4 h-4 fill-current" aria-hidden="true" viewBox="0 0 20 20">
+					<path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" fill-rule="evenodd"></path>
+				</svg>
+			</button>
+		</li>
+	`;
+	
+	$('#navegacion-tablas_ordenadores').html(html);
+}
+
+function generarPieOrdenadores() {
+	$('#pie-tabla_ordenadores').remove();
+
+	$("#main-tabla-ordenadores").append(`
+		<div id="pie-tabla_ordenadores" class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800">
+			<span id="cantidad-pie_ordenadores" class="flex items-center col-span-3">
+				Mostrando ${numElementosActuales_ordenadores} de ${ordenadores.data.length}
+			</span>
+			<span class="col-span-2"></span>
+			<!-- Pagination -->
+			<span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
+				<nav aria-label="Table navigation">
+					<ul id="navegacion-tablas_ordenadores" class="inline-flex items-center">
+					</ul>
+				</nav>
+			</span>
+		</div>
+	  `);
+	  
+	  generarNavegadorTablaOrdenadores();
+}
+
+// function eliminarComponente(id, posicion){
+// 	$.ajax({
+// 		url: `/api/componente/${id}`,
+// 		type: 'DELETE',
+// 		success: function(){
+// 			componentes.cantidad--;
+
+// 			if(componentes.cantidad%10 == 0 && pagina!=1){
+// 				pagina_componentes--;
+// 			}
+
+// 			componentes.data.splice(posicion,1);
+// 			crearComponentes();
+// 			generarPieComponentes();
+
+// 			// Actualiza la tarjeta superior
+// 			$('#elementos-totales-tarjeta-componentes').html(componentes.data.length);
+// 		},
+// 		error: function(){
+// 			$('#titulo-error').html('Error al eliminar componentes')
+// 			$('#mensaje-error').html('Ha habido un error al eliminar la componentes')
+// 			$('.popup').removeClass('hidden');
+
+// 			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
+// 		}
+// 	});
+// }
+
+function cargarFormularioOrdenador(id, tipo, localizacion, observaciones, otro, posicion){
+
+	$('#body-modal').html(`
+	
+	 <!-- Modal title -->
+	<p
+		class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300"
+	>
+		Editar ordenador
+	</p>
+	<!-- Modal description -->
+		<label class="block text-sm my-3">
+		<span class="text-gray-700 dark:text-gray-400">Localizacion</span>
+		<input id="editar-localizacion"
+			class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+			placeholder=""
+		/>
+		</label>
+
+		<label class="block text-sm my-3">
+		<span class="text-gray-700 dark:text-gray-400">Observaciones</span>
+		<input id="editar-observaciones"
+			class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+			placeholder=""
+		/>
+		</label>
+
+		<label id="estado-o-tamano" class="block text-sm my-3">
+		</label>
+
+	`)
+
+
+	$('#editar-localizacion').val(localizacion);
+	$('#editar-observaciones').val(observaciones);
+	if(tipo == "Sobremesa"){
+		$('#estado-o-tamano').html(`
+			<span class="text-gray-700 dark:text-gray-400">Tamaño</span>
+			<input id="editar-estado-o-tamano"
+				class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+				placeholder="" value="${otro}"
+			/>
+		`);
+	}
+	else{
+		$('#estado-o-tamano').html(`
+			<span class="text-gray-700 dark:text-gray-400">Estado</span>
+			<select id="editar-estado-o-tamano"
+				class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+			>
+				<option>Desconocido</option>
+				<option>Bueno</option>
+				<option>Regular</option>
+				<option>Por revisar</option>
+				<option>No aprovechable</option>
+				<option>Roto</option>
+			</select>
+		`);
+		$('#editar-estado-o-tamano').val(otro);
+	}
+
+	$('#confirmar-modal').attr('onclick', `editarOrdenador(${id}, '${tipo}', ${posicion})`);
+
+}
+
+function cargarFormularioVacioOrdenadores(tipo){
+
+	$('#body-modal').html(`
+	
+		<!-- Modal title -->
+		<p
+			class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300"
+		>
+			Editar ordenador
+		</p>
+		<!-- Modal description -->
+		<label class="block text-sm my-3">
+		<span class="text-gray-700 dark:text-gray-400">Localizacion</span>
+		<input id="editar-localizacion"
+			class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+			placeholder=""
+		/>
+		</label>
+
+		<label class="block text-sm my-3">
+		<span class="text-gray-700 dark:text-gray-400">Observaciones</span>
+		<input id="editar-observaciones"
+			class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+			placeholder=""
+		/>
+		</label>
+
+		<label id="estado-o-tamano" class="block text-sm my-3">
+		</label>
+
+	`)
+
+	$('#editar-localizacion').val('');
+	$('#editar-observaciones').val('');
+	
+	if(tipo == "Sobremesa"){
+		$('#estado-o-tamano').html(`
+			<span class="text-gray-700 dark:text-gray-400">Tamaño</span>
+			<input id="editar-estado-o-tamano"
+				class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+				placeholder="" value=""
+			/>
+		`);
+	}
+	else{
+		$('#estado-o-tamano').html(`
+			<span class="text-gray-700 dark:text-gray-400">Estado</span>
+			<select id="editar-estado-o-tamano"
+				class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+			>
+				<option>Desconocido</option>
+				<option>Bueno</option>
+				<option>Regular</option>
+				<option>Por revisar</option>
+				<option>No aprovechable</option>
+				<option>Roto</option>
+			</select>
+		`);
+		$('#editar-estado-o-tamano').val('');
+	}
+
+	// cargarCaracteristicas(id, posicion);
+	$('#confirmar-modal').attr('onclick', `crearOrdenador('${tipo}')`);
+}
+
+
+// function editarComponente(id, posicion){
+
+// 	const tipo 	        = $('#editar-tipo').val();
+// 	const estado        = $('#editar-estado').val();
+// 	const fecha         = $('#editar-fecha').val();
+// 	const observaciones = $('#editar-observaciones').val();
+	
+// 	const json = {
+// 		"tipo": tipo,
+// 		"estado": estado,
+// 		"observaciones": observaciones
+// 	};
+
+// 	if(fecha)
+// 		json["fecha_entrada"] = fecha;
+
+// 	$.ajax({
+// 		url: `/api/componente/${id}`,
+// 		data: JSON.stringify(json),
+// 		contentType: "application/json; charset=utf-8",
+// 		dataType: "json",
+// 		type: 'PUT',
+// 		success: function(){
+// 			$(`#componente_tipo-${id}`).html(tipo);
+// 			$(`#componente_estado-${id}`).html(obtenerEstadoFormateado(estado));
+// 			$(`#componente_fecha-${id}`).html(fecha);
+// 			$(`#componente_observaciones-${id}`).html(observaciones);
+// 			$(`#componente_editar-${id}`).attr('onclick', `cargarFormulario('${id}', '${tipo}', '${estado}', '${fecha}', '${observaciones}', ${posicion})`);
+
+// 			componentes.data[posicion].estado = estado;
+// 			componentes.data[posicion].observaciones = observaciones;
+// 			componentes.data[posicion].fecha_entrada = fecha;
+// 			componentes.data[posicion].tipo = tipo;
+// 		},
+// 		error: function(){
+// 			$('#titulo-error').html('Error al editar la componente')
+// 			$('#mensaje-error').html('Ha habido un error al editar la componente')
+// 			$('.popup').removeClass('hidden');
+
+// 			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
+// 		}
+// 	});
+
+// }
+
+// function crearComponente(){
+// 	const tipo 	        = $('#editar-tipo').val();
+// 	const estado        = $('#editar-estado').val();
+// 	const fecha         = $('#editar-fecha').val();
+// 	const observaciones = $('#editar-observaciones').val();
+
+// 	const json = {
+// 		"tipo": tipo,
+// 		"estado": estado,
+// 		"observaciones": observaciones
+// 	};
+
+// 	if(fecha)
+// 		json["fecha_entrada"] = fecha;
+
+// 	$.ajax({
+// 		url: `/api/recogida/${recogida.id}/componente/`,
+// 		data: JSON.stringify(json),
+// 		contentType: "application/json; charset=utf-8",
+// 		dataType: "json",
+// 		type: 'POST',
+// 		success: function(data){
+
+// 			let id = data.id;
+// 			componentes.cantidad++;
+
+// 			componentes.data.push({
+// 				id: id,
+// 				tipo: tipo, 
+// 				estado: estado,
+// 				fecha_entrada: fecha,
+// 				observaciones: observaciones
+// 			})
+
+// 			$('#elementos-totales-tarjeta-componentes').html(componentes.cantidad);
+// 			if(!$('#main-tabla-componentes').length){
+// 				crearTablaComponentes();
+// 				generarPieComponentes();
+// 			}
+// 			else
+// 				crearComponentes();
+// 		},
+// 		error: function(){
+// 			$('#titulo-error').html('Error al crear la componente')
+// 			$('#mensaje-error').html('Ha habido un error al crear la componente')
+// 			$('.popup').removeClass('hidden');
+
+// 			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
+// 		}
+// 	});
+// }
