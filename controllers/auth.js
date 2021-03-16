@@ -264,3 +264,54 @@ exports.salir = function(req, res){
   });
 
 }
+
+exports.obtener = function(req, res){
+  
+  const authHeader = req.headers.authorization;
+  const authCookie = req.cookies.authcookie;
+
+  if(authHeader)
+    var token = authHeader.split(' ')[1];
+  else if(authCookie)
+    var token = authCookie;
+
+  if(authHeader || authCookie){
+
+    jwt.verify(token, accessTokenSecret, (err, usuario) => {
+      
+      if(err || usuario.username != "admin"){
+        const e = new APIError('Forbidden', '403', 'El token proporcionado no es válido', `Intento de acceso con token inválido`);
+        return res.status(e.statusCode).send(e.getJson());
+      }
+
+      db.getConnection(function (err, conn) {
+        if (!err) {
+
+          conn.query('SELECT username FROM usuario;', function (err, rows) {
+            
+            conn.release();
+      
+            if (!err) {
+              res.status('200').send({
+                estado: "Correcto",
+                data: rows
+              });
+            }
+            else {
+              const e = new BadRequest('Error al obtener los usuarios', [''], `Error al obtener los usuarios. ${err}`);
+              return res.status(e.statusCode).send(e.getJson());
+            }
+  
+          })
+        }
+        else {
+          const e = new APIError('Service Unavailable', '503', 'Error al conectar con la base de datos', `Error al conectar con la base de datos\n${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+      })
+    })
+
+
+  }
+
+}

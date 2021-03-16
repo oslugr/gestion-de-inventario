@@ -1,7 +1,9 @@
 const express 	  = require('express'),
 	  router  	  = express.Router();
-const db 	  	  = require('../db/pool').pool;
 const controlador = require('../controllers/auth');
+
+// Obtener todos los usuarios del sistemas
+router.get('/usuario',  controlador.obtener)
 
 // Loguearse y obtener un token
 router.post('/login',  controlador.autenticar)
