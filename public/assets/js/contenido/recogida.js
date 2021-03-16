@@ -1064,7 +1064,7 @@ function crearComponentes() {
 	paginaMax_componentes = Math.ceil(componentes.cantidad/10);
 
 	// Elimina la tabla de componentes
-	$('.componentes').remove();
+	$('.componente').remove();
 
 	for (i = 0; i < elementos.length; i++)
 		filas += fila_componentes(elementos[i].id, elementos[i].estado, elementos[i].fecha_entrada, elementos[i].tipo, elementos[i].observaciones, (pagina_componentes - 1)*10+i );
@@ -1236,33 +1236,33 @@ function generarPieComponentes() {
 	  generarNavegadorTablaComponentes();
 }
 
-// function eliminarTransformador(id, posicion){
-// 	$.ajax({
-// 		url: `/api/transformador/${id}`,
-// 		type: 'DELETE',
-// 		success: function(){
-// 			transformadores.cantidad--;
-			
-// 			if(transformadores.cantidad%10 == 0 && pagina_transformadores!=1){
-// 				pagina_transformadores--;
-// 			}
+function eliminarComponente(id, posicion){
+	$.ajax({
+		url: `/api/componente/${id}`,
+		type: 'DELETE',
+		success: function(){
+			componentes.cantidad--;
 
-// 			transformadores.data.splice(posicion,1);
-// 			crearTransformadores();
-// 			generarPieTransformadores();
+			if(componentes.cantidad%10 == 0 && pagina!=1){
+				pagina_componentes--;
+			}
 
-// 			// Actualiza la tarjeta superior
-// 			$('#elementos-totales-tarjeta-transformadores').html(transformadores.data.length);
-// 		},
-// 		error: function(){
-// 			$('#titulo-error').html('Error al eliminar')
-// 			$('#mensaje-error').html('Ha ocurrido un error al eliminar el cable')
-// 			$('.popup').removeClass('hidden');
+			componentes.data.splice(posicion,1);
+			crearComponentes();
+			generarPieComponentes();
 
-// 			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
-// 		}
-// 	});
-// }
+			// Actualiza la tarjeta superior
+			$('#elementos-totales-tarjeta-componentes').html(componentes.data.length);
+		},
+		error: function(){
+			$('#titulo-error').html('Error al eliminar componentes')
+			$('#mensaje-error').html('Ha habido un error al eliminar la componentes')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
+		}
+	});
+}
 
 function cargarFormularioComponente(id, tipo, estado, fecha, observaciones, posicion){
 
@@ -1321,9 +1321,7 @@ function cargarFormularioComponente(id, tipo, estado, fecha, observaciones, posi
 	$(`#editar-estado`).val(estado);
 	$('#editar-fecha').val(fecha);
 	$('#editar-observaciones').val(observaciones);
-	cargarCaracteristicas(id, posicion);
 	$('#confirmar-modal').attr('onclick', `editarComponente(${id}, ${posicion})`);
-	$('#boton-nueva-caracteristica').attr('onclick', `aniadirCaracteristica({id: -1, nombre: '', valor: ''}, ${posicion}, null, ${id}, 'crear');`);
 
 }
 
@@ -1383,117 +1381,104 @@ function cargarFormularioVacioComponentes(){
 	$('#editar-tipo').val("");
 	$(`#editar-estado`).val("Desconocido");
 	$('#editar-fecha').val("");
-	$('#body-tabla-caracteristicas').html('');
 	$('#editar-observaciones').val("");
 	$('#confirmar-modal').attr('onclick', `crearComponente()`);
-	$('#boton-nueva-caracteristica').attr('onclick', `aniadirCaracteristicaNueva(0)`);
 }
 
-// function editarTransformador(id, posicion){
 
-// 	let voltaje  = $('#editar-voltaje').val();
-// 	let amperaje = $('#editar-amperaje').val();
-// 	let c_tipo 	 = $('#corresponde-tipo').val().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-// 	let c_id	 = $('#corresponde-id').val();	
+function editarComponente(id, posicion){
 
-// 	let json = {
-// 		voltaje: voltaje, 
-// 		amperaje: amperaje
-// 	}
-
-// 	if(c_id){
-// 		json['corresponde'] = {
-// 			tipo: c_tipo,
-// 			id: c_id
-// 		}
-// 	}
-
-// 	$.ajax({
-// 		url: `/api/transformador/${id}`,
-// 		type: 'PUT',
-// 		data: JSON.stringify(json),
-// 		contentType: "application/json; charset=utf-8",
-// 		success: function(){
-// 			$(`#transformador_voltaje-${id}`).html(voltaje);
-// 			$(`#transformador_amperaje-${id}`).html(amperaje);
-// 			$(`#transformador_editar-${id}`).attr('onclick', `cargarFormularioTransformador('${id}', '${voltaje}', '${amperaje}', ${posicion})`);
-
-// 			transformadores.data[posicion].voltaje  = voltaje;
-// 			transformadores.data[posicion].amperaje = amperaje;
-// 			transformadores.data[posicion].corresponde = json.corresponde;
-
-// 			crearTransformadores();
-// 		},
-// 		error: function(){
-// 			$('#titulo-error').html('Error al editar el transformador')
-// 			$('#mensaje-error').html('Ha ocurrido un error al editar el transformador')
-// 			$('.popup').removeClass('hidden');
-
-// 			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
-// 		}
-// 	});
-
-
-// }
-
-// function crearTransformador(){
-
-// 	let voltaje  = $('#editar-voltaje').val();
-// 	let amperaje = $('#editar-amperaje').val();
-// 	let c_tipo 	 = $('#corresponde-tipo').val().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-// 	let c_id	 = $('#corresponde-id').val();
+	const tipo 	        = $('#editar-tipo').val();
+	const estado        = $('#editar-estado').val();
+	const fecha         = $('#editar-fecha').val();
+	const observaciones = $('#editar-observaciones').val();
 	
-// 	let json = {
-// 		voltaje: voltaje, 
-// 		amperaje: amperaje
-// 	}
+	const json = {
+		"tipo": tipo,
+		"estado": estado,
+		"observaciones": observaciones
+	};
 
-// 	if(c_id){
-// 		json['corresponde'] = {
-// 			tipo: c_tipo,
-// 			id: c_id
-// 		}
-// 	}
-	
-// 	$.ajax({
-// 		url: `/api/recogida/${recogida.id}/transformador/`,
-// 		type: 'POST',
-// 		data: JSON.stringify(json),
-// 		contentType: "application/json; charset=utf-8",
-// 		dataType: "json",
-// 		success: function(data){
-// 			let id = data.id;
-// 			transformadores.cantidad++;
+	if(fecha)
+		json["fecha_entrada"] = fecha;
 
-// 			let response_json = {
-// 				id: id,
-// 				voltaje: voltaje,
-// 				amperaje: amperaje
-// 			}
+	$.ajax({
+		url: `/api/componente/${id}`,
+		data: JSON.stringify(json),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		type: 'PUT',
+		success: function(){
+			$(`#componente_tipo-${id}`).html(tipo);
+			$(`#componente_estado-${id}`).html(obtenerEstadoFormateado(estado));
+			$(`#componente_fecha-${id}`).html(fecha);
+			$(`#componente_observaciones-${id}`).html(observaciones);
+			$(`#componente_editar-${id}`).attr('onclick', `cargarFormulario('${id}', '${tipo}', '${estado}', '${fecha}', '${observaciones}', ${posicion})`);
 
-// 			if(json.corresponde)
-// 				response_json.corresponde = json.corresponde;
-// 			else
-// 				response_json.corresponde = null
+			componentes.data[posicion].estado = estado;
+			componentes.data[posicion].observaciones = observaciones;
+			componentes.data[posicion].fecha_entrada = fecha;
+			componentes.data[posicion].tipo = tipo;
+		},
+		error: function(){
+			$('#titulo-error').html('Error al editar la componente')
+			$('#mensaje-error').html('Ha habido un error al editar la componente')
+			$('.popup').removeClass('hidden');
 
-// 			transformadores.data.push(response_json);
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
+		}
+	});
 
-// 			$('#elementos-totales-tarjeta-transformadores').html(transformadores.cantidad);
+}
 
-// 			if(!$('#main-tabla-transformadores').length){
-// 				crearTablaTransformadores();
-// 				generarPieTransformadores();
-// 			}
-// 			else
-// 				crearTransformadores();
-// 		},
-// 		error: function(){
-// 			$('#titulo-error').html('Error al crear el transformador')
-// 			$('#mensaje-error').html('Ha ocurrido un error al crear el transformador')
-// 			$('.popup').removeClass('hidden');
+function crearComponente(){
+	const tipo 	        = $('#editar-tipo').val();
+	const estado        = $('#editar-estado').val();
+	const fecha         = $('#editar-fecha').val();
+	const observaciones = $('#editar-observaciones').val();
 
-// 			setTimeout(() => $('.popup').addClass('hidden'), 3000 );
-// 		}
-// 	});
+	const json = {
+		"tipo": tipo,
+		"estado": estado,
+		"observaciones": observaciones
+	};
 
-// }
+	if(fecha)
+		json["fecha_entrada"] = fecha;
+
+	$.ajax({
+		url: `/api/recogida/${recogida.id}/componente/`,
+		data: JSON.stringify(json),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		type: 'POST',
+		success: function(data){
+
+			let id = data.id;
+			componentes.cantidad++;
+
+			componentes.data.push({
+				id: id,
+				tipo: tipo, 
+				estado: estado,
+				fecha_entrada: fecha,
+				observaciones: observaciones
+			})
+
+			$('#elementos-totales-tarjeta-componentes').html(componentes.cantidad);
+			if(!$('#main-tabla-componentes').length){
+				crearTablaComponentes();
+				generarPieComponentes();
+			}
+			else
+				crearComponentes();
+		},
+		error: function(){
+			$('#titulo-error').html('Error al crear la componente')
+			$('#mensaje-error').html('Ha habido un error al crear la componente')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
+		}
+	});
+}
