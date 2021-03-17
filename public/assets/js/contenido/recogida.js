@@ -1762,33 +1762,34 @@ function generarPieOrdenadores() {
 	  generarNavegadorTablaOrdenadores();
 }
 
-// function eliminarComponente(id, posicion){
-// 	$.ajax({
-// 		url: `/api/componente/${id}`,
-// 		type: 'DELETE',
-// 		success: function(){
-// 			componentes.cantidad--;
+function eliminarOrdenador(id, posicion){
+	$.ajax({
+		url: `/api/ordenador/${id}`,
+		type: 'DELETE',
+		success: function(){
 
-// 			if(componentes.cantidad%10 == 0 && pagina!=1){
-// 				pagina_componentes--;
-// 			}
+			ordenadores.cantidad--;
 
-// 			componentes.data.splice(posicion,1);
-// 			crearComponentes();
-// 			generarPieComponentes();
+			if(ordenadores.cantidad%10 == 0 && pagina_ordenadores!=1){
+				pagina_ordenadores--;
+			}
 
-// 			// Actualiza la tarjeta superior
-// 			$('#elementos-totales-tarjeta-componentes').html(componentes.data.length);
-// 		},
-// 		error: function(){
-// 			$('#titulo-error').html('Error al eliminar componentes')
-// 			$('#mensaje-error').html('Ha habido un error al eliminar la componentes')
-// 			$('.popup').removeClass('hidden');
+			ordenadores.data.splice(posicion,1);
+			crearOrdenadores();
+			generarPieOrdenadores();
 
-// 			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
-// 		}
-// 	});
-// }
+			// Actualiza la tarjeta superior
+			$('#elementos-totales-tarjeta-ordenadores').html(ordenadores.data.length);
+		},
+		error: function(){
+			$('#titulo-error').html('Error al eliminar el ordenador')
+			$('#mensaje-error').html('Ha habido un error al eliminar el ordenador')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
+		}
+	});
+}
 
 function cargarFormularioOrdenador(id, tipo, localizacion, observaciones, otro, posicion){
 
@@ -1921,99 +1922,113 @@ function cargarFormularioVacioOrdenadores(tipo){
 }
 
 
-// function editarComponente(id, posicion){
+function editarOrdenador(id, tipo, posicion){
 
-// 	const tipo 	        = $('#editar-tipo').val();
-// 	const estado        = $('#editar-estado').val();
-// 	const fecha         = $('#editar-fecha').val();
-// 	const observaciones = $('#editar-observaciones').val();
+	const localizacion  = $('#editar-localizacion').val();
+	const observaciones = $('#editar-observaciones').val();
+	const otro 			= $('#editar-estado-o-tamano').val();
 	
-// 	const json = {
-// 		"tipo": tipo,
-// 		"estado": estado,
-// 		"observaciones": observaciones
-// 	};
+	const json = {
+		"localizacion_taller": localizacion,
+		"observaciones": observaciones,
+	};
 
-// 	if(fecha)
-// 		json["fecha_entrada"] = fecha;
+	if(tipo == "Portatil")
+		json["estado"] = otro;
+	else if(tipo == "Sobremesa")
+		json["tamano"] = otro;
 
-// 	$.ajax({
-// 		url: `/api/componente/${id}`,
-// 		data: JSON.stringify(json),
-// 		contentType: "application/json; charset=utf-8",
-// 		dataType: "json",
-// 		type: 'PUT',
-// 		success: function(){
-// 			$(`#componente_tipo-${id}`).html(tipo);
-// 			$(`#componente_estado-${id}`).html(obtenerEstadoFormateado(estado));
-// 			$(`#componente_fecha-${id}`).html(fecha);
-// 			$(`#componente_observaciones-${id}`).html(observaciones);
-// 			$(`#componente_editar-${id}`).attr('onclick', `cargarFormulario('${id}', '${tipo}', '${estado}', '${fecha}', '${observaciones}', ${posicion})`);
+	$.ajax({
+		url: `/api/ordenador/${id}`,
+		data: JSON.stringify(json),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		type: 'PUT',
+		success: function(){
+			$(`#ordenador_localizacion-${id}`).html(localizacion);
+			$(`#ordenador_observaciones-${id}`).html(observaciones);
+			$(`#ordenador_editar-${id}`).attr('onclick', `cargarFormulario(${id}, '${tipo}', '${localizacion}', '${observaciones}', '${otro}', ${posicion})`);
 
-// 			componentes.data[posicion].estado = estado;
-// 			componentes.data[posicion].observaciones = observaciones;
-// 			componentes.data[posicion].fecha_entrada = fecha;
-// 			componentes.data[posicion].tipo = tipo;
-// 		},
-// 		error: function(){
-// 			$('#titulo-error').html('Error al editar la componente')
-// 			$('#mensaje-error').html('Ha habido un error al editar la componente')
-// 			$('.popup').removeClass('hidden');
+			if(tipo == "Portatil")
+				ordenadores.data[posicion].estado = otro;
+			else if(tipo == "Sobremesa")
+				ordenadores.data[posicion].tamano = otro;
+			
+			ordenadores.data[posicion].observaciones = observaciones;
+			ordenadores.data[posicion].localizacion_taller = localizacion;
+		},
+		error: function(){
+			$('#titulo-error').html('Error al modificar el ordenador')
+			$('#mensaje-error').html('Ha habido un error al editar el ordenador')
+			$('.popup').removeClass('hidden');
 
-// 			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
-// 		}
-// 	});
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
+		}
+	});
 
-// }
 
-// function crearComponente(){
-// 	const tipo 	        = $('#editar-tipo').val();
-// 	const estado        = $('#editar-estado').val();
-// 	const fecha         = $('#editar-fecha').val();
-// 	const observaciones = $('#editar-observaciones').val();
+}
 
-// 	const json = {
-// 		"tipo": tipo,
-// 		"estado": estado,
-// 		"observaciones": observaciones
-// 	};
+function crearOrdenador(tipo){
+	const localizacion  = $('#editar-localizacion').val();
+	const observaciones = $('#editar-observaciones').val();
+	const otro 			= $('#editar-estado-o-tamano').val();
+	
+	const json = {
+		"localizacion_taller": localizacion,
+		"observaciones": observaciones
+	};
 
-// 	if(fecha)
-// 		json["fecha_entrada"] = fecha;
+	if(tipo == "Portátil"){
+		json["estado"] = otro;
+		var query = 'portatil';
+	}
+	else if(tipo == "Sobremesa"){
+		json["tamano"] = otro;
+		var query = 'sobremesa';
+	}
 
-// 	$.ajax({
-// 		url: `/api/recogida/${recogida.id}/componente/`,
-// 		data: JSON.stringify(json),
-// 		contentType: "application/json; charset=utf-8",
-// 		dataType: "json",
-// 		type: 'POST',
-// 		success: function(data){
+	$.ajax({
+		url: `/api/recogida/${recogida.id}/${query}/`,
+		data: JSON.stringify(json),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		type: 'POST',
+		success: function(data){
+			ordenadores.cantidad++;
 
-// 			let id = data.id;
-// 			componentes.cantidad++;
+			let json = {
+				id: data.id,
+				localizacion_taller: localizacion,
+				observaciones: observaciones, 
+				tipo: tipo
+			};
 
-// 			componentes.data.push({
-// 				id: id,
-// 				tipo: tipo, 
-// 				estado: estado,
-// 				fecha_entrada: fecha,
-// 				observaciones: observaciones
-// 			})
+			if(tipo == "Portátil"){
+				json["estado"] = otro;
+				json["tamano"] = null;
+			}
+			else if(tipo == "Sobremesa"){
+				json["estado"] = null;
+				json["tamano"] = otro;
+			}
 
-// 			$('#elementos-totales-tarjeta-componentes').html(componentes.cantidad);
-// 			if(!$('#main-tabla-componentes').length){
-// 				crearTablaComponentes();
-// 				generarPieComponentes();
-// 			}
-// 			else
-// 				crearComponentes();
-// 		},
-// 		error: function(){
-// 			$('#titulo-error').html('Error al crear la componente')
-// 			$('#mensaje-error').html('Ha habido un error al crear la componente')
-// 			$('.popup').removeClass('hidden');
+			ordenadores.data.push(json)
 
-// 			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
-// 		}
-// 	});
-// }
+			$('#elementos-totales-tarjeta-ordenadores').html(ordenadores.cantidad);
+			if(!$('#main-tabla-ordenadores').length){
+				crearTablaOrdenadores();
+				generarPieOrdenadores();
+			}
+			else
+				crearOrdenadores();
+		},
+		error: function(){
+			$('#titulo-error').html('Error al crear el ordenador')
+			$('#mensaje-error').html('Ha habido un error al crear el ordenador')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
+		}
+	});
+}
