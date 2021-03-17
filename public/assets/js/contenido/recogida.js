@@ -109,7 +109,18 @@ function tarjeta(tipo,titulo, dato) {
 function crearTarjetas() {
 	$("#main-contenido").append(`
 		<div id="main-tarjetas" class="grid gap-6 mt-4 md:grid-cols-2 xl:grid-cols-4">
-		
+			<div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 cursor-pointer" onclick="descargarArchivoDatos()">
+				<div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
+					<svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+						<path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+					</svg>
+				</div>
+				<div>
+					<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+					Exportar datos
+					</p>
+				</div>
+			</div>
 		</div>
   `)
 }
@@ -2031,4 +2042,37 @@ function crearOrdenador(tipo){
 			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
 		}
 	});
+}
+
+// ----------------------------------------------------------------------------------
+// EXPORTACIÓN DE DATOS
+// ----------------------------------------------------------------------------------
+
+function descargarArchivoDatos(){
+
+	const texto = generarDatosExportacion();
+	const archivo = `recogida_${recogida.id}.csv`;
+
+	var element = document.createElement('a');
+	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(texto));
+	element.setAttribute('download', archivo);
+
+	element.style.display = 'none';
+	document.body.appendChild(element);
+
+	element.click();
+
+	document.body.removeChild(element);
+
+}
+
+function generarDatosExportacion(){
+
+	let salida = '';
+
+	salida = `"id_recogida","fecha","tipo","localizacion","numero_cables","numero_componentes","numero_ordenadores","numero_transformadores"\n`;
+	salida += `${recogida.id},"${recogida.fecha}","${recogida.tipo}","${recogida.localizacion}",${cables.cantidad},${componentes.cantidad},${ordenadores.cantidad},${transformadores.cantidad},`;
+
+	return salida;
+
 }
