@@ -147,6 +147,11 @@ exports.eliminar = function(req, res){
 
       const usuario = req.params.user;
 
+      if (usuario == 'admin') {
+        const e = new BadRequest('No se puede eliminar el usuario admin', ['No se puede eliminar el usuario admin'], `No se puede eliminar el usuario admin`);
+        return res.status(e.statusCode).send(e.getJson());
+      } 
+
       if (!user) {
         const e = new BadRequest('No se ha especificado usuario', ['No se ha especificado usuario'], `No se ha especificado usuario`);
         return res.status(e.statusCode).send(e.getJson());
