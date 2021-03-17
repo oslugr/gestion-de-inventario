@@ -1,7 +1,7 @@
 function logout(){
 
     $.ajax({
-		url: `/api/logout/`,
+		url: `/api/usuario/logout/`,
 		type: 'POST',
 		success: function(data){
 			window.location.replace('/login')

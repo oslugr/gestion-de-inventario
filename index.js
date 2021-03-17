@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 const auth  = require('./routes/auth');
 app.use(autorizacion);
-app.use('/api', auth);
+app.use('/api/usuario', auth);
 
 // Routes
 const localizacion  = require('./routes/localizacion')

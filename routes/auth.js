@@ -3,7 +3,7 @@ const express 	  = require('express'),
 const controlador = require('../controllers/auth');
 
 // Obtener todos los usuarios del sistemas
-router.get('/usuario',  controlador.obtener)
+router.get('/',  controlador.obtener)
 
 // Loguearse y obtener un token
 router.post('/login',  controlador.autenticar)
@@ -15,9 +15,9 @@ router.post('/logout',  controlador.salir)
 router.post('/signup', controlador.registrar)
 
 // Eliminar un usuario
-router.delete('/usuario/:user', controlador.eliminar)
+router.delete('/:user', controlador.eliminar)
 
 // Cambiar contraseña
-router.put('/usuario/:user', controlador.cambiarContrasena)
+router.put('/:user', controlador.cambiarContrasena)
 
 module.exports = router;

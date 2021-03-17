@@ -7,7 +7,7 @@ function iniciarSesion(){
     }
 
     $.ajax({
-		url: `/api/login/`,
+		url: `/api/usuario/login/`,
         data: JSON.stringify(json),
 		contentType: "application/json; charset=utf-8",
 		dataType: "json",

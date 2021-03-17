@@ -355,7 +355,7 @@ function crearUsuario(){
 	}
 	
 	$.ajax({
-		url: `/api/signup/`,
+		url: `/api/usuario/signup/`,
 		type: 'POST',
 		data: JSON.stringify(json),
 		contentType: "application/json; charset=utf-8",

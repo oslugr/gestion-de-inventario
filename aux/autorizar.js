@@ -9,6 +9,9 @@ function error( req, res ){
     const e = new APIError('Forbidden', '403', 'El token proporcionado no es válido', `Intento de acceso con token inválido`);
     return res.status(e.statusCode).send(e.getJson());
   }
+  else if(req.originalUrl.startsWith('/usuarios')){
+    res.redirect('/');
+  }
   else{
     res.redirect('/login');
   }
@@ -19,7 +22,7 @@ exports.autorizacion = function(req, res, next){
 
   if(req.originalUrl.includes('login')){
     next();
-  } 
+  }
   else{
 
     const authHeader = req.headers.authorization;
@@ -35,6 +38,10 @@ exports.autorizacion = function(req, res, next){
       jwt.verify(token, accessTokenSecret, (err, user) => {
         
         if(err){
+          error(req, res);
+        }
+
+        if(user.username != "admin" && req.originalUrl.startsWith('/usuarios')){
           error(req, res);
         }
 
