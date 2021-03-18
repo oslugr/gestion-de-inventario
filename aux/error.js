@@ -5,7 +5,8 @@ class APIError extends Error{
 
         this.name        = name;
         this.statusCode  = statusCode;
-        console.log(log)
+        console.log('\x1b[31m%s\x1b[0m', 'ERROR EN LA SIGUIENTE QUERY:'); // Muestra el log en rojo
+        console.log(`${log}`);
     }
 
     getJson(){
