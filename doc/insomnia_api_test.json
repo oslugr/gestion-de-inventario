@@ -1,32 +1,26 @@
 {
     "_type": "export",
     "__export_format": 4,
-    "__export_date": "2021-03-13T15:44:51.973Z",
+    "__export_date": "2021-03-18T12:47:55.002Z",
     "__export_source": "insomnia.desktop.app:v2020.5.2",
     "resources": [
         {
-            "_id": "req_6742117f7b05432da83752de19ca50f6",
+            "_id": "req_534eaec2ee28408bb0c545a3da0a3257",
             "parentId": "fld_7ef410b5024c42858b1196d9d13c8e4f",
-            "modified": 1615628824182,
-            "created": 1615627610813,
-            "url": "http://localhost:3000/api/login",
-            "name": "Login",
+            "modified": 1615974197539,
+            "created": 1615897281880,
+            "url": "http://localhost:3000/api/usuario",
+            "name": "Usuario",
             "description": "",
-            "method": "POST",
-            "body": {
-                "mimeType": "application/json",
-                "text": "{\n\t\"user\": \"admin\",\n\t\"pass\": \"holas\"\n}"
-            },
+            "method": "GET",
+            "body": {},
             "parameters": [],
-            "headers": [
-                {
-                    "name": "Content-Type",
-                    "value": "application/json",
-                    "id": "pair_f51d551196744d1e8cfe101f09d319cd"
-                }
-            ],
-            "authentication": {},
-            "metaSortKey": -1615627610813,
+            "headers": [],
+            "authentication": {
+                "type": "bearer",
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWF0IjoxNjE1OTc0MTY5LCJleHAiOjE2MTU5OTkzNjl9.T6Ri1JoeYIusTbl938BBmtf6U5iGXNYCXfAL5XpFWYA"
+            },
+            "metaSortKey": -1615627610863,
             "isPrivate": false,
             "settingStoreCookies": true,
             "settingSendCookies": true,
@@ -59,11 +53,46 @@
             "_type": "workspace"
         },
         {
+            "_id": "req_6742117f7b05432da83752de19ca50f6",
+            "parentId": "fld_7ef410b5024c42858b1196d9d13c8e4f",
+            "modified": 1615974190592,
+            "created": 1615627610813,
+            "url": "http://localhost:3000/api/usuario/login",
+            "name": "Login",
+            "description": "",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"user\": \"admin\",\n\t\"pass\": \"admin\"\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "id": "pair_f51d551196744d1e8cfe101f09d319cd"
+                }
+            ],
+            "authentication": {
+                "type": "bearer",
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWF0IjoxNjE1OTc0MTY5LCJleHAiOjE2MTU5OTkzNjl9.T6Ri1JoeYIusTbl938BBmtf6U5iGXNYCXfAL5XpFWYA"
+            },
+            "metaSortKey": -1615627610813,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
             "_id": "req_71de9099c134475ba4ff60a6b3958478",
             "parentId": "fld_7ef410b5024c42858b1196d9d13c8e4f",
-            "modified": 1615633088945,
+            "modified": 1615974330917,
             "created": 1615633073408,
-            "url": "http://localhost:3000/api/logout",
+            "url": "http://localhost:3000/api/usuario/logout",
             "name": "Logout",
             "description": "",
             "method": "POST",
@@ -84,9 +113,9 @@
         {
             "_id": "req_b9d58cb21c914f5695b195c99c0ff133",
             "parentId": "fld_7ef410b5024c42858b1196d9d13c8e4f",
-            "modified": 1615628685326,
+            "modified": 1615974337259,
             "created": 1615628616435,
-            "url": "http://localhost:3000/api/signup",
+            "url": "http://localhost:3000/api/usuario/signup",
             "name": "Registro",
             "description": "",
             "method": "POST",
@@ -116,7 +145,7 @@
         {
             "_id": "req_702057b6fc7c42b38e01723bb0a3a945",
             "parentId": "fld_7ef410b5024c42858b1196d9d13c8e4f",
-            "modified": 1615628807510,
+            "modified": 1615898717510,
             "created": 1615628750671,
             "url": "http://localhost:3000/api/usuario/admin",
             "name": "Usuario",
@@ -204,6 +233,29 @@
             "_type": "request_group"
         },
         {
+            "_id": "req_6e49c00a72ca467a889a46833748ecab",
+            "parentId": "fld_2c018eb0d3674a699ab2eed4cc5ebc82",
+            "modified": 1616063412688,
+            "created": 1616056143006,
+            "url": "http://localhost:3000/api/recogida/Recogida/exportar",
+            "name": "Exportar por tipo",
+            "description": "",
+            "method": "GET",
+            "body": {},
+            "parameters": [],
+            "headers": [],
+            "authentication": {},
+            "metaSortKey": -1610357373553.5,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
             "_id": "req_5ac76137c0e946bfa20c979c3c38403f",
             "parentId": "fld_2c018eb0d3674a699ab2eed4cc5ebc82",
             "modified": 1611048965730,
@@ -229,9 +281,9 @@
         {
             "_id": "req_d729f4360f304896a3d6abc4ecdf0573",
             "parentId": "fld_2c018eb0d3674a699ab2eed4cc5ebc82",
-            "modified": 1611049583860,
+            "modified": 1615811440683,
             "created": 1611049572002,
-            "url": "http://localhost:3000/api/recogida/1/transformador",
+            "url": "http://localhost:3000/api/recogida/3/transformador",
             "name": "Transformador",
             "description": "",
             "method": "GET",
@@ -252,9 +304,9 @@
         {
             "_id": "req_e6abc76b6b424c0fae679a06be3b15f2",
             "parentId": "fld_2c018eb0d3674a699ab2eed4cc5ebc82",
-            "modified": 1612786908620,
+            "modified": 1615806811745,
             "created": 1611050354558,
-            "url": "http://localhost:3000/api/recogida/2/componente",
+            "url": "http://localhost:3000/api/recogida/3/componente",
             "name": "Componente",
             "description": "",
             "method": "GET",
@@ -275,9 +327,9 @@
         {
             "_id": "req_a4e4a270202743ff9f2ac1ce99a36de9",
             "parentId": "fld_2c018eb0d3674a699ab2eed4cc5ebc82",
-            "modified": 1611052386203,
+            "modified": 1615809276278,
             "created": 1611051430198,
-            "url": "http://localhost:3000/api/recogida/1/ordenador",
+            "url": "http://localhost:3000/api/recogida/3/ordenador",
             "name": "Ordenador",
             "description": "",
             "method": "GET",
@@ -330,9 +382,9 @@
         {
             "_id": "req_7518b15d0d74432eb46aa9d7a338c256",
             "parentId": "fld_2c018eb0d3674a699ab2eed4cc5ebc82",
-            "modified": 1611048814260,
+            "modified": 1615798597558,
             "created": 1610711155718,
-            "url": "http://localhost:3000/api/recogida/2/cable/3",
+            "url": "http://localhost:3000/api/recogida/4/cable/USB/2.0",
             "name": "Cable",
             "description": "",
             "method": "POST",
@@ -353,15 +405,24 @@
         {
             "_id": "req_8f378174cf8144718fd957e1d4905d82",
             "parentId": "fld_2c018eb0d3674a699ab2eed4cc5ebc82",
-            "modified": 1611049535193,
+            "modified": 1615811445408,
             "created": 1611043956122,
-            "url": "http://localhost:3000/api/recogida/1/transformador/2",
+            "url": "http://localhost:3000/api/recogida/3/transformador/",
             "name": "Transformador",
             "description": "",
             "method": "POST",
-            "body": {},
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"voltaje\": 2,\n\t\"amperaje\": 4,\n\t\"corresponde\": {\n\t\t\"tipo\": \"Componente\",\n\t\t\"id\": 1\n\t}\n}"
+            },
             "parameters": [],
-            "headers": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "id": "pair_8b613e3aa7a24513bbe4134b653691df"
+                }
+            ],
             "authentication": {},
             "metaSortKey": -1610357373441,
             "isPrivate": false,
@@ -374,19 +435,28 @@
             "_type": "request"
         },
         {
-            "_id": "req_74596e0b372a4f66a7f788b141abfc73",
+            "_id": "req_dd932f55d18a452ea9e24356e46911ac",
             "parentId": "fld_2c018eb0d3674a699ab2eed4cc5ebc82",
-            "modified": 1611052350226,
-            "created": 1611044210563,
-            "url": "http://localhost:3000/api/recogida/1/ordenador/2",
-            "name": "Ordenador",
+            "modified": 1615885098274,
+            "created": 1611045188019,
+            "url": "http://localhost:3000/api/recogida/3/componente/",
+            "name": "Componente",
             "description": "",
             "method": "POST",
-            "body": {},
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"tipo\": \"432vxc\",\n\t\"estado\": \"Bueno\",\n\t\"observaciones\": \"\"\n}"
+            },
             "parameters": [],
-            "headers": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "id": "pair_423bb0c3e3ac4755a4559d4280b1a211"
+                }
+            ],
             "authentication": {},
-            "metaSortKey": -1610357373391,
+            "metaSortKey": -1610357373341,
             "isPrivate": false,
             "settingStoreCookies": true,
             "settingSendCookies": true,
@@ -397,19 +467,51 @@
             "_type": "request"
         },
         {
-            "_id": "req_dd932f55d18a452ea9e24356e46911ac",
+            "_id": "req_fcdf7044f8df4340b2c150cb8456fb75",
             "parentId": "fld_2c018eb0d3674a699ab2eed4cc5ebc82",
-            "modified": 1612787125662,
-            "created": 1611045188019,
-            "url": "http://localhost:3000/api/recogida/2/componente/2",
-            "name": "Componente",
+            "modified": 1615809403671,
+            "created": 1615806951179,
+            "url": "http://localhost:3000/api/recogida/3/portatil/",
+            "name": "Portatil",
             "description": "",
             "method": "POST",
             "body": {},
             "parameters": [],
             "headers": [],
             "authentication": {},
-            "metaSortKey": -1610357373341,
+            "metaSortKey": -1610357373328.5,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "req_74596e0b372a4f66a7f788b141abfc73",
+            "parentId": "fld_2c018eb0d3674a699ab2eed4cc5ebc82",
+            "modified": 1615809207809,
+            "created": 1611044210563,
+            "url": "http://localhost:3000/api/recogida/3/sobremesa/",
+            "name": "Sobremesa",
+            "description": "",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"localizacion_taller\": \"B45\",\n\t\"observaciones\": \"Caja rota por debajo\",\n\t\"tamano\": \"Micro-ATX\"\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "id": "pair_41d1a4ae215e4dccb7912fffb1e609f1"
+                }
+            ],
+            "authentication": {},
+            "metaSortKey": -1610357373322.25,
             "isPrivate": false,
             "settingStoreCookies": true,
             "settingSendCookies": true,
@@ -686,7 +788,7 @@
         {
             "_id": "req_978482c62b804078af42a9dec41e6d56",
             "parentId": "fld_d1fd899672024576bc012ee4fe12d79a",
-            "modified": 1612434937166,
+            "modified": 1616056105715,
             "created": 1610608898930,
             "url": "http://localhost:3000/api/componente/caracteristica/5",
             "name": "Característica",
@@ -1413,14 +1515,14 @@
         {
             "_id": "jar_d80f5c04313f58ff1f0b465e709128f603088af6",
             "parentId": "wrk_89767f5b357a40aeba040f71b8b3168c",
-            "modified": 1615633202748,
+            "modified": 1616056049380,
             "created": 1605265568024,
             "name": "Default Jar",
             "cookies": [
                 {
                     "key": "authcookie",
-                    "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWF0IjoxNjE1NjMzMjAyLCJleHAiOjE2MTU2NTg0MDJ9.vUuJdljtJp5KdbP0lVTyZ_3IJk853-xAUepVNPiOoSc",
-                    "expires": "2021-03-13T18:00:02.000Z",
+                    "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWF0IjoxNjE2MDU2MDQ5LCJleHAiOjE2MTYwODEyNDl9.8bMFYiMrNfiHyCnwCJ5XjrTyGjlie1my1pp8Wl1QXrc",
+                    "expires": "2021-03-18T15:27:29.000Z",
                     "maxAge": 25200,
                     "domain": "localhost",
                     "path": "/",
@@ -1429,9 +1531,9 @@
                         "SameSite=Strict"
                     ],
                     "hostOnly": true,
-                    "creation": "2021-03-13T10:39:13.927Z",
-                    "lastAccessed": "2021-03-13T11:00:02.746Z",
-                    "id": "48960378992680176"
+                    "creation": "2021-03-17T09:43:37.511Z",
+                    "lastAccessed": "2021-03-18T08:27:29.375Z",
+                    "id": "7931381356185621"
                 }
             ],
             "_type": "cookie_jar"
