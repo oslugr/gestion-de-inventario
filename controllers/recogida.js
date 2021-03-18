@@ -42,6 +42,48 @@ exports.obtenerRecogida = function (req, res){
 
 }
 
+exports.exportarRecogida = function (req, res){
+
+  if(req.params.tipo && ( req.params.tipo=="Entrega" || req.params.tipo=="Recogida" ) )           
+		var tipo = req.params.tipo;
+	else{
+		const e = new BadRequest('Tipo de la recogida no especificado o no válido', ["tipo no introducido o no válido. Valores válidos: 'Entrega' o 'Recogida'"], `Error al obtener las recogidas por tipo. El usuario no ha especificado un tipo válido`);
+		return res.status(e.statusCode).send(e.getJson());
+	}
+
+  const sql = `SELECT R.id, R.fecha, R.tipo, E.localizacion, 
+                (SELECT COUNT(*) FROM contiene_cable CCA WHERE CCA.id_recogida=R.id) as numero_cables, 
+                (SELECT COUNT(*) FROM contiene_componente CCO WHERE CCO.id_recogida=R.id) as numero_componentes,
+                (SELECT COUNT(*) FROM contiene_ordenador CO WHERE CO.id_recogida=R.id) as numero_ordenadores,
+                (SELECT COUNT(*) FROM contiene_transformador CT WHERE CT.id_recogida=R.id) as numero_transformadores
+              FROM recogida R
+              INNER JOIN en E ON E.id_recogida=R.id
+              WHERE R.tipo=?;`
+
+  db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query(sql, [tipo], function (err, rows) {
+        
+        conn.release();
+
+        if (err) {
+          const e = new BadRequest('Error al obtener las estadísticas', ['Ocurrió algún error al obtener las estadísticas'], `Error al obtener las estadísticas. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send({
+          data: rows
+        });
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+
+}
+
 exports.nuevaRecogida = function (req, res){
 
 	const errores = validationResult(req);
