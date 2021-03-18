@@ -7,6 +7,10 @@ const port = 3000
 const { NotFound } = require('./aux/error');
 const { autorizacion } = require('./aux/autorizar');
 const morgan = require('morgan');
+const randomToken = require('random-token');
+var config = require('./config');
+
+config.accessTokenSecret = randomToken(16);
 
 app.use(morgan('short'))
 

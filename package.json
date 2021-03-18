@@ -37,6 +37,7 @@
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
     "postcss-cli": "^7.1.2",
+    "random-token": "^0.0.8",
     "release-it": "^13.7.1",
     "tailwindcss": "^1.9.6",
     "tailwindcss-multi-theme": "^1.0.4"

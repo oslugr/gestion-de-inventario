@@ -1,6 +1,6 @@
 const db = require('../db/pool').pool;
 const { APIError, NotFound, BadRequest } = require('../aux/error');
-const { accessTokenSecret } = require('../config');
+var config = require('../config');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { autorizacion } = require('../aux/autorizar');
@@ -25,7 +25,7 @@ exports.autenticar = function(req, res){
             
             if(result){
 
-              const accessToken = jwt.sign({ username: user }, accessTokenSecret, { expiresIn: '7h' });
+              const accessToken = jwt.sign({ username: user },  config.accessTokenSecret, { expiresIn: '7h' });
                             
               res.cookie('authcookie',accessToken,{maxAge:25200000,httpOnly:true,sameSite: 'strict'}).status(200).send({
                 estado: "Correcto",
@@ -67,7 +67,7 @@ exports.registrar = function(req, res){
 
   if(authHeader || authCookie){
 
-    jwt.verify(token, accessTokenSecret, (err, usuario) => {
+    jwt.verify(token,  config.accessTokenSecret, (err, usuario) => {
       
       if(err || usuario.username != "admin"){
         const e = new APIError('Forbidden', '403', 'El token proporcionado no es válido', `Intento de acceso con token inválido`);
@@ -138,7 +138,7 @@ exports.eliminar = function(req, res){
 
   if(authHeader || authCookie){
 
-    jwt.verify(token, accessTokenSecret, (err, user) => {
+    jwt.verify(token,  config.accessTokenSecret, (err, user) => {
       
       if(err || user.username != "admin"){
         const e = new APIError('Forbidden', '403', 'El token proporcionado no es válido', `Intento de acceso con token inválido`);
@@ -202,7 +202,7 @@ exports.cambiarContrasena = function(req, res){
 
   if(authHeader || authCookie){
 
-    jwt.verify(token, accessTokenSecret, (err, user) => {
+    jwt.verify(token,  config.accessTokenSecret, (err, user) => {
       
       if(err || user.username != "admin"){
         const e = new APIError('Forbidden', '403', 'El token proporcionado no es válido', `Intento de acceso con token inválido`);
@@ -282,7 +282,7 @@ exports.obtener = function(req, res){
 
   if(authHeader || authCookie){
 
-    jwt.verify(token, accessTokenSecret, (err, usuario) => {
+    jwt.verify(token,  config.accessTokenSecret, (err, usuario) => {
       
       if(err || usuario.username != "admin"){
         const e = new APIError('Forbidden', '403', 'El token proporcionado no es válido', `Intento de acceso con token inválido`);

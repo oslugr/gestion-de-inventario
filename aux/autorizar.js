@@ -1,4 +1,4 @@
-const { accessTokenSecret } = require('../config');
+var config = require('../config');
 const jwt = require('jsonwebtoken');
 const { APIError, NotFound, BadRequest } = require('../aux/error');
 
@@ -35,7 +35,7 @@ exports.autorizacion = function(req, res, next){
 
     if(authHeader || authCookie){
 
-      jwt.verify(token, accessTokenSecret, (err, user) => {
+      jwt.verify(token, config.accessTokenSecret, (err, user) => {
         
         if(err){
           error(req, res);
