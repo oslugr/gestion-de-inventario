@@ -6,7 +6,18 @@ $.get("/api/recogida/Recogida", crearInterfazRecogidas);
 
 function tarjeta(titulo, dato) {
 	return `
-    
+    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 cursor-pointer" onclick="exportarDatos()">
+		<div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
+			<svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+				<path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+			</svg>
+		</div>
+		<div>
+			<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+			Exportar datos
+			</p>
+		</div>
+	</div>
     <a href="localizaciones.html">
         <div class="flex items-center p-4 h-full bg-white rounded-lg shadow-xs dark:bg-gray-800 cursor-pointer">
             <div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
@@ -417,6 +428,48 @@ function crearRecogida(){
 		error: function(){
 			$('#titulo-error').html('Error al crear')
 			$('#mensaje-error').html('Se ha producido un error al crear la recogida')
+			$('.popup').removeClass('hidden');
+
+			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
+		}
+	});
+
+}
+
+// ----------------------------------------------------------------------------------
+// EXPORTACIÓN DE DATOS
+// ----------------------------------------------------------------------------------
+
+function exportarDatos(){
+
+	$.ajax({
+		url: `/api/recogida/Recogida/exportar`,
+		type: 'GET',
+		success: function(data){
+			texto = `"id_recogida","fecha","tipo","localizacion","numero_cables","numero_componentes","numero_ordenadores","numero_transformadores"\n`;
+
+			for (let i = 0; i < data.data.length; i++) {
+				
+				texto += `${data.data[i].id},${data.data[i].fecha},"${data.data[i].tipo}","${data.data[i].localizacion}",${data.data[i].numero_cables},${data.data[i].numero_componentes},${data.data[i].numero_ordenadores},${data.data[i].numero_transformadores}\n`;
+				
+			}
+
+			let archivo = `recogidas.csv`;
+
+			var element = document.createElement('a');
+			element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(texto));
+			element.setAttribute('download', archivo);
+
+			element.style.display = 'none';
+			document.body.appendChild(element);
+
+			element.click();
+
+			document.body.removeChild(element);
+		},
+		error: function(){
+			$('#titulo-error').html('Error al exportar')
+			$('#mensaje-error').html('No se han podido obtener los datos')
 			$('.popup').removeClass('hidden');
 
 			setTimeout(() => $('.popup').addClass('hidden'), 3000 )
