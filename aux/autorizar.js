@@ -33,19 +33,20 @@ exports.autorizacion = function(req, res, next){
     else if(authCookie)
       var token = authCookie;
 
-    if(authHeader || authCookie){
+    if(authHeader || authCookie && token){
 
       jwt.verify(token, config.accessTokenSecret, (err, user) => {
+
+        if(err || !user){
+          error(req, res);
+        }
+        else if(user.username != "admin" && req.originalUrl.startsWith('/usuarios')){
+          error(req, res);
+        }
+        else{
+          next();
+        }
         
-        if(err){
-          error(req, res);
-        }
-
-        if(user.username != "admin" && req.originalUrl.startsWith('/usuarios')){
-          error(req, res);
-        }
-
-        next();
       })
     }
     else{
