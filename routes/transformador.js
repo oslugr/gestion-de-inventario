@@ -16,9 +16,6 @@ router.post	  ('/', [
 	body('corresponde.id').if(body('corresponde').exists()).isInt().not().isEmpty().withMessage('Id de corresponde no válido')
 ],  controlador.insertarTransformador);
 
-// Asigna un transformador a un portatil
-router.post	  ('/:id_t/portatil/:id_p', controlador.asignarPortatil);
-
 // Edita un transformador
 router.put	  ('/:id', [
 	body('voltaje').isInt().not().isEmpty().withMessage('Voltaje no válido'),
