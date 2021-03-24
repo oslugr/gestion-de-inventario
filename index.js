@@ -10,7 +10,7 @@ const morgan = require('morgan');
 const randomToken = require('random-token');
 var config = require('./config');
 
-// config.accessTokenSecret = randomToken(16);
+config.accessTokenSecret = randomToken(16);
 
 app.use(morgan('short'))
 
