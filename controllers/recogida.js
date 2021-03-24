@@ -1058,3 +1058,235 @@ exports.obtenerRecogidaId = function (req, res){
   });
 
 }
+
+exports.aniadirCableId = function (req, res){
+
+  if(req.params.id_recogida)  var id_recogida = req.params.id_recogida;
+  else                        var id_recogida = null;
+  if(req.params.id_cable)     var id_cable = req.params.id_cable;
+  else                        var id_cable = null;
+
+	db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('INSERT INTO contiene_cable(id_recogida, id_cable) VALUES (?);', [[id_recogida, id_cable]], function (err, rows) {
+        
+        if (err) {
+          const e = new BadRequest('Error al insertar un cable en una recogida', ['Ocurrió algún error al insertar el cable. Puede ser que el cable o la recogida no existan o que simplemente ya esté inserado en esta recogida'], `Error al insertar un cable en una recogida. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send({
+					estado: "Correcto",
+					descripcion: "Cable insertado correctamente en la recogida"
+				});
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+}
+
+exports.aniadirTransformadorId = function (req, res) {
+  
+  if(req.params.id_recogida)  var id_recogida = req.params.id_recogida;
+  else                        var id_recogida = null;
+  if(req.params.id_trans)     var id_trans = req.params.id_trans;
+  else                        var id_trans = null;
+
+	db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('INSERT INTO contiene_transformador(id_recogida, id_transformador) VALUES (?);', [[id_recogida, id_trans]], function (err, rows) {
+        
+        if (err) {
+          const e = new BadRequest('Error al insertar un transformador en una recogida', ['Ocurrió algún error al insertar el transformador. Puede ser que el transformador o la recogida no existan o que simplemente ya esté inserado en esta recogida'], `Error al insertar un transformador en una recogida. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send({
+					estado: "Correcto",
+					descripcion: "Transformador insertado correctamente en la recogida"
+				});
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+}
+
+exports.aniadirOrdenadorId = function (req, res) {
+  
+  if(req.params.id_recogida)  var id_recogida = req.params.id_recogida;
+  else                        var id_recogida = null;
+  if(req.params.id_ord)       var id_ord = req.params.id_ord;
+  else                        var id_ord = null;
+
+	db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('INSERT INTO contiene_ordenador(id_recogida, id_ordenador) VALUES (?);', [[id_recogida, id_ord]], function (err, rows) {
+        
+        if (err) {
+          const e = new BadRequest('Error al insertar un ordenador en una recogida', ['Ocurrió algún error al insertar el ordenador. Puede ser que el ordenador o la recogida no existan o que simplemente ya esté inserado en esta recogida'], `Error al insertar un ordenador en una recogida. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send({
+					estado: "Correcto",
+					descripcion: "Ordenador insertado correctamente en la recogida"
+				});
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+}
+
+exports.aniadirComponenteId = function (req, res) {
+  
+  if(req.params.id_recogida)  var id_recogida = req.params.id_recogida;
+  else                        var id_recogida = null;
+  if(req.params.id_comp)      var id_comp = req.params.id_comp;
+  else                        var id_comp = null;
+
+	db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('INSERT INTO contiene_componente(id_recogida, id_componente) VALUES (?);', [[id_recogida, id_comp]], function (err, rows) {
+        
+        if (err) {
+          const e = new BadRequest('Error al insertar una componente en una recogida', ['Ocurrió algún error al insertar la componente. Puede ser que la componente o la recogida no existan o que simplemente ya esté inserado en esta recogida'], `Error al insertar una componente en una recogida. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send({
+					estado: "Correcto",
+					descripcion: "Componente insertada correctamente en la recogida"
+				});
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+}
+
+exports.eliminarCableId = function (req, res){
+
+  if(req.params.id_recogida)  var id_recogida = req.params.id_recogida;
+  else                        var id_recogida = null;
+  if(req.params.id_cable)     var id_cable = req.params.id_cable;
+  else                        var id_cable = null;
+
+	db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('DELETE FROM contiene_cable WHERE id_recogida=? AND id_cable=?;', [id_recogida, id_cable], function (err, rows) {
+        
+        if (err) {
+          const e = new BadRequest('Error al eliminar un cable de una recogida', ['Ocurrió algún error al eliminar el cable'], `Error al eliminar un cable en una recogida. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send({
+					estado: "Correcto",
+					descripcion: "Cable eliminado correctamente de la recogida"
+				});
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+}
+
+exports.eliminarTransformadorId = function (req, res) {
+  
+  if(req.params.id_recogida)  var id_recogida = req.params.id_recogida;
+  else                        var id_recogida = null;
+  if(req.params.id_trans)     var id_trans = req.params.id_trans;
+  else                        var id_trans = null;
+
+	db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('DELETE FROM contiene_transformador WHERE id_recogida=? AND id_transformador=?;', [id_recogida, id_trans], function (err, rows) {
+        
+        if (err) {
+          const e = new BadRequest('Error al eliminar un transformador de una recogida', ['Ocurrió algún error al eliminar el transformador.'], `Error al eliminar un transformador en una recogida. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send({
+					estado: "Correcto",
+					descripcion: "Transformador eliminardo correctamente de la recogida"
+				});
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+}
+
+exports.eliminarOrdenadorId = function (req, res) {
+  
+  if(req.params.id_recogida)  var id_recogida = req.params.id_recogida;
+  else                        var id_recogida = null;
+  if(req.params.id_ord)       var id_ord = req.params.id_ord;
+  else                        var id_ord = null;
+
+	db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('DELETE FROM contiene_ordenador WHERE id_recogida=? AND id_ordenador=?;', [id_recogida, id_ord], function (err, rows) {
+        
+        if (err) {
+          const e = new BadRequest('Error al eliminar un ordenador de una recogida', ['Ocurrió algún error al elimianr el ordenador'], `Error al eliminar un ordenador de una recogida. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send({
+					estado: "Correcto",
+					descripcion: "Ordenador eliminado correctamente en la recogida"
+				});
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+}
+
+exports.eliminarComponenteId = function (req, res) {
+  
+  if(req.params.id_recogida)  var id_recogida = req.params.id_recogida;
+  else                        var id_recogida = null;
+  if(req.params.id_comp)      var id_comp = req.params.id_comp;
+  else                        var id_comp = null;
+
+	db.getConnection(function (err, conn) {
+    if (!err) {
+      conn.query('DELETE FROM contiene_componente WHERE id_recogida=? AND id_componente=?;', [id_recogida, id_comp], function (err, rows) {
+        
+        if (err) {
+          const e = new BadRequest('Error al eliminar una componente en una recogida', ['Ocurrió algún error al eliminar la componente.'], `Error al eliminar una componente en una recogida. ${err}`);
+          return res.status(e.statusCode).send(e.getJson());
+        }
+        
+        return res.status('200').send({
+					estado: "Correcto",
+					descripcion: "Componente elimiada correctamente en la recogida"
+				});
+      });
+    }
+    else{
+      const e = new APIError('Service Unavailable', '503', 'Error interno de la base de datos', `Error al conectar a la base de datos para obtener recogidas \n${err}`);
+      return res.status(e.statusCode).send(e.getJson());
+    }
+  });
+}

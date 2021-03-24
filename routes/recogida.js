@@ -69,11 +69,35 @@ router.post	  ('/:id_recogida/sobremesa/',[
 	body('tamano').optional().isString().withMessage('Valor no válido en tamano')
 ], controlador.aniadirSobremesa);
 
+// Añade un cable a una recogida por id
+router.post	  ('/:id_recogida/cable/:id_cable', controlador.aniadirCableId);
+
+// Añade un transformador a una recogida por id
+router.post	  ('/:id_recogida/transformador/:id_trans', controlador.aniadirTransformadorId);
+
+// Añade un ordenador a una recogida por id
+router.post	  ('/:id_recogida/ordenador/:id_ord', controlador.aniadirOrdenadorId);
+
+// Añade un componente a una recogida por id
+router.post	  ('/:id_recogida/componente/:id_comp', controlador.aniadirComponenteId);
+
 // Edita una recogida
 router.put	  ('/:id',[
 	body('fecha').matches(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/).withMessage('Fecha mal introducida. Formatos de fecha correcto: AAAA-MM-DD'),
 	body('localizacion').isString().withMessage('Localizacion no válida. No puede ser vacía y tiene que ser un string')
 ],                                      controlador.editarRecogida);
+
+// Añade un cable a una recogida por id
+router.delete ('/:id_recogida/cable/:id_cable', controlador.eliminarCableId);
+
+// Añade un transformador a una recogida por id
+router.delete ('/:id_recogida/transformador/:id_trans', controlador.eliminarTransformadorId);
+
+// Añade un ordenador a una recogida por id
+router.delete ('/:id_recogida/ordenador/:id_ord', controlador.eliminarOrdenadorId);
+
+// Añade un componente a una recogida por id
+router.delete ('/:id_recogida/componente/:id_comp', controlador.eliminarComponenteId);
 
 // Elimina una recogida
 router.delete ('/:id', 					controlador.eliminarRecogida)

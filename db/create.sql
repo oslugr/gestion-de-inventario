@@ -25,8 +25,7 @@ CREATE TABLE cable(
 CREATE TABLE contiene_cable(
 	id_cable INT REFERENCES cable(id) ON DELETE CASCADE,
 	id_recogida INT REFERENCES recogida(id),
-	PRIMARY KEY(id_cable, id_recogida),
-    UNIQUE(id_cable)
+	PRIMARY KEY(id_cable, id_recogida)
 );
 
 /* Transformador */
@@ -39,8 +38,7 @@ CREATE TABLE transformador (
 CREATE TABLE contiene_transformador(
 	id_transformador INT REFERENCES transformador(id) ON DELETE CASCADE,
 	id_recogida INT REFERENCES recogida(id),
-	PRIMARY KEY(id_transformador, id_recogida),
-    UNIQUE(id_transformador)
+	PRIMARY KEY(id_transformador, id_recogida)
 );
 
 /* Componente y sus asociados */
@@ -66,8 +64,7 @@ CREATE TABLE tiene (
 CREATE TABLE contiene_componente(
 	id_componente INT REFERENCES componente(id) ON DELETE CASCADE,
 	id_recogida INT REFERENCES recogida(id),
-	PRIMARY KEY(id_componente, id_recogida),
-    UNIQUE(id_componente)
+	PRIMARY KEY(id_componente, id_recogida)
 );
 
 CREATE TABLE corresponde_componente (
@@ -104,8 +101,7 @@ CREATE TABLE corresponde_portatil (
 CREATE TABLE contiene_ordenador(
 	id_ordenador INT REFERENCES ordenador(id) ON DELETE CASCADE,
 	id_recogida INT REFERENCES recogida(id),
-	PRIMARY KEY(id_ordenador, id_recogida),
-    UNIQUE(id_ordenador)
+	PRIMARY KEY(id_ordenador, id_recogida)
 );
 
 CREATE TABLE formado (
