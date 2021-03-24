@@ -66,6 +66,14 @@ function mostrarRecogida(){
 			</div>
 	
 		</div>
+		<a id="aviso-nuevo" class="flex hidden mt-5 cursor-pointer items-center justify-between p-4 mb-8 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple" onclick="location.reload();" >
+			<div class="flex items-center">
+				<svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+					<path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+				</svg>
+				<span>Has añadido un nuevo elemento a la entrega. Si quieres ver sus características, recarga la página</span>
+			</div>
+        </a>
   `);
 
 }
@@ -162,8 +170,8 @@ function fila_cables(id, tipo, version, posicion) {
 						</svg>
 					</button>
 					<button onclick="eliminarCable(${id}, ${posicion});" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Delete">
-						<svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-							<path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+						<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 						</svg>
 					</button>
 				</div>
@@ -350,7 +358,7 @@ function generarPieCables() {
 
 function eliminarCable(id, posicion){
 	$.ajax({
-		url: `/api/cable/id/${id}`,
+		url: `/api/recogida/${recogida.id}/cable/${id}`,
 		type: 'DELETE',
 		success: function(){
 			cables.cantidad--;
@@ -424,16 +432,8 @@ function cargarFormularioVacioCable(){
 	<!-- Modal description -->
 	<div class="text-sm mt-5">
 		<label class="block text-sm my-3">
-		<span class="text-gray-700 dark:text-gray-400">Tipo</span>
-		<input id="editar-tipo"
-			class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-			placeholder=""
-		/>
-		</label>
-
-		<label class="block text-sm my-3">
-		<span class="text-gray-700 dark:text-gray-400">Versión</span>
-		<input id="editar-version"
+		<span class="text-gray-700 dark:text-gray-400">ID</span>
+		<input id="editar-id"
 			class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
 			placeholder=""
 		/>
@@ -442,8 +442,6 @@ function cargarFormularioVacioCable(){
 
 	`)
 
-	$('#editar-tipo').val('');
-	$('#editar-version').val('');
 	$('#confirmar-modal').attr('onclick', `crearCable()`);
 }
 
@@ -476,20 +474,19 @@ function editarCable(id, posicion){
 
 function crearCable(){
 
-	let tipo 	= $('#editar-tipo').val();
-	let version = $('#editar-version').val();
+	let id_cable = $('#editar-id').val();
 	
 	$.ajax({
-		url: `/api/recogida/${recogida.id}/cable/${tipo}/${version}`,
+		url: `/api/recogida/${recogida.id}/cable/${id_cable}`,
 		type: 'POST',
 		success: function(data){
 			let id = data.id;
 			cables.cantidad++;
 
 			cables.data.push({
-				id: id,
-				tipo: tipo,
-				version_tipo: version
+				id: id_cable,
+				tipo: '',
+				version_tipo: ''
 			})
 
 			$('#elementos-totales-tarjeta-cables').html(cables.cantidad);
@@ -500,10 +497,12 @@ function crearCable(){
 			}
 			else
 				crearCables();
+
+			$('#aviso-nuevo').removeClass('hidden');
 		},
 		error: function(){
-			$('#titulo-error').html('Error al crear el cable')
-			$('#mensaje-error').html('Ha ocurrido un error al crear el cable')
+			$('#titulo-error').html('Error al asociar el cable')
+			$('#mensaje-error').html('Ha ocurrido un error al asociar el cable. Es posible que no exista este.')
 			$('.popup').removeClass('hidden');
 
 			setTimeout(() => $('.popup').addClass('hidden'), 3000 );
@@ -550,8 +549,8 @@ function fila_transformadores(id, voltaje, amperaje, posicion) {
 						</svg>
 					</button>
 					<button onclick="eliminarTransformador(${id}, ${posicion});" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Delete">
-						<svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-							<path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+						<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 						</svg>
 					</button>
 				</div>
@@ -739,7 +738,7 @@ function generarPieTransformadores() {
 
 function eliminarTransformador(id, posicion){
 	$.ajax({
-		url: `/api/transformador/${id}`,
+		url: `/api/recogida/${recogida.id}/transformador/${id}`,
 		type: 'DELETE',
 		success: function(){
 			transformadores.cantidad--;
@@ -854,52 +853,17 @@ function cargarFormularioVacioTransformador(){
 	<!-- Modal description -->
 	<div class="text-sm mt-5">
 		<label class="block text-sm my-3">
-		<span class="text-gray-700 dark:text-gray-400">Voltaje</span>
-		<input id="editar-voltaje"
+		<span class="text-gray-700 dark:text-gray-400">Id</span>
+		<input id="editar-id"
 			class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
 			placeholder=""
 		/>
-		</label>
-
-		<label class="block text-sm my-3">
-		<span class="text-gray-700 dark:text-gray-400">Amperaje</span>
-		<input id="editar-amperaje"
-			class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-			placeholder=""
-		/>
-		</label>
-		<label class="block text-sm my-3">
-		<div class="w-full overflow-x-auto">
-			<table class="w-full whitespace-no-wrap">
-			<thead>
-				<tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
-				<th class="px-2 py-3">Corresponde a</th>
-				<th class="px-2 py-3"></th>
-				</tr>
-			</thead>
-			<tbody id="body-tabla-caracteristicas" class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-				<td class="px-2 py-3 text-sm">
-				<select id="corresponde-tipo" class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
-					<option>Portátil</option>
-					<option>Componente</option>
-				</select>
-				</td>
-				<td class="px-2 py-3 text-sm border-1">
-				<input id="corresponde-id"
-					class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-					placeholder="ID"
-				/>  
-				</td>
-			</tbody>
-			</table>
-		</div>                  
 		</label>
 	</div>
 
 	`)
 
-	$('#editar-voltaje').val('');
-	$('#editar-amperaje').val('');
+	$('#editar-id').val('');
 	$('#confirmar-modal').attr('onclick', `crearTransformador()`);
 }
 
@@ -952,45 +916,20 @@ function editarTransformador(id, posicion){
 
 function crearTransformador(){
 
-	let voltaje  = $('#editar-voltaje').val();
-	let amperaje = $('#editar-amperaje').val();
-	let c_tipo 	 = $('#corresponde-tipo').val().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-	let c_id	 = $('#corresponde-id').val();
-	
-	let json = {
-		voltaje: voltaje, 
-		amperaje: amperaje
-	}
+	let id_trans = $('#editar-id').val();
 
-	if(c_id){
-		json['corresponde'] = {
-			tipo: c_tipo,
-			id: c_id
-		}
-	}
-	
 	$.ajax({
-		url: `/api/recogida/${recogida.id}/transformador/`,
+		url: `/api/recogida/${recogida.id}/transformador/${id_trans}`,
 		type: 'POST',
-		data: JSON.stringify(json),
-		contentType: "application/json; charset=utf-8",
-		dataType: "json",
 		success: function(data){
-			let id = data.id;
 			transformadores.cantidad++;
 
-			let response_json = {
-				id: id,
-				voltaje: voltaje,
-				amperaje: amperaje
-			}
-
-			if(json.corresponde)
-				response_json.corresponde = json.corresponde;
-			else
-				response_json.corresponde = null
-
-			transformadores.data.push(response_json);
+			transformadores.data.push({
+				id: id_trans,
+				voltaje: '',
+				amperaje: '',
+				corresponde: {}
+			});
 
 			$('#elementos-totales-tarjeta-transformadores').html(transformadores.cantidad);
 
@@ -1000,6 +939,8 @@ function crearTransformador(){
 			}
 			else
 				crearTransformadores();
+
+			$('#aviso-nuevo').removeClass('hidden');
 		},
 		error: function(){
 			$('#titulo-error').html('Error al crear el transformador')
@@ -1056,8 +997,8 @@ function fila_componentes(id, estado, fecha, tipo, observaciones, posicion) {
 						</svg>
 					</button>
 					<button onclick="eliminarComponente(${id}, ${posicion});" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Delete">
-						<svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-							<path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+						<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 						</svg>
 					</button>
 				</div>
@@ -1247,7 +1188,7 @@ function generarPieComponentes() {
 
 function eliminarComponente(id, posicion){
 	$.ajax({
-		url: `/api/componente/${id}`,
+		url: `/api/recogida/${recogida.id}/componente/${id}`,
 		type: 'DELETE',
 		success: function(){
 			componentes.cantidad--;
@@ -1342,43 +1283,13 @@ function cargarFormularioVacioComponentes(){
 	<p
 		class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300"
 	>
-		Editar componente
+		Crear componente
 	</p>
 	<!-- Modal description -->
 	<div class="text-sm mt-5">
 		<label class="block text-sm my-3">
-		<span class="text-gray-700 dark:text-gray-400">Tipo</span>
-		<input id="editar-tipo"
-			class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-			placeholder=""
-		/>
-		</label>
-
-		<label class="block text-sm my-3">
-		<span class="text-gray-700 dark:text-gray-400">Estado</span>
-		<select id="editar-estado"
-			class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
-		>
-			<option>Desconocido</option>
-			<option>Bueno</option>
-			<option>Regular</option>
-			<option>Por revisar</option>
-			<option>No aprovechable</option>
-			<option>Roto</option>
-		</select>
-		</label>
-
-		<label class="block text-sm my-3">
-		<span class="text-gray-700 dark:text-gray-400">Fecha</span>
-		<input id="editar-fecha"
-			class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-			placeholder="Formato: 2000-01-31"
-		/>
-		</label>
-
-		<label class="block text-sm my-3">
-		<span class="text-gray-700 dark:text-gray-400">Observaciones</span>
-		<input id="editar-observaciones"
+		<span class="text-gray-700 dark:text-gray-400">ID</span>
+		<input id="editar-id"
 			class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
 			placeholder=""
 		/>
@@ -1387,10 +1298,6 @@ function cargarFormularioVacioComponentes(){
 
 	`)
 
-	$('#editar-tipo').val("");
-	$(`#editar-estado`).val("Desconocido");
-	$('#editar-fecha').val("");
-	$('#editar-observaciones').val("");
 	$('#confirmar-modal').attr('onclick', `crearComponente()`);
 }
 
@@ -1441,25 +1348,10 @@ function editarComponente(id, posicion){
 }
 
 function crearComponente(){
-	const tipo 	        = $('#editar-tipo').val();
-	const estado        = $('#editar-estado').val();
-	const fecha         = $('#editar-fecha').val();
-	const observaciones = $('#editar-observaciones').val();
-
-	const json = {
-		"tipo": tipo,
-		"estado": estado,
-		"observaciones": observaciones
-	};
-
-	if(fecha)
-		json["fecha_entrada"] = fecha;
+	const id_comp = $('#editar-id').val();
 
 	$.ajax({
-		url: `/api/recogida/${recogida.id}/componente/`,
-		data: JSON.stringify(json),
-		contentType: "application/json; charset=utf-8",
-		dataType: "json",
+		url: `/api/recogida/${recogida.id}/componente/${id_comp}`,
 		type: 'POST',
 		success: function(data){
 
@@ -1467,11 +1359,11 @@ function crearComponente(){
 			componentes.cantidad++;
 
 			componentes.data.push({
-				id: id,
-				tipo: tipo, 
-				estado: estado,
-				fecha_entrada: fecha,
-				observaciones: observaciones
+				id: id_comp,
+				tipo: '', 
+				estado: '',
+				fecha_entrada: '',
+				observaciones: ''
 			})
 
 			$('#elementos-totales-tarjeta-componentes').html(componentes.cantidad);
@@ -1481,6 +1373,8 @@ function crearComponente(){
 			}
 			else
 				crearComponentes();
+
+			$('#aviso-nuevo').removeClass('hidden');
 		},
 		error: function(){
 			$('#titulo-error').html('Error al crear la componente')
@@ -1520,7 +1414,7 @@ function tarjetaOrdenador() {
 				</p>
 			</div>
     </div>
-	<div id="boton-aniadir-ordenadores-portatiles" class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 cursor-pointer" onclick="cargarFormularioVacioOrdenadores('Portátil')" @click="openModal">
+	<div id="boton-aniadir-ordenadores-portatiles" class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 cursor-pointer" onclick="cargarFormularioVacioOrdenadores()" @click="openModal">
 			<div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
 				<svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -1528,19 +1422,7 @@ function tarjetaOrdenador() {
 			</div>
 			<div>
 				<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-				Añadir Portátil
-				</p>
-			</div>
-    </div>
-	<div id="boton-aniadir-ordenadores-sobremesas" class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 cursor-pointer" onclick="cargarFormularioVacioOrdenadores('Sobremesa')" @click="openModal">
-			<div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
-				<svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-				</svg>
-			</div>
-			<div>
-				<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-				Añadir sobremesa
+				Añadir Ordenador
 				</p>
 			</div>
     </div>
@@ -1580,8 +1462,8 @@ function fila_ordenadores(id, tipo, localizacion, observaciones, otro, posicion)
 						</svg>
 					</button>
 					<button onclick="eliminarOrdenador(${id}, ${posicion});" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Delete">
-						<svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-							<path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+						<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 						</svg>
 					</button>
 				</div>
@@ -1775,7 +1657,7 @@ function generarPieOrdenadores() {
 
 function eliminarOrdenador(id, posicion){
 	$.ajax({
-		url: `/api/ordenador/${id}`,
+		url: `/api/recogida/${recogida.id}/ordenador/${id}`,
 		type: 'DELETE',
 		success: function(){
 
@@ -1867,7 +1749,7 @@ function cargarFormularioOrdenador(id, tipo, localizacion, observaciones, otro, 
 
 }
 
-function cargarFormularioVacioOrdenadores(tipo){
+function cargarFormularioVacioOrdenadores(){
 
 	$('#body-modal').html(`
 	
@@ -1879,57 +1761,17 @@ function cargarFormularioVacioOrdenadores(tipo){
 		</p>
 		<!-- Modal description -->
 		<label class="block text-sm my-3">
-		<span class="text-gray-700 dark:text-gray-400">Localizacion</span>
-		<input id="editar-localizacion"
+		<span class="text-gray-700 dark:text-gray-400">ID</span>
+		<input id="editar-id"
 			class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
 			placeholder=""
 		/>
-		</label>
-
-		<label class="block text-sm my-3">
-		<span class="text-gray-700 dark:text-gray-400">Observaciones</span>
-		<input id="editar-observaciones"
-			class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-			placeholder=""
-		/>
-		</label>
-
-		<label id="estado-o-tamano" class="block text-sm my-3">
 		</label>
 
 	`)
 
-	$('#editar-localizacion').val('');
-	$('#editar-observaciones').val('');
-	
-	if(tipo == "Sobremesa"){
-		$('#estado-o-tamano').html(`
-			<span class="text-gray-700 dark:text-gray-400">Tamaño</span>
-			<input id="editar-estado-o-tamano"
-				class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-				placeholder="" value=""
-			/>
-		`);
-	}
-	else{
-		$('#estado-o-tamano').html(`
-			<span class="text-gray-700 dark:text-gray-400">Estado</span>
-			<select id="editar-estado-o-tamano"
-				class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
-			>
-				<option>Desconocido</option>
-				<option>Bueno</option>
-				<option>Regular</option>
-				<option>Por revisar</option>
-				<option>No aprovechable</option>
-				<option>Roto</option>
-			</select>
-		`);
-		$('#editar-estado-o-tamano').val('');
-	}
-
 	// cargarCaracteristicas(id, posicion);
-	$('#confirmar-modal').attr('onclick', `crearOrdenador('${tipo}')`);
+	$('#confirmar-modal').attr('onclick', `crearOrdenador()`);
 }
 
 
@@ -1980,49 +1822,23 @@ function editarOrdenador(id, tipo, posicion){
 
 }
 
-function crearOrdenador(tipo){
-	const localizacion  = $('#editar-localizacion').val();
-	const observaciones = $('#editar-observaciones').val();
-	const otro 			= $('#editar-estado-o-tamano').val();
-	
-	const json = {
-		"localizacion_taller": localizacion,
-		"observaciones": observaciones
-	};
-
-	if(tipo == "Portátil"){
-		json["estado"] = otro;
-		var query = 'portatil';
-	}
-	else if(tipo == "Sobremesa"){
-		json["tamano"] = otro;
-		var query = 'sobremesa';
-	}
+function crearOrdenador(){
+	const id_ordenador = $('#editar-id').val();
 
 	$.ajax({
-		url: `/api/recogida/${recogida.id}/${query}/`,
-		data: JSON.stringify(json),
-		contentType: "application/json; charset=utf-8",
-		dataType: "json",
+		url: `/api/recogida/${recogida.id}/ordenador/${id_ordenador}`,
 		type: 'POST',
 		success: function(data){
 			ordenadores.cantidad++;
 
 			let json = {
-				id: data.id,
-				localizacion_taller: localizacion,
-				observaciones: observaciones, 
-				tipo: tipo
+				id: id_ordenador,
+				localizacion_taller: "",
+				observaciones: "", 
+				tipo: "",
+				estado: "",
+				tamano: ""
 			};
-
-			if(tipo == "Portátil"){
-				json["estado"] = otro;
-				json["tamano"] = null;
-			}
-			else if(tipo == "Sobremesa"){
-				json["estado"] = null;
-				json["tamano"] = otro;
-			}
 
 			ordenadores.data.push(json)
 
@@ -2033,6 +1849,8 @@ function crearOrdenador(tipo){
 			}
 			else
 				crearOrdenadores();
+
+			$('#aviso-nuevo').removeClass('hidden');
 		},
 		error: function(){
 			$('#titulo-error').html('Error al crear el ordenador')
